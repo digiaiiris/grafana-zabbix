@@ -11,7 +11,7 @@ import { migratePanelSchema, CURRENT_SCHEMA_VERSION } from './migrations';
 import ProblemList from './components/Problems/Problems';
 import AlertList from './components/AlertList/AlertList';
 
-const ZABBIX_DS_ID = 'alexanderzobnin-zabbix-datasource';
+const ZABBIX_DS_ID = 'iiris-zabbix-datasource';
 const PROBLEM_EVENTS_LIMIT = 100;
 
 export const DEFAULT_TARGET = {
@@ -698,7 +698,7 @@ export class TriggerPanelCtrl extends PanelCtrl {
   }
 }
 
-TriggerPanelCtrl.templateUrl = 'public/plugins/alexanderzobnin-zabbix-app/panel-triggers/partials/module.html';
+TriggerPanelCtrl.templateUrl = 'public/plugins/iiris-zabbix-triggers-panel/panel-triggers/partials/module.html';
 
 function filterTriggers(triggers, triggerFilter) {
   if (utils.isRegex(triggerFilter)) {

@@ -16,8 +16,8 @@ import {loadPluginCss} from 'grafana/app/plugins/sdk';
 import './datasource-selector.directive';
 
 loadPluginCss({
-  dark: 'plugins/alexanderzobnin-zabbix-app/css/grafana-zabbix.dark.css',
-  light: 'plugins/alexanderzobnin-zabbix-app/css/grafana-zabbix.light.css'
+  dark: 'plugins/iiris-zabbix-triggers-panel/css/grafana-zabbix.dark.css',
+  light: 'plugins/iiris-zabbix-triggers-panel/css/grafana-zabbix.light.css'
 });
 
 export {
