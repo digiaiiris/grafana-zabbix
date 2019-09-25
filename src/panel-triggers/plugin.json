@@ -4,6 +4,7 @@
   "id": "iiris-zabbix-problems-panel",
 
   "dataFormats": [],
+  "skipDataQuery": true,
 
   "info": {
     "author": {

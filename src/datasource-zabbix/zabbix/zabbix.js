@@ -368,7 +368,7 @@ export class Zabbix {
       itServices = _.filter(itServices, {'serviceid': target.itservice.serviceid});
     }
     let itServiceIds = _.map(itServices, 'serviceid');
-    return this.zabbixAPI.getSLA(itServiceIds, timeRange)
+    return this.zabbixAPI.getSLA(itServiceIds, timeRange, options)
     .then(slaResponse => {
       return _.map(itServiceIds, serviceid => {
         let itservice = _.find(itServices, {'serviceid': serviceid});
