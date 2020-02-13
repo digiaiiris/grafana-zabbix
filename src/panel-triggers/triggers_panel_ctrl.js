@@ -341,7 +341,7 @@ export class TriggerPanelCtrl extends PanelCtrl {
 
   filterTriggersPre(triggerList, ds) {
     // Filter triggers by description
-    let triggerFilter = this.panel.targets[ds].trigger.filter;
+    let triggerFilter = this.panel.targets && this.panel.targets[ds] ? this.panel.targets[ds].trigger.filter : '';
     triggerFilter = this.datasources[ds].replaceTemplateVars(triggerFilter);
     if (triggerFilter) {
       triggerList = filterTriggers(triggerList, triggerFilter);
