@@ -11,7 +11,7 @@ const template = `
 
 angular
 .module('grafana.directives')
-.directive('datasourceSelector', () => {
+.directive('iirisDatasourceSelector', () => {
   return {
     scope: {
       datasources: "=",
