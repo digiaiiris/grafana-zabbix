@@ -1,17 +1,6 @@
 import _ from 'lodash';
 import * as utils from './utils';
-import ts from './timeseries';
-
-let downsampleSeries = ts.downsample;
-let groupBy = ts.groupBy_perf;
-let groupBy_exported = (interval, groupFunc, datapoints) => groupBy(datapoints, interval, groupFunc);
-let sumSeries = ts.sumSeries;
-let delta = ts.delta;
-let rate = ts.rate;
-let scale = (factor, datapoints) => ts.scale_perf(datapoints, factor);
-let offset = (delta, datapoints) => ts.offset(datapoints, delta);
-let simpleMovingAverage = (n, datapoints) => ts.simpleMovingAverage(datapoints, n);
-let expMovingAverage = (a, datapoints) => ts.expMovingAverage(datapoints, a);
+import ts, { groupBy_perf as groupBy } from './timeseries';
 
 let SUM = ts.SUM;
 let COUNT = ts.COUNT;
@@ -20,6 +9,17 @@ let MIN = ts.MIN;
 let MAX = ts.MAX;
 let MEDIAN = ts.MEDIAN;
 let PERCENTILE = ts.PERCENTILE;
+
+let downsampleSeries = ts.downsample;
+let groupBy_exported = (interval, groupFunc, datapoints) => groupBy(datapoints, interval, groupFunc);
+let sumSeries = ts.sumSeries;
+let delta = ts.delta;
+let rate = ts.rate;
+let scale = (factor, datapoints) => ts.scale_perf(datapoints, factor);
+let offset = (delta, datapoints) => ts.offset(datapoints, delta);
+let simpleMovingAverage = (n, datapoints) => ts.simpleMovingAverage(datapoints, n);
+let expMovingAverage = (a, datapoints) => ts.expMovingAverage(datapoints, a);
+let percentile = (interval, n, datapoints) => groupBy(datapoints, interval, _.partial(PERCENTILE, n));
 
 function limit(order, n, orderByFunc, timeseries) {
   let orderByCallback = aggregationFunctions[orderByFunc];
@@ -121,10 +121,12 @@ function aggregateWrapper(groupByCallback, interval, datapoints) {
   return groupBy(sortedPoints, interval, groupByCallback);
 }
 
-function percentile(interval, n, datapoints) {
-  var flattenedPoints = ts.flattenDatapoints(datapoints);
-  var groupByCallback = _.partial(PERCENTILE, n);
-  return groupBy(flattenedPoints, interval, groupByCallback);
+function percentileAgg(interval, n, datapoints) {
+  const flattenedPoints = ts.flattenDatapoints(datapoints);
+  // groupBy_perf works with sorted series only
+  const sortedPoints = ts.sortByTime(flattenedPoints);
+  let groupByCallback = _.partial(PERCENTILE, n);
+  return groupBy(sortedPoints, interval, groupByCallback);
 }
 
 function timeShift(interval, range) {
@@ -152,10 +154,11 @@ let metricFunctions = {
   rate: rate,
   movingAverage: simpleMovingAverage,
   exponentialMovingAverage: expMovingAverage,
+  percentile: percentile,
   transformNull: transformNull,
   aggregateBy: aggregateByWrapper,
   // Predefined aggs
-  percentile: percentile,
+  percentileAgg: percentileAgg,
   average: _.partial(aggregateWrapper, AVERAGE),
   min: _.partial(aggregateWrapper, MIN),
   max: _.partial(aggregateWrapper, MAX),

@@ -5,9 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [3.11.0] - 2020-03-23
+### Added
+- Improve variable query editor, [#705](https://github.com/alexanderzobnin/grafana-zabbix/issues/705)
+- Transform/percentile function, [#868](https://github.com/alexanderzobnin/grafana-zabbix/issues/868)
+
+### Fixed
+- Problems panel: stopped working in Grafana 6.7.0, [#907](https://github.com/alexanderzobnin/grafana-zabbix/issues/907)
+- Problems panel: event severity change, [#870](https://github.com/alexanderzobnin/grafana-zabbix/issues/870)
+- Problems panel: color is changed to acknowledged even if there is only message without acknowledgment, [#857](https://github.com/alexanderzobnin/grafana-zabbix/issues/857)
+- Percentile function returns incorrect results, [#862](https://github.com/alexanderzobnin/grafana-zabbix/issues/862)
+
+## [3.10.5] - 2019-12-26
 ### Added
 - SLA over time graphs, [#728](https://github.com/alexanderzobnin/grafana-zabbix/issues/728)
+- Additional time ranges in functions, [#531](https://github.com/alexanderzobnin/grafana-zabbix/issues/531)
+
+### Fixed
+- Problems panel: query editor broken in Grafana 6.4, [#817](https://github.com/alexanderzobnin/grafana-zabbix/issues/817)
+- Datasource: function editor is not working, [#810](https://github.com/alexanderzobnin/grafana-zabbix/issues/810)
+- Datasource: cannot add a function to query from typeahead, [#468](https://github.com/alexanderzobnin/grafana-zabbix/issues/468)
+- Datasource: annotations editor broken in Grafana 6.x, [#813](https://github.com/alexanderzobnin/grafana-zabbix/issues/813)
+- React plugins issue, [#823](https://github.com/alexanderzobnin/grafana-zabbix/issues/823)
 
 ## [3.10.4] - 2019-08-08
 ### Fixed
