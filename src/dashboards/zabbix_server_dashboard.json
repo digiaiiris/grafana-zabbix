@@ -601,7 +601,7 @@
         "label": "Zabbix Data Source",
         "name": "datasource",
         "options": [],
-        "query": "alexanderzobnin-zabbix-datasource",
+        "query": "iiris-zabbix-datasource",
         "refresh": 1,
         "regex": "",
         "type": "datasource"

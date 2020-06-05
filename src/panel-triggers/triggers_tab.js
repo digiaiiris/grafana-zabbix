@@ -125,7 +125,7 @@ export function triggerPanelTriggersTab() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/plugins/alexanderzobnin-zabbix-app/panel-triggers/partials/triggers_tab.html',
+    templateUrl: 'public/plugins/iiris-zabbix-triggers-panel/panel-triggers/partials/triggers_tab.html',
     controller: TriggersTabCtrl,
   };
 }

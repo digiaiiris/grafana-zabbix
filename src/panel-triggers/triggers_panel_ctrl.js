@@ -13,7 +13,7 @@ import ProblemList from './components/Problems/Problems';
 import AlertList from './components/AlertList/AlertList';
 import { getNextRefIdChar } from './utils';
 
-const ZABBIX_DS_ID = 'alexanderzobnin-zabbix-datasource';
+const ZABBIX_DS_ID = 'iiris-zabbix-datasource';
 const PROBLEM_EVENTS_LIMIT = 100;
 
 export const DEFAULT_TARGET = {
@@ -38,12 +38,12 @@ export const getDefaultTarget = (targets) => {
 };
 
 export const DEFAULT_SEVERITY = [
-  { priority: 0, severity: 'Not classified',  color: 'rgb(108, 108, 108)', show: true},
-  { priority: 1, severity: 'Information',     color: 'rgb(120, 158, 183)', show: true},
-  { priority: 2, severity: 'Warning',         color: 'rgb(175, 180, 36)', show: true},
-  { priority: 3, severity: 'Average',         color: 'rgb(255, 137, 30)', show: true},
-  { priority: 4, severity: 'High',            color: 'rgb(255, 101, 72)', show: true},
-  { priority: 5, severity: 'Disaster',        color: 'rgb(215, 0, 0)', show: true},
+  { priority: 0, severity: 'Not classified',  color: 'rgb(108, 108, 108)', show: false},
+  { priority: 1, severity: 'Informatiivinen', color: 'rgb(120, 158, 183)', show: true},
+  { priority: 2, severity: 'Matala',          color: 'rgb(175, 180, 36)', show: true},
+  { priority: 3, severity: 'Keskitaso',       color: 'rgb(255, 137, 30)', show: true},
+  { priority: 4, severity: 'Vakava',          color: 'rgb(255, 101, 72)', show: true},
+  { priority: 5, severity: 'Kriittinen',      color: 'rgb(215, 0, 0)', show: true},
 ];
 
 export const getDefaultSeverity = () => DEFAULT_SEVERITY;
@@ -54,30 +54,30 @@ export const PANEL_DEFAULTS = {
   schemaVersion: CURRENT_SCHEMA_VERSION,
   targets: [getDefaultTarget([])],
   // Fields
-  hostField: true,
+  hostField: false,
   hostTechNameField: false,
   hostGroups: false,
   hostProxy: false,
-  showTags: true,
-  statusField: true,
+  showTags: false,
+  statusField: false,
   statusIcon: false,
   severityField: true,
-  ageField: false,
+  ageField: true,
   descriptionField: true,
-  descriptionAtNewLine: false,
+  descriptionAtNewLine: true,
   // Options
   hostsInMaintenance: true,
   showTriggers: 'all triggers',
-  sortTriggersBy: { text: 'last change', value: 'lastchange' },
+  sortTriggersBy: { text: 'severity', value: 'priority' },
   showEvents: { text: 'Problems', value: 1 },
-  limit: 100,
+  limit: 10,
   // View options
-  layout: 'table',
+  layout: 'list',
   fontSize: '100%',
-  pageSize: 10,
+  pageSize: 5,
   problemTimeline: true,
-  highlightBackground: false,
-  highlightNewEvents: false,
+  highlightBackground: true,
+  highlightNewEvents: true,
   highlightNewerThan: '1h',
   customLastChangeFormat: false,
   lastChangeFormat: "",
@@ -261,10 +261,10 @@ export class TriggerPanelCtrl extends PanelCtrl {
         showAckButton = !datasource.disableReadOnlyUsersAck || userIsEditor;
 
         // Replace template variables
-        const groupFilter = datasource.replaceTemplateVars(triggerFilter.group.filter);
-        const hostFilter = datasource.replaceTemplateVars(triggerFilter.host.filter);
-        const appFilter = datasource.replaceTemplateVars(triggerFilter.application.filter);
-        const proxyFilter = datasource.replaceTemplateVars(triggerFilter.proxy.filter);
+        const groupFilter = triggerFilter && triggerFilter.group ? datasource.replaceTemplateVars(triggerFilter.group.filter) : '';
+        const hostFilter = triggerFilter && triggerFilter.host ? datasource.replaceTemplateVars(triggerFilter.host.filter) : '';
+        const appFilter = triggerFilter && triggerFilter.application ? datasource.replaceTemplateVars(triggerFilter.application.filter) : '';
+        const proxyFilter = triggerFilter && triggerFilter.proxy ? datasource.replaceTemplateVars(triggerFilter.proxy.filter) : '';
 
         let triggersOptions = {
           showTriggers: showEvents
@@ -354,7 +354,7 @@ export class TriggerPanelCtrl extends PanelCtrl {
   filterTriggersPre(triggerList, target) {
     // Filter triggers by description
     const ds = target.datasource;
-    let triggerFilter = target.trigger.filter;
+    let triggerFilter = target ? target.trigger.filter : '';
     triggerFilter = this.datasources[ds].replaceTemplateVars(triggerFilter);
     if (triggerFilter) {
       triggerList = filterTriggers(triggerList, triggerFilter);
@@ -720,7 +720,7 @@ export class TriggerPanelCtrl extends PanelCtrl {
   }
 }
 
-TriggerPanelCtrl.templateUrl = 'public/plugins/alexanderzobnin-zabbix-app/panel-triggers/partials/module.html';
+TriggerPanelCtrl.templateUrl = 'public/plugins/iiris-zabbix-triggers-panel/panel-triggers/partials/module.html';
 
 function filterTriggers(triggers, triggerFilter) {
   if (utils.isRegex(triggerFilter)) {

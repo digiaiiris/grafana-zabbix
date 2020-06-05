@@ -77,7 +77,10 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
             )}
           </ol>
         </section>
-
+        {(currentProblems.length === 0
+          ? <div className="no-data-container">Ei aktiivisia häiriöitä</div>
+          : null)
+        }
         <div className="triggers-panel-footer" key="alertListFooter">
           <PaginationControl
             itemsLength={problems.length}
