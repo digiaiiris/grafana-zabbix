@@ -45,7 +45,7 @@ export function triggerPanelOptionsTab() {
   return {
     restrict: 'E',
     scope: true,
-    templateUrl: 'public/plugins/alexanderzobnin-zabbix-app/panel-triggers/partials/options_tab.html',
+    templateUrl: 'public/plugins/iiris-zabbix-triggers-panel/panel-triggers/partials/options_tab.html',
     controller: TriggerPanelOptionsCtrl,
   };
 }
