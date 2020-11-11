@@ -1,15 +1,16 @@
 {
   "type": "panel",
-  "name": "Zabbix Problems",
-  "id": "alexanderzobnin-zabbix-triggers-panel",
-
-  "dataFormats": [],
-  "skipDataQuery": true,
+  "name": "Iiris Zabbix Problems",
+  "id": "iiris-zabbix-problems-panel",
 
   "info": {
     "author": {
       "name": "Alexander Zobnin",
       "url": "https://github.com/alexanderzobnin/grafana-zabbix"
+    },
+    "logos": {
+      "small": "img/icn-zabbix-problems-panel.svg",
+      "large": "img/icn-zabbix-problems-panel.svg"
     }
   }
 }

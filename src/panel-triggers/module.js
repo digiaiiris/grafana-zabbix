@@ -11,9 +11,8 @@
  * Licensed under the Apache License, Version 2.0
  */
 
-import {TriggerPanelCtrl} from './triggers_panel_ctrl';
-import {loadPluginCss} from 'grafana/app/plugins/sdk';
-import './datasource-selector.directive';
+import { TriggerPanelCtrl } from './triggers_panel_ctrl';
+import { loadPluginCss } from 'grafana/app/plugins/sdk';
 
 loadPluginCss({
   dark: 'plugins/iiris-zabbix-triggers-panel/css/grafana-zabbix.dark.css',

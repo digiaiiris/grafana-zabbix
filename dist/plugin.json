@@ -1,18 +1,18 @@
 {
   "type": "app",
-  "name": "Zabbix",
-  "id": "alexanderzobnin-zabbix-app",
+  "name": "Iiris Zabbix",
+  "id": "iiris-zabbix-triggers-panel",
 
   "info": {
-    "description": "Zabbix plugin for Grafana",
+    "description": "Iiris Zabbix plugin for Grafana",
     "author": {
       "name": "Alexander Zobnin",
       "url": "https://github.com/alexanderzobnin"
     },
     "keywords": ["zabbix"],
     "logos": {
-      "small": "img/zabbix_app_logo.svg",
-      "large": "img/zabbix_app_logo.svg"
+      "small": "img/icn-zabbix-app.svg",
+      "large": "img/icn-zabbix-app.svg"
     },
     "links": [
       {"name": "GitHub", "url": "https://github.com/alexanderzobnin/grafana-zabbix"},
@@ -26,18 +26,18 @@
       {"name": "Metric Editor", "path": "img/screenshot-metric_editor.png"},
       {"name": "Triggers", "path": "img/screenshot-triggers.png"}
     ],
-    "version": "3.11.0",
-    "updated": "2020-03-23"
+    "version": "3.12.4",
+    "updated": "2020-07-28"
   },
 
   "includes": [
     {
       "type": "datasource",
-      "name": "Zabbix Datasource"
+      "name": "Iiris Zabbix Datasource"
     },
     {
       "type": "panel",
-      "name": "Triggers Panel"
+      "name": "Iiris Zabbix Problems"
     }
   ],
 
