@@ -168,11 +168,7 @@ const defaultProblem: any = {
 };
 
 function generateDataFramesResponse(problemDescs: any[] = [{id: 1}]): any {
-<<<<<<< HEAD
-  const problems = problemDescs.map(problem => generateProblem(problem.id, problem.timestamp, problem.priority));
-=======
   const problems = problemDescs.map(problem => generateProblem(problem.id, problem.timestamp, problem.severity));
->>>>>>> upstream/release-4.0.1
 
   return [
     {

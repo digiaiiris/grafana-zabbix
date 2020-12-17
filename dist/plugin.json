@@ -1,10 +1,10 @@
 {
   "type": "app",
-  "name": "Zabbix",
-  "id": "alexanderzobnin-zabbix-app",
+  "name": "Iiris Zabbix",
+  "id": "iiris-zabbix-triggers-panel",
 
   "info": {
-    "description": "Zabbix plugin for Grafana",
+    "description": "Iiris Zabbix plugin for Grafana",
     "author": {
       "name": "Alexander Zobnin",
       "url": "https://github.com/alexanderzobnin"
@@ -33,11 +33,11 @@
   "includes": [
     {
       "type": "datasource",
-      "name": "Zabbix data source"
+      "name": "Iiris Zabbix Datasource"
     },
     {
       "type": "panel",
-      "name": "Problems panel"
+      "name": "Iiris Zabbix Problems"
     }
   ],
 

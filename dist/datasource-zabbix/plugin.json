@@ -1,7 +1,7 @@
 {
   "type": "datasource",
-  "name": "Zabbix",
-  "id": "alexanderzobnin-zabbix-datasource",
+  "name": "Iiris Zabbix Datasource",
+  "id": "iiris-zabbix-datasource",
 
   "metrics": true,
   "annotations": true,

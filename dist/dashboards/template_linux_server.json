@@ -3,7 +3,7 @@
     {
       "name": "DS_NAME",
       "type": "datasource",
-      "pluginId": "alexanderzobnin-zabbix-datasource"
+      "pluginId": "iiris-zabbix-datasource"
     }
   ],
   "title": "Zabbix Template Linux Server",

@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "Zabbix Problems",
-  "id": "alexanderzobnin-zabbix-triggers-panel",
+  "name": "Iiris Zabbix Problems",
+  "id": "iiris-zabbix-problems-panel",
 
   "info": {
     "author": {
