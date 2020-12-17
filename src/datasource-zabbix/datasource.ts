@@ -10,55 +10,48 @@ import dataProcessor from './dataProcessor';
 import responseHandler from './responseHandler';
 import problemsHandler from './problemsHandler';
 import { Zabbix } from './zabbix/zabbix';
-import { ZabbixAPIError } from './zabbix/connectors/zabbix_api/zabbixAPICore';
-import { VariableQueryTypes, ShowProblemTypes } from './types';
+import { ZabbixAPIError } from './zabbix/connectors/zabbix_api/zabbixAPIConnector';
+import { ZabbixMetricsQuery, ZabbixDSOptions, VariableQueryTypes, ShowProblemTypes, ProblemDTO } from './types';
+import { getBackendSrv } from '@grafana/runtime';
+import { DataSourceApi, DataSourceInstanceSettings } from '@grafana/data';
 
-export class ZabbixDatasource {
+export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDSOptions> {
   name: string;
-  url: string;
   basicAuth: any;
   withCredentials: any;
 
-  username: string;
-  password: string;
   trends: boolean;
   trendsFrom: string;
   trendsRange: string;
   cacheTTL: any;
-  alertingEnabled: boolean;
-  addThresholds: boolean;
-  alertingMinSeverity: string;
   disableReadOnlyUsersAck: boolean;
   enableDirectDBConnection: boolean;
   dbConnectionDatasourceId: number;
   dbConnectionDatasourceName: string;
   dbConnectionRetentionPolicy: string;
   enableDebugLog: boolean;
+  datasourceId: number;
   zabbix: Zabbix;
 
   replaceTemplateVars: (target: any, scopedVars?: any) => any;
 
   /** @ngInject */
-  constructor(instanceSettings, private templateSrv, private zabbixAlertingSrv) {
-    this.templateSrv = templateSrv;
-    this.zabbixAlertingSrv = zabbixAlertingSrv;
+  constructor(instanceSettings: DataSourceInstanceSettings<ZabbixDSOptions>, private templateSrv) {
+    super(instanceSettings);
 
+    this.templateSrv = templateSrv;
     this.enableDebugLog = config.buildInfo.env === 'development';
 
     // Use custom format for template variables
     this.replaceTemplateVars = _.partial(replaceTemplateVars, this.templateSrv);
 
     // General data source settings
+    this.datasourceId     = instanceSettings.id;
     this.name             = instanceSettings.name;
-    this.url              = instanceSettings.url;
     this.basicAuth        = instanceSettings.basicAuth;
     this.withCredentials  = instanceSettings.withCredentials;
 
     const jsonData = migrations.migrateDSConfig(instanceSettings.jsonData);
-
-    // Zabbix API credentials
-    this.username         = jsonData.username;
-    this.password         = jsonData.password;
 
     // Use trends instead history since specified time
     this.trends           = jsonData.trends;
@@ -68,11 +61,6 @@ export class ZabbixDatasource {
     // Set cache update interval
     const ttl = jsonData.cacheTTL || '1h';
     this.cacheTTL = utils.parseInterval(ttl);
-
-    // Alerting options
-    this.alertingEnabled =     jsonData.alerting;
-    this.addThresholds =       jsonData.addThresholds;
-    this.alertingMinSeverity = jsonData.alertingMinSeverity || c.SEV_WARNING;
 
     // Other options
     this.disableReadOnlyUsersAck = jsonData.disableReadOnlyUsersAck;
@@ -84,9 +72,6 @@ export class ZabbixDatasource {
     this.dbConnectionRetentionPolicy = jsonData.dbConnectionRetentionPolicy;
 
     const zabbixOptions = {
-      url: this.url,
-      username: this.username,
-      password: this.password,
       basicAuth: this.basicAuth,
       withCredentials: this.withCredentials,
       cacheTTL: this.cacheTTL,
@@ -94,6 +79,7 @@ export class ZabbixDatasource {
       dbConnectionDatasourceId: this.dbConnectionDatasourceId,
       dbConnectionDatasourceName: this.dbConnectionDatasourceName,
       dbConnectionRetentionPolicy: this.dbConnectionRetentionPolicy,
+      datasourceId: this.datasourceId,
     };
 
     this.zabbix = new Zabbix(zabbixOptions);
@@ -109,20 +95,6 @@ export class ZabbixDatasource {
    * @return {Object} Grafana metrics object with timeseries data for each target.
    */
   query(options) {
-    // Get alerts for current panel
-    if (this.alertingEnabled) {
-      this.alertQuery(options).then(alert => {
-        this.zabbixAlertingSrv.setPanelAlertState(options.panelId, alert.state);
-
-        this.zabbixAlertingSrv.removeZabbixThreshold(options.panelId);
-        if (this.addThresholds) {
-          _.forEach(alert.thresholds, threshold => {
-            this.zabbixAlertingSrv.setPanelThreshold(options.panelId, threshold);
-          });
-        }
-      });
-    }
-
     // Create request for each target
     const promises = _.map(options.targets, t => {
       // Don't request for hidden targets
@@ -194,6 +166,42 @@ export class ZabbixDatasource {
       .then(data => {
         return { data: data };
       });
+  }
+
+  doTsdbRequest(options) {
+    const tsdbRequestData: any = {
+      queries: options.targets.map(target => {
+        target.datasourceId = this.datasourceId;
+        target.queryType = 'zabbixAPI';
+        return target;
+      }),
+    };
+
+    if (options.range) {
+      tsdbRequestData.from = options.range.from.valueOf().toString();
+      tsdbRequestData.to = options.range.to.valueOf().toString();
+    }
+
+    return getBackendSrv().post('/api/tsdb/query', tsdbRequestData);
+  }
+
+  /**
+   * @returns {Promise<TSDBResponse>}
+   */
+  doTSDBConnectionTest() {
+    /**
+     * @type {{ queries: ZabbixConnectionTestQuery[] }}
+     */
+    const tsdbRequestData = {
+      queries: [
+        {
+          datasourceId: this.datasourceId,
+          queryType: 'connectionTest'
+        }
+      ]
+    };
+
+    return getBackendSrv().post('/api/tsdb/query', tsdbRequestData);
   }
 
   /**
@@ -442,18 +450,21 @@ export class ZabbixDatasource {
     }
 
     if (target.options?.minSeverity) {
-      const severities = [0, 1, 2, 3, 4, 5].filter(v => v >= target.options?.minSeverity);
+      let severities = [0, 1, 2, 3, 4, 5].filter(v => v >= target.options?.minSeverity);
+      if (target.options?.severities) {
+        severities = severities.filter(v => target.options?.severities.includes(v));
+      }
       problemsOptions.severities = severities;
     }
 
+    let getProblemsPromise: Promise<ProblemDTO[]>;
     if (showProblems === ShowProblemTypes.History) {
       problemsOptions.timeFrom = timeFrom;
       problemsOptions.timeTo = timeTo;
+      getProblemsPromise = this.zabbix.getProblemsHistory(groupFilter, hostFilter, appFilter, proxyFilter, problemsOptions);
+    } else {
+      getProblemsPromise = this.zabbix.getProblems(groupFilter, hostFilter, appFilter, proxyFilter, problemsOptions);
     }
-
-    const getProblemsPromise = showProblems === ShowProblemTypes.History ?
-      this.zabbix.getProblemsHistory(groupFilter, hostFilter, appFilter, proxyFilter, problemsOptions) :
-      this.zabbix.getProblems(groupFilter, hostFilter, appFilter, proxyFilter, problemsOptions);
 
     const problemsPromises = Promise.all([
       getProblemsPromise,
@@ -466,6 +477,7 @@ export class ZabbixDatasource {
     .then(problems => problemsHandler.setMaintenanceStatus(problems))
     .then(problems => problemsHandler.setAckButtonStatus(problems, showAckButton))
     .then(problems => problemsHandler.filterTriggersPre(problems, replacedTarget))
+    .then(problems => problemsHandler.sortProblems(problems, target))
     .then(problems => problemsHandler.addTriggerDataSource(problems, target))
     .then(problems => problemsHandler.addTriggerHostProxy(problems, proxies));
 
@@ -478,10 +490,9 @@ export class ZabbixDatasource {
   /**
    * Test connection to Zabbix API and external history DB.
    */
-  testDatasource() {
-    return this.zabbix.testDataSource()
-    .then(result => {
-      const { zabbixVersion, dbConnectorStatus } = result;
+  async testDatasource() {
+    try {
+      const { zabbixVersion, dbConnectorStatus } = await this.zabbix.testDataSource();
       let message = `Zabbix API version: ${zabbixVersion}`;
       if (dbConnectorStatus) {
         message += `, DB connector type: ${dbConnectorStatus.dsType}`;
@@ -491,8 +502,7 @@ export class ZabbixDatasource {
         title: "Success",
         message: message
       };
-    })
-    .catch(error => {
+    } catch (error) {
       if (error instanceof ZabbixAPIError) {
         return {
           status: "error",
@@ -502,14 +512,14 @@ export class ZabbixDatasource {
       } else if (error.data && error.data.message) {
         return {
           status: "error",
-          title: "Connection failed",
-          message: "Connection failed: " + error.data.message
+          title: "Zabbix Client Error",
+          message: error.data.message
         };
-      } else if (typeof(error) === 'string') {
+      } else if (typeof (error) === 'string') {
         return {
           status: "error",
-          title: "Connection failed",
-          message: "Connection failed: " + error
+          title: "Unknown Error",
+          message: error
         };
       } else {
         console.log(error);
@@ -519,7 +529,7 @@ export class ZabbixDatasource {
           message: "Could not connect to given url"
         };
       }
-    });
+    }
   }
 
   ////////////////
@@ -647,58 +657,6 @@ export class ZabbixDatasource {
     });
   }
 
-  /**
-   * Get triggers and its details for panel's targets
-   * Returns alert state ('ok' if no fired triggers, or 'alerting' if at least 1 trigger is fired)
-   * or empty object if no related triggers are finded.
-   */
-  alertQuery(options) {
-    const enabled_targets = filterEnabledTargets(options.targets);
-    const getPanelItems = _.map(enabled_targets, t => {
-      let target = _.cloneDeep(t);
-      target = migrations.migrate(target);
-      this.replaceTargetVariables(target, options);
-      return this.zabbix.getItemsFromTarget(target, {itemtype: 'num'});
-    });
-
-    return Promise.all(getPanelItems)
-    .then(results => {
-      const items = _.flatten(results);
-      const itemids = _.map(items, 'itemid');
-
-      if (itemids.length === 0) {
-        return [];
-      }
-      return this.zabbix.getAlerts(itemids);
-    })
-    .then(triggers => {
-      triggers = _.filter(triggers, trigger => {
-        return trigger.priority >= this.alertingMinSeverity;
-      });
-
-      if (!triggers || triggers.length === 0) {
-        return {};
-      }
-
-      let state = 'ok';
-
-      const firedTriggers = _.filter(triggers, {value: '1'});
-      if (firedTriggers.length) {
-        state = 'alerting';
-      }
-
-      const thresholds = _.map(triggers, trigger => {
-        return getTriggerThreshold(trigger.expression);
-      });
-
-      return {
-        panelId: options.panelId,
-        state: state,
-        thresholds: thresholds
-      };
-    });
-  }
-
   // Replace template variables
   replaceTargetVariables(target, options) {
     const parts = ['group', 'host', 'application', 'item'];
@@ -820,16 +778,4 @@ function filterEnabledTargets(targets) {
   return _.filter(targets, target => {
     return !(target.hide || !target.group || !target.host || !target.item);
   });
-}
-
-function getTriggerThreshold(expression) {
-  const thresholdPattern = /.*[<>=]{1,2}([\d\.]+)/;
-  const finded_thresholds = expression.match(thresholdPattern);
-  if (finded_thresholds && finded_thresholds.length >= 2) {
-    let threshold = finded_thresholds[1];
-    threshold = Number(threshold);
-    return threshold;
-  } else {
-    return null;
-  }
 }

@@ -20,6 +20,14 @@ jest.mock('angular', () => {
   };
 }, {virtual: true});
 
+jest.mock('grafana/app/features/templating/template_srv', () => {
+  return {};
+}, {virtual: true});
+
+jest.mock('grafana/app/features/dashboard/dashboard_srv', () => {
+  return {};
+}, {virtual: true});
+
 jest.mock('@grafana/runtime', () => {
   return {
     getBackendSrv: () => ({
@@ -44,6 +52,7 @@ const mockMetricsPanelCtrl = MetricsPanelCtrl;
 jest.mock('grafana/app/plugins/sdk', () => {
   return {
     QueryCtrl: null,
+    PanelCtrl: mockPanelCtrl,
     loadPluginCss: () => {},
     PanelCtrl: mockPanelCtrl,
     MetricsPanelCtrl: mockMetricsPanelCtrl,

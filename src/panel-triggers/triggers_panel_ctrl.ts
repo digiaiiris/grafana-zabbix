@@ -212,13 +212,13 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     return problemsList;
   }
 
-  sortTriggers(triggerList) {
+  sortTriggers(problems: ProblemDTO[]) {
     if (this.panel.sortProblems === 'priority') {
-      triggerList = _.orderBy(triggerList, ['priority', 'timestamp', 'eventid'], ['desc', 'desc', 'desc']);
+      problems = _.orderBy(problems, ['severity', 'timestamp', 'eventid'], ['desc', 'desc', 'desc']);
     } else if (this.panel.sortProblems === 'lastchange') {
-      triggerList = _.orderBy(triggerList, ['timestamp', 'priority', 'eventid'], ['desc', 'desc', 'desc']);
+      problems = _.orderBy(problems, ['timestamp', 'severity', 'eventid'], ['desc', 'desc', 'desc']);
     }
-    return triggerList;
+    return problems;
   }
 
   formatTrigger(zabbixTrigger) {
@@ -316,6 +316,15 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     });
   }
 
+  getProblemScripts(problem: ProblemDTO) {
+    const hostid = problem.hosts?.length ? problem.hosts[0].hostid : null;
+
+    return getDataSourceSrv().get(problem.datasource)
+    .then((datasource: any) => {
+      return datasource.zabbix.getScripts([hostid]);
+    });
+  }
+
   getAlertIconClassBySeverity(triggerSeverity) {
     let iconClass = 'icon-gf-online';
     if (triggerSeverity.priority >= 2) {
@@ -352,6 +361,15 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     });
   }
 
+  executeScript(problem: ProblemDTO, scriptid: string) {
+    const hostid = problem.hosts?.length ? problem.hosts[0].hostid : null;
+
+    return getDataSourceSrv().get(problem.datasource)
+    .then((datasource: any) => {
+      return datasource.zabbix.executeScript(hostid, scriptid);
+    });
+  }
+
   handlePageSizeChange(pageSize, pageIndex) {
     this.panel.pageSize = pageSize;
     this.pageIndex = pageIndex;
@@ -373,6 +391,7 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     ctrl.events.on(PanelEvents.render, (renderData) => {
       renderData = renderData || this.renderData;
       renderPanel(renderData);
+      ctrl.renderingCompleted();
     });
 
     function renderPanel(problems) {
@@ -399,12 +418,14 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
         panelId: ctrl.panel.id,
         getProblemEvents: ctrl.getProblemEvents.bind(ctrl),
         getProblemAlerts: ctrl.getProblemAlerts.bind(ctrl),
+        getScripts: ctrl.getProblemScripts.bind(ctrl),
         onPageSizeChange: ctrl.handlePageSizeChange.bind(ctrl),
         onColumnResize: ctrl.handleColumnResize.bind(ctrl),
         onProblemAck: (trigger, data) => {
           const { message, action, severity } = data;
           return ctrl.acknowledgeProblem(trigger, message, action, severity);
         },
+        onExecuteScript: ctrl.executeScript.bind(ctrl),
         onTagClick: (tag, datasource, ctrlKey, shiftKey) => {
           if (ctrlKey || shiftKey) {
             ctrl.removeTagFilter(tag, datasource);
