@@ -39,6 +39,7 @@ const DEFAULT_TIME_FORMAT = "DD MMM YYYY HH:mm:ss";
 
 export const PANEL_DEFAULTS = {
   schemaVersion: CURRENT_SCHEMA_VERSION,
+  targets: [{}],
   // Fields
   hostField: false,
   hostTechNameField: false,

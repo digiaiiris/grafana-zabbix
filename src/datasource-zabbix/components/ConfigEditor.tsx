@@ -34,6 +34,7 @@ export const ConfigEditor = (props: Props) => {
         trendsFrom: '',
         trendsRange: '',
         cacheTTL: '',
+        timeout: '',
         ...restJsonData,
       },
     });
@@ -152,6 +153,17 @@ export const ConfigEditor = (props: Props) => {
             placeholder="1h"
             onChange={jsonDataChangeHandler('cacheTTL', options, onOptionsChange)}
             tooltip="Zabbix data source caches metric names in memory. Specify how often data will be updated."
+          />
+        </div>
+        <div className="gf-form">
+          <FormField
+            labelWidth={7}
+            inputWidth={4}
+            label="Timeout"
+            value={options.jsonData.timeout || ''}
+            placeholder="30"
+            onChange={jsonDataChangeHandler('timeout', options, onOptionsChange)}
+            tooltip="Zabbix API connection timeout in seconds. Default is 30."
           />
         </div>
       </div>

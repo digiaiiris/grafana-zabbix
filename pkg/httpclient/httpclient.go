@@ -3,6 +3,7 @@ package httpclient
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"net"
@@ -12,6 +13,7 @@ import (
 
 	simplejson "github.com/bitly/go-simplejson"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 type proxyTransportCache struct {
@@ -45,14 +47,16 @@ var ptc = proxyTransportCache{
 }
 
 // GetHttpClient returns new http.Client. Transport either initialized or got from cache.
-func GetHttpClient(ds *backend.DataSourceInstanceSettings) (*http.Client, error) {
+func GetHttpClient(ds *backend.DataSourceInstanceSettings, timeout time.Duration) (*http.Client, error) {
 	transport, err := getHttpTransport(ds)
 	if err != nil {
 		return nil, err
 	}
 
+	log.DefaultLogger.Debug("Initializing new HTTP client", "timeout", timeout.Seconds())
+
 	return &http.Client{
-		Timeout:   time.Duration(time.Second * 30),
+		Timeout:   timeout,
 		Transport: transport,
 	}, nil
 }
@@ -85,6 +89,13 @@ func getHttpTransport(ds *backend.DataSourceInstanceSettings) (*dataSourceTransp
 		ExpectContinueTimeout: 1 * time.Second,
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
+	}
+
+	if ds.BasicAuthEnabled {
+		user := ds.BasicAuthUser
+		password := ds.DecryptedSecureJSONData["basicAuthPassword"]
+		basicAuthHeader := getBasicAuthHeader(user, password)
+		customHeaders["Authorization"] = basicAuthHeader
 	}
 
 	dsTransport := &dataSourceTransport{
@@ -168,4 +179,10 @@ func getCustomHeaders(ds *backend.DataSourceInstanceSettings) map[string]string 
 	}
 
 	return headers
+}
+
+// getBasicAuthHeader returns a base64 encoded string from user and password.
+func getBasicAuthHeader(user string, password string) string {
+	var userAndPass = user + ":" + password
+	return "Basic " + base64.StdEncoding.EncodeToString([]byte(userAndPass))
 }
