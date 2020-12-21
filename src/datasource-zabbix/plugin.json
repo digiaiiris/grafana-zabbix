@@ -8,7 +8,7 @@
 
   "backend": true,
   "alerting": true,
-  "executable": "../zabbix-plugin",
+  "executable": "../iiris-zabbix-plugin",
 
   "includes": [
     {
