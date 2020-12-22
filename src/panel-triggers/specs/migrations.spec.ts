@@ -27,7 +27,7 @@ describe('Triggers Panel schema migration', () => {
         panel: {
           datasource: 'zabbix',
           triggers: DEFAULT_TARGET,
-          hostField: true,
+          hostField: false,
           statusField: false,
           severityField: false,
           lastChangeField: true,
@@ -43,7 +43,7 @@ describe('Triggers Panel schema migration', () => {
           okEventColor: 'rgba(0, 245, 153, 0.45)',
           ackEventColor: 'rgba(0, 0, 0, 0)',
           scroll: true,
-          pageSize: 10,
+          pageSize: 5,
           fontSize: '100%',
         }
       }

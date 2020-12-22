@@ -8,18 +8,18 @@ install:
 	go mod vendor
 	GO111MODULE=off go get -u golang.org/x/lint/golint
 
-build: build-frontend build-backend
+build: build-frontend build-backend build-backend-windows build-backend-darwin
 build-frontend:
 	yarn dev-build
 build-backend:
-	env GOOS=linux go build -mod=vendor -o ./dist/zabbix-plugin_linux_amd64 ./pkg
+	env GOOS=linux go build -mod=vendor -o ./dist/iiris-zabbix-plugin_linux_amd64 ./pkg
 build-debug:
-	env GOOS=linux go build -mod=vendor -gcflags=all="-N -l" -o ./dist/zabbix-plugin_linux_amd64 ./pkg
+	env GOOS=linux go build -mod=vendor -gcflags=all="-N -l" -o ./dist/iiris-zabbix-plugin_linux_amd64 ./pkg
 
 # Build for specific platform
 build-backend-windows: extension = .exe
 build-backend-%:
-	$(eval filename = zabbix-plugin_$*_amd64$(extension))
+	$(eval filename = iiris-zabbix-plugin_$*_amd64$(extension))
 	env GOOS=$* GOARCH=amd64 go build -mod=vendor -o ./dist/$(filename) ./pkg
 
 run-frontend:
@@ -39,17 +39,17 @@ dist-frontend:
 dist-backend: dist-backend-linux dist-backend-darwin dist-backend-windows
 dist-backend-windows: extension = .exe
 dist-backend-%:
-	$(eval filename = zabbix-plugin_$*_amd64$(extension))
+	$(eval filename = iiris-zabbix-plugin_$*_amd64$(extension))
 	env GOOS=$* GOARCH=amd64 go build -ldflags="-s -w" -mod=vendor -o ./dist/$(filename) ./pkg
 
 # ARM
 dist-arm: dist-arm-linux-arm-v6 dist-arm-linux-arm64
 dist-arm-linux-arm-v6:
-	env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -mod=vendor -o ./dist/zabbix-plugin_linux_arm ./pkg
+	env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -mod=vendor -o ./dist/iiris-zabbix-plugin_linux_arm ./pkg
 dist-arm-linux-arm-v7:
-	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -mod=vendor -o ./dist/zabbix-plugin_linux_arm ./pkg
+	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -mod=vendor -o ./dist/iiris-zabbix-plugin_linux_arm ./pkg
 dist-arm-linux-arm64:
-	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -mod=vendor -o ./dist/zabbix-plugin_linux_arm64 ./pkg
+	env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -mod=vendor -o ./dist/iiris-zabbix-plugin_linux_arm64 ./pkg
 
 .PHONY: test
 test: test-frontend test-backend

@@ -54,7 +54,6 @@ jest.mock('grafana/app/plugins/sdk', () => {
     QueryCtrl: null,
     PanelCtrl: mockPanelCtrl,
     loadPluginCss: () => {},
-    PanelCtrl: mockPanelCtrl,
     MetricsPanelCtrl: mockMetricsPanelCtrl,
   };
 }, {virtual: true});
