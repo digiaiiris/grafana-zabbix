@@ -31,6 +31,7 @@ yarn-error.log
 
 # Built plugin
 ci/
+dist/MANIFEST.txt
 
 # Grafana toolkit configs
 .prettierrc.js
