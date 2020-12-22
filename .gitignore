@@ -30,7 +30,6 @@ npm-debug.log
 yarn-error.log
 
 # Built plugin
-dist/
 ci/
 
 # Grafana toolkit configs
