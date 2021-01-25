@@ -277,7 +277,7 @@ export class Zabbix implements ZabbixConnector {
           }
         }
       });
-      this.getGlobalMacros().then(globalMacros => {
+      return this.getGlobalMacros().then(globalMacros => {
         _.forEach(items, item => {
           if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
             if (isTriggerItem) {

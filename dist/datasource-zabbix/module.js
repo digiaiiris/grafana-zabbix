@@ -8394,7 +8394,7 @@ var Zabbix = /** @class */ (function () {
                     }
                 }
             });
-            _this.getGlobalMacros().then(function (globalMacros) {
+            return _this.getGlobalMacros().then(function (globalMacros) {
                 lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                     if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                         if (isTriggerItem) {
