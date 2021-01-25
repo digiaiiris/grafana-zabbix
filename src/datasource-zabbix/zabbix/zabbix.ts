@@ -266,7 +266,6 @@ export class Zabbix implements ZabbixConnector {
 
   expandUserMacro(items, isTriggerItem) {
     const hostids = getHostIds(items);
-    const macroItems = [];
     return this.getMacros(hostids)
     .then(macros => {
       _.forEach(items, item => {
@@ -276,10 +275,8 @@ export class Zabbix implements ZabbixConnector {
           } else {
             item.name = utils.replaceMacro(item, macros);
           }
-          macroItems.push(item);
         }
       });
-      // return items;
       this.getGlobalMacros().then(globalMacros => {
         _.forEach(items, item => {
           if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
@@ -288,10 +285,9 @@ export class Zabbix implements ZabbixConnector {
             } else {
               item.name = utils.replaceMacro(item, globalMacros);
             }
-            macroItems.push(item);
           }
         })
-        return macroItems;
+        return items;
       });
     });
   }

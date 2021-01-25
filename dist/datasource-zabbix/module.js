@@ -8382,7 +8382,6 @@ var Zabbix = /** @class */ (function () {
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
         var _this = this;
         var hostids = getHostIds(items);
-        var macroItems = [];
         return this.getMacros(hostids)
             .then(function (macros) {
             lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
@@ -8393,10 +8392,8 @@ var Zabbix = /** @class */ (function () {
                     else {
                         item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
                     }
-                    macroItems.push(item);
                 }
             });
-            // return items;
             _this.getGlobalMacros().then(function (globalMacros) {
                 lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                     if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
@@ -8406,10 +8403,9 @@ var Zabbix = /** @class */ (function () {
                         else {
                             item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros);
                         }
-                        macroItems.push(item);
                     }
                 });
-                return macroItems;
+                return items;
             });
         });
     };
