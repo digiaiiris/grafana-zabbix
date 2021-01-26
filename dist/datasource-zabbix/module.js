@@ -6501,7 +6501,7 @@ var MACRO_PATTERN = /{\$[A-Z0-9_\.]+}/g;
 function containsMacro(itemName) {
     return MACRO_PATTERN.test(itemName);
 }
-function replaceMacro(item, macros, isTriggerItem) {
+function replaceMacro(item, macros, isTriggerItem, parentHosts) {
     var itemName = isTriggerItem ? item.url : item.name;
     var item_macros = itemName.match(MACRO_PATTERN);
     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(item_macros, function (macro) {
@@ -6512,7 +6512,10 @@ function replaceMacro(item, macros, isTriggerItem) {
                     // Check all trigger host ids against macro host id
                     var hostIdFound_1 = false;
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(item.hosts, function (h) {
-                        if (h.hostid === m.hostid) {
+                        // Check if macro's hostid is same as hosts or parent templates hostid
+                        var parentHost = parentHosts.find(function (pHost) { return pHost.hostid === h.hostid; }) || {};
+                        var isTemplateMacro = parentHost.parentTemplates.findIndex(function (tmpl) { return tmpl.templateid === m.hostid; }) > -1;
+                        if (h.hostid === m.hostid || isTemplateMacro) {
                             hostIdFound_1 = true;
                         }
                     });
@@ -8385,11 +8388,11 @@ var Zabbix = /** @class */ (function () {
         return this.zabbixAPI
             .request('host.get', {
             hostids: hostids,
-            selectParentTemplates: 'extend',
-            output: 'extend',
+            selectParentTemplates: ['name', 'templateid'],
+            output: ['name', 'hostid'],
         })
-            .then(function (hosts) {
-            hosts.map(function (host) {
+            .then(function (parentHosts) {
+            parentHosts.map(function (host) {
                 if (host.parentTemplates) {
                     host.parentTemplates.map(function (template) {
                         if (hostids.indexOf(template.templateid) === -1) {
@@ -8403,7 +8406,7 @@ var Zabbix = /** @class */ (function () {
                 lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                     if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                         if (isTriggerItem) {
-                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem);
+                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
                         }
                         else {
                             item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);

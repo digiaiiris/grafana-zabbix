@@ -269,11 +269,11 @@ export class Zabbix implements ZabbixConnector {
     return this.zabbixAPI
       .request('host.get', {
         hostids,
-        selectParentTemplates: 'extend',
-        output: 'extend',
+        selectParentTemplates: ['name', 'templateid'],
+        output: ['name', 'hostid'],
       })
-      .then((hosts: any) => {
-        hosts.map((host: any) => {
+      .then((parentHosts: any) => {
+        parentHosts.map((host: any) => {
           if (host.parentTemplates) {
             host.parentTemplates.map((template: any) => {
               if (hostids.indexOf(template.templateid) === -1) {
@@ -287,7 +287,7 @@ export class Zabbix implements ZabbixConnector {
           _.forEach(items, item => {
             if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
               if (isTriggerItem) {
-                item.url = utils.replaceMacro(item, macros, isTriggerItem);
+                item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
               } else {
                 item.name = utils.replaceMacro(item, macros);
               }
