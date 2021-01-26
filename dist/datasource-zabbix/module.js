@@ -8382,30 +8382,47 @@ var Zabbix = /** @class */ (function () {
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
         var _this = this;
         var hostids = getHostIds(items);
-        return this.getMacros(hostids)
-            .then(function (macros) {
-            lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
-                    if (isTriggerItem) {
-                        item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem);
-                    }
-                    else {
-                        item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
-                    }
+        return this.zabbixAPI
+            .request('host.get', {
+            hostids: hostids,
+            selectParentTemplates: 'extend',
+            output: 'extend',
+        })
+            .then(function (hosts) {
+            hosts.map(function (host) {
+                if (host.parentTemplates) {
+                    host.parentTemplates.map(function (template) {
+                        if (hostids.indexOf(template.templateid) === -1) {
+                            hostids.push(template.templateid);
+                        }
+                    });
                 }
             });
-            return _this.getGlobalMacros().then(function (globalMacros) {
+            return _this.getMacros(hostids)
+                .then(function (macros) {
                 lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                     if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                         if (isTriggerItem) {
-                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros, isTriggerItem);
+                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem);
                         }
                         else {
-                            item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros);
+                            item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
                         }
                     }
                 });
-                return items;
+                return _this.getGlobalMacros().then(function (globalMacros) {
+                    lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
+                        if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                            if (isTriggerItem) {
+                                item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros, isTriggerItem);
+                            }
+                            else {
+                                item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros);
+                            }
+                        }
+                    });
+                    return items;
+                });
             });
         });
     };

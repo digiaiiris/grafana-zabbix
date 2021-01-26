@@ -266,30 +266,47 @@ export class Zabbix implements ZabbixConnector {
 
   expandUserMacro(items, isTriggerItem) {
     const hostids = getHostIds(items);
-    return this.getMacros(hostids)
-    .then(macros => {
-      _.forEach(items, item => {
-        if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
-          if (isTriggerItem) {
-            item.url = utils.replaceMacro(item, macros, isTriggerItem);
-          } else {
-            item.name = utils.replaceMacro(item, macros);
+    return this.zabbixAPI
+      .request('host.get', {
+        hostids,
+        selectParentTemplates: 'extend',
+        output: 'extend',
+      })
+      .then((hosts: any) => {
+        hosts.map((host: any) => {
+          if (host.parentTemplates) {
+            host.parentTemplates.map((template: any) => {
+              if (hostids.indexOf(template.templateid) === -1) {
+                hostids.push(template.templateid);
+              }
+            });
           }
-        }
-      });
-      return this.getGlobalMacros().then(globalMacros => {
-        _.forEach(items, item => {
-          if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
-            if (isTriggerItem) {
-              item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
-            } else {
-              item.name = utils.replaceMacro(item, globalMacros);
+        });
+        return this.getMacros(hostids)
+        .then(macros => {
+          _.forEach(items, item => {
+            if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+              if (isTriggerItem) {
+                item.url = utils.replaceMacro(item, macros, isTriggerItem);
+              } else {
+                item.name = utils.replaceMacro(item, macros);
+              }
             }
-          }
-        })
-        return items;
+          });
+          return this.getGlobalMacros().then(globalMacros => {
+            _.forEach(items, item => {
+              if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+                if (isTriggerItem) {
+                  item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
+                } else {
+                  item.name = utils.replaceMacro(item, globalMacros);
+                }
+              }
+            })
+            return items;
+          });
+        });
       });
-    });
   }
 
   getItems(groupFilter?, hostFilter?, appFilter?, itemFilter?, options = {}) {
