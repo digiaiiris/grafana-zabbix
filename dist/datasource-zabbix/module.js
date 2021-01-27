@@ -6501,7 +6501,7 @@ var MACRO_PATTERN = /{\$[A-Z0-9_\.]+}/g;
 function containsMacro(itemName) {
     return MACRO_PATTERN.test(itemName);
 }
-function replaceMacro(item, macros, isTriggerItem) {
+function replaceMacro(item, macros, isTriggerItem, parentHosts) {
     var itemName = isTriggerItem ? item.url : item.name;
     var item_macros = itemName.match(MACRO_PATTERN);
     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(item_macros, function (macro) {
@@ -6512,7 +6512,10 @@ function replaceMacro(item, macros, isTriggerItem) {
                     // Check all trigger host ids against macro host id
                     var hostIdFound_1 = false;
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(item.hosts, function (h) {
-                        if (h.hostid === m.hostid) {
+                        // Check if macro's hostid is same as hosts or parent templates hostid
+                        var parentHost = parentHosts.find(function (pHost) { return pHost.hostid === h.hostid; }) || {};
+                        var isTemplateMacro = parentHost.parentTemplates.findIndex(function (tmpl) { return tmpl.templateid === m.hostid; }) > -1;
+                        if (h.hostid === m.hostid || isTemplateMacro) {
                             hostIdFound_1 = true;
                         }
                     });
@@ -8176,15 +8179,17 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
 var REQUESTS_TO_PROXYFY = [
     'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
     'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
-    'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts'
+    'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
+    'getGlobalMacros'
 ];
 var REQUESTS_TO_CACHE = [
-    'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies'
+    'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
+    'getGlobalMacros'
 ];
 var REQUESTS_TO_BIND = [
     'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
     'getAcknowledges', 'getITService', 'getVersion', 'acknowledgeEvent', 'getProxies', 'getEventAlerts',
-    'getExtendedEventData', 'getScripts', 'executeScript',
+    'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros'
 ];
 var Zabbix = /** @class */ (function () {
     function Zabbix(options) {
@@ -8378,20 +8383,50 @@ var Zabbix = /** @class */ (function () {
             .then(this.expandUserMacro.bind(this));
     };
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
+        var _this = this;
         var hostids = getHostIds(items);
-        return this.getMacros(hostids)
-            .then(function (macros) {
-            lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
-                    if (isTriggerItem) {
-                        item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem);
-                    }
-                    else {
-                        item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
-                    }
+        return this.zabbixAPI
+            .request('host.get', {
+            hostids: hostids,
+            selectParentTemplates: ['name', 'templateid'],
+            output: ['name', 'hostid'],
+        })
+            .then(function (parentHosts) {
+            parentHosts.map(function (host) {
+                if (host.parentTemplates) {
+                    host.parentTemplates.map(function (template) {
+                        if (hostids.indexOf(template.templateid) === -1) {
+                            hostids.push(template.templateid);
+                        }
+                    });
                 }
             });
-            return items;
+            return _this.getMacros(hostids)
+                .then(function (macros) {
+                lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
+                    if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                        if (isTriggerItem) {
+                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
+                        }
+                        else {
+                            item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
+                        }
+                    }
+                });
+                return _this.getGlobalMacros().then(function (globalMacros) {
+                    lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
+                        if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                            if (isTriggerItem) {
+                                item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros, isTriggerItem);
+                            }
+                            else {
+                                item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros);
+                            }
+                        }
+                    });
+                    return items;
+                });
+            });
         });
     };
     Zabbix.prototype.getItems = function (groupFilter, hostFilter, appFilter, itemFilter, options) {
@@ -8457,8 +8492,8 @@ var Zabbix = /** @class */ (function () {
             var problems = _a[0], triggers = _a[1];
             return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_9__["joinTriggersWithProblems"])(problems, triggers);
         })
-            .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); });
-        // .then(triggers => this.expandUserMacro.bind(this)(triggers, true));
+            .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); })
+            .then(function (triggers) { return _this.expandUserMacro.bind(_this)(triggers, true); });
     };
     Zabbix.prototype.getProblemsHistory = function (groupFilter, hostFilter, appFilter, proxyFilter, options) {
         var _this = this;
@@ -8492,8 +8527,8 @@ var Zabbix = /** @class */ (function () {
             var problems = _a[0], triggers = _a[1];
             return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_9__["joinTriggersWithEvents"])(problems, triggers, { valueFromEvent: valueFromEvent });
         })
-            .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); });
-        // .then(triggers => this.expandUserMacro.bind(this)(triggers, true));
+            .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); })
+            .then(function (triggers) { return _this.expandUserMacro.bind(_this)(triggers, true); });
     };
     Zabbix.prototype.filterTriggersByProxy = function (triggers, proxyFilter) {
         return this.getFilteredProxies(proxyFilter)
