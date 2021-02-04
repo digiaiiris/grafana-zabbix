@@ -7754,7 +7754,7 @@ var ZabbixAPIConnector = /** @class */ (function () {
             expandData: true,
             expandComment: true,
             monitored: true,
-            // skipDependent: true,
+            skipDependent: true,
             selectGroups: ['name'],
             selectHosts: ['name', 'host', 'maintenance_status', 'proxy_hostid'],
             selectItems: ['name', 'key_', 'lastvalue'],
