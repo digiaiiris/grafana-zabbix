@@ -241,9 +241,9 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     }
 
     // Handle multi-line description
-    if (trigger.comments) {
+    /* if (trigger.comments) {
       trigger.comments = trigger.comments.replace('\n', '<br>');
-    }
+    } */
 
     trigger.lastchangeUnix = Number(trigger.lastchange);
     return trigger;
