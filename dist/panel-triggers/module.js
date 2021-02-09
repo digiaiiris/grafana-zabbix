@@ -12037,9 +12037,9 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
             trigger.tags = null;
         }
         // Handle multi-line description
-        if (trigger.comments) {
-            trigger.comments = trigger.comments.replace('\n', '<br>');
-        }
+        /* if (trigger.comments) {
+          trigger.comments = trigger.comments.replace('\n', '<br>');
+        } */
         trigger.lastchangeUnix = Number(trigger.lastchange);
         return trigger;
     };
