@@ -4,10 +4,14 @@ import kbn from 'grafana/app/core/utils/kbn';
 import * as utils from '../../../utils';
 import { ZBX_ACK_ACTION_NONE, ZBX_ACK_ACTION_ADD_MESSAGE, MIN_SLA_INTERVAL } from '../../../constants';
 import { ShowProblemTypes, ZBXProblem } from '../../../types';
-import { GFHTTPRequest, JSONRPCError, ZBXScript, APIExecuteScriptResponse } from './types';
-import { getBackendSrv } from '@grafana/runtime';
+import { JSONRPCError, ZBXScript, APIExecuteScriptResponse } from './types';
+import { BackendSrvRequest, getBackendSrv } from '@grafana/runtime';
+import { rangeUtil } from '@grafana/data';
 
 const DEFAULT_ZABBIX_VERSION = '3.0.0';
+
+// Backward compatibility. Since Grafana 7.2 roundInterval() func was moved to @grafana/data package
+const roundInterval: (interval: number) => number = rangeUtil?.roundInterval || kbn.roundInterval || kbn.round_interval;
 
 /**
  * Zabbix API Wrapper.
@@ -48,12 +52,13 @@ export class ZabbixAPIConnector {
   }
 
   backendAPIRequest(method: string, params: any = {}) {
-    const requestOptions: GFHTTPRequest = {
+    const requestOptions: BackendSrvRequest = {
       url: this.backendAPIUrl,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
+      hideFromInspector: false,
       data: {
         datasourceId: this.datasourceId,
         method,
@@ -113,7 +118,7 @@ export class ZabbixAPIConnector {
       action: action
     };
 
-    if (severity) {
+    if (severity !== undefined) {
       params.severity = severity;
     }
 
@@ -161,11 +166,15 @@ export class ZabbixAPIConnector {
   getItems(hostids, appids, itemtype) {
     const params: any = {
       output: [
-        'name', 'key_',
+        'name',
+        'key_',
         'value_type',
         'hostid',
         'status',
-        'state'
+        'state',
+        'units',
+        'valuemapid',
+        'delay'
       ],
       sortfield: 'name',
       webitems: true,
@@ -195,11 +204,15 @@ export class ZabbixAPIConnector {
     const params = {
       itemids: itemids,
       output: [
-        'name', 'key_',
+        'name',
+        'key_',
         'value_type',
         'hostid',
         'status',
-        'state'
+        'state',
+        'units',
+        'valuemapid',
+        'delay'
       ],
       webitems: true,
       selectHosts: ['hostid', 'name']
@@ -651,6 +664,15 @@ export class ZabbixAPIConnector {
 
     return this.request('script.execute', params);
   }
+
+  getValueMappings() {
+    const params = {
+      output: 'extend',
+      selectMappings: "extend",
+    };
+
+    return this.request('valuemap.get', params);
+  }
 }
 
 function filterTriggersByAcknowledge(triggers, acknowledged) {
@@ -666,7 +688,7 @@ function filterTriggersByAcknowledge(triggers, acknowledged) {
 function getSLAInterval(intervalMs) {
   // Too many intervals may cause significant load on the database, so decrease number of resulting points
   const resolutionRatio = 100;
-  const interval = kbn.round_interval(intervalMs * resolutionRatio) / 1000;
+  const interval = roundInterval(intervalMs * resolutionRatio) / 1000;
   return Math.max(interval, MIN_SLA_INTERVAL);
 }
 

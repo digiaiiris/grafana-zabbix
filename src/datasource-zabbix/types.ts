@@ -13,6 +13,7 @@ export interface ZabbixDSOptions extends DataSourceJsonData {
   dbConnectionDatasourceName?: string;
   dbConnectionRetentionPolicy?: string;
   disableReadOnlyUsersAck: boolean;
+  disableDataAlignment: boolean;
 }
 
 export interface ZabbixSecureJSONData {
@@ -36,18 +37,41 @@ export interface ZabbixMetricsQuery extends DataQuery {
   triggers: { minSeverity: string; acknowledged: boolean; count: number; };
   queryType: string;
   datasourceId: number;
-  functions: ZabbixMetricFunction[];
-  options: any;
+  group: { filter: string; name?: string; };
+  host: { filter: string; name?: string; };
+  application: { filter: string; name?: string; };
+  item: { filter: string; name?: string; };
   textFilter: string;
   mode: number;
   itemids: number[];
   useCaptureGroups: boolean;
-  group: { filter: string; name: string; };
-  host: { filter: string; name: string; };
-  hostFilter: string;
-  application: { filter: string; name: string; };
-  item: { filter: string; name: string; };
-  itemFilter: string;
+  proxy?: { filter: string; };
+  trigger?: { filter: string; };
+  itServiceFilter?: string;
+  tags?: { filter: string; };
+  functions: ZabbixMetricFunction[];
+  options: ZabbixQueryOptions;
+  // Problems
+  showProblems?: ShowProblemTypes;
+  // Deprecated
+  hostFilter?: string;
+  itemFilter?: string;
+}
+
+export interface ZabbixQueryOptions {
+  showDisabledItems?: boolean;
+  skipEmptyValues?: boolean;
+  disableDataAlignment?: boolean;
+  useZabbixValueMapping?: boolean;
+  // Problems options
+  minSeverity?: number;
+  sortProblems?: string;
+  acknowledged?: number;
+  hostsInMaintenance?: boolean;
+  hostProxy?: boolean;
+  limit?: number;
+  useTimeRange?: boolean;
+  severities?: number[];
 }
 
 export interface ZabbixMetricFunction {

@@ -21,18 +21,18 @@ const REQUESTS_TO_PROXYFY = [
   'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
   'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
   'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-  'getGlobalMacros'
+  'getValueMappings', 'getGlobalMacros'
 ];
 
 const REQUESTS_TO_CACHE = [
   'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-  'getGlobalMacros'
+  'getValueMappings', 'getGlobalMacros'
 ];
 
 const REQUESTS_TO_BIND = [
   'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
   'getAcknowledges', 'getITService', 'getVersion', 'acknowledgeEvent', 'getProxies', 'getEventAlerts',
-  'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros'
+  'getExtendedEventData', 'getScripts', 'executeScript', 'getValueMappings', 'getGlobalMacros'
 ];
 
 export class Zabbix implements ZabbixConnector {
@@ -58,6 +58,7 @@ export class Zabbix implements ZabbixConnector {
   getMacros: (hostids: any[]) => Promise<any>;
   getVersion: () => Promise<string>;
   getGlobalMacros: () => Promise<any>;
+  getValueMappings: () => Promise<any>;
 
   constructor(options) {
     const {
