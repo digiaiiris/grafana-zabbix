@@ -6,8 +6,8 @@
   "info": {
     "description": "Iiris Zabbix plugin for Grafana",
     "author": {
-      "name": "Alexander Zobnin",
-      "url": "https://github.com/alexanderzobnin"
+      "name": "Digia Finland Oy",
+      "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
     "keywords": ["zabbix"],
     "logos": {
@@ -15,9 +15,6 @@
       "large": "img/icn-zabbix-app.svg"
     },
     "links": [
-      {"name": "GitHub", "url": "https://github.com/alexanderzobnin/grafana-zabbix"},
-      {"name": "Docs", "url": "https://alexanderzobnin.github.io/grafana-zabbix"},
-      {"name": "License", "url": "https://github.com/alexanderzobnin/grafana-zabbix/blob/master/LICENSE"}
     ],
     "screenshots": [
       {"name": "Showcase", "path": "img/screenshot-showcase.png"},
