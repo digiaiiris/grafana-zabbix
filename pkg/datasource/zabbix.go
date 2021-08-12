@@ -167,7 +167,10 @@ func (ds *ZabbixDatasourceInstance) getItems(ctx context.Context, groupFilter st
 	}
 
 	apps, err := ds.getApps(ctx, groupFilter, hostFilter, appFilter)
-	if err != nil {
+	// Apps not supported in Zabbix 5.4 and higher
+	if isAppMethodNotFoundError(err) {
+		apps = []map[string]interface{}{}
+	} else if err != nil {
 		return nil, err
 	}
 	var appids []string
@@ -374,7 +377,8 @@ func (ds *ZabbixDatasourceInstance) queryNumericDataForItems(ctx context.Context
 		return nil, err
 	}
 
-	return convertHistory(history, items), nil
+	frame := convertHistory(history, items)
+	return frame, nil
 }
 
 func (ds *ZabbixDatasourceInstance) getTrendValueType(query *QueryModel) string {
@@ -472,46 +476,6 @@ func (ds *ZabbixDatasourceInstance) isUseTrend(timeRange backend.TimeRange) bool
 	return false
 }
 
-func convertHistory(history History, items Items) *data.Frame {
-	timeFileld := data.NewFieldFromFieldType(data.FieldTypeTime, 0)
-	timeFileld.Name = "time"
-	frame := data.NewFrame("History", timeFileld)
-
-	for _, item := range items {
-		field := data.NewFieldFromFieldType(data.FieldTypeNullableFloat64, 0)
-		if len(item.Hosts) > 0 {
-			field.Name = fmt.Sprintf("%s: %s", item.Hosts[0].Name, item.ExpandItem())
-		} else {
-			field.Name = item.ExpandItem()
-		}
-		frame.Fields = append(frame.Fields, field)
-	}
-
-	for _, point := range history {
-		for columnIndex, field := range frame.Fields {
-			if columnIndex == 0 {
-				ts := time.Unix(point.Clock, point.NS)
-				field.Append(ts)
-			} else {
-				item := items[columnIndex-1]
-				if point.ItemID == item.ID {
-					value := point.Value
-					field.Append(&value)
-				} else {
-					field.Append(nil)
-				}
-			}
-		}
-	}
-
-	// TODO: convert to wide format
-	wideFrame, err := data.LongToWide(frame, &data.FillMissing{Mode: data.FillModeNull})
-	if err == nil {
-		return wideFrame
-	}
-	return frame
-}
-
 func parseFilter(filter string) (*regexp.Regexp, error) {
 	regex := regexp.MustCompile(`^/(.+)/(.*)$`)
 	flagRE := regexp.MustCompile("[imsU]+")
@@ -543,4 +507,13 @@ func isNotAuthorized(err error) bool {
 	return strings.Contains(message, "Session terminated, re-login, please.") ||
 		strings.Contains(message, "Not authorised.") ||
 		strings.Contains(message, "Not authorized.")
+}
+
+func isAppMethodNotFoundError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	message := err.Error()
+	return message == `Method not found. Incorrect API "application".`
 }

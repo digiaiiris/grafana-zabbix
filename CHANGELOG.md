@@ -1,8 +1,52 @@
 # Change Log
 
+## [4.1.5] - 2021-05-18
+### Fixed
+- Fix compatibility with Zabbix 5.4, [#1188](https://github.com/alexanderzobnin/grafana-zabbix/issues/1188)
+
+## [4.1.4] - 2021-03-09
+### Fixed
+- `Field/Standard options/Display name` stopped working in 4.1 release, [#1130](https://github.com/alexanderzobnin/grafana-zabbix/issues/1130)
+- Functions: trendsValue(sum) is not working, [#935](https://github.com/alexanderzobnin/grafana-zabbix/issues/935)
+
+## [4.1.3] - 2021-03-05
+### Fixed
+- Explore: Error "Unexpected field length", [#1150](https://github.com/alexanderzobnin/grafana-zabbix/issues/1150)
+- Problems: item last value truncated text, [#1145](https://github.com/alexanderzobnin/grafana-zabbix/issues/1145)
+- Problems: minor UI bug, [#1149](https://github.com/alexanderzobnin/grafana-zabbix/issues/1149)
+- Option to disable zabbix value mapping translation in query, [#1128](https://github.com/alexanderzobnin/grafana-zabbix/issues/1128)
+
+## [4.1.2] - 2021-01-28
+### Fixed
+- Item ID query mode doesn't work, [#1148](https://github.com/alexanderzobnin/grafana-zabbix/issues/1148)
+- IT Services: a.round_interval is not a function, [#1142](https://github.com/alexanderzobnin/grafana-zabbix/issues/1142)
+- Problems: Text overlap between the tooltip and description boxes, [#1138](https://github.com/alexanderzobnin/grafana-zabbix/issues/1138)
+- Problems: expanded row overwritten on refresh, [#1143](https://github.com/alexanderzobnin/grafana-zabbix/issues/1143)
+
+## [4.1.1] - 2020-12-30
+### Fixed
+- Graphs with dependent items failed to render, [#1123](https://github.com/alexanderzobnin/grafana-zabbix/issues/1123)
+
+## [4.1.0] - 2020-12-28
+### Added
+- [Data Frames](https://grafana.com/docs/grafana/latest/developers/plugins/data-frames/) support, [#10820](https://github.com/alexanderzobnin/grafana-zabbix/issues/10820). This solves various issues below:
+- Use units configured in Zabbix if possible
+- Use value mappings from Zabbix
+- Align points in each series to prevent stacking graph issues
+- Fill missing points with null values, [#1109](https://github.com/alexanderzobnin/grafana-zabbix/issues/1109)
+- Problems: filter problems by time range, [#1094](https://github.com/alexanderzobnin/grafana-zabbix/issues/1094)
+- ARM build (ARM64 and ARM v6), [#1028](https://github.com/alexanderzobnin/grafana-zabbix/issues/1028)
+
+### Fixed
+- Grafana doesn't prevent from saving alerts with template variables, [#1100](https://github.com/alexanderzobnin/grafana-zabbix/issues/1100)
+- Query inspector is not working, [#1097](https://github.com/alexanderzobnin/grafana-zabbix/issues/1097)
+- Problems panel query editor issues, [#988](https://github.com/alexanderzobnin/grafana-zabbix/issues/988)
+- Problems: unable to change severity to Not Classified, [#1104](https://github.com/alexanderzobnin/grafana-zabbix/issues/1104)
+- Problems: ack message limited to 64 characters, [#1122](https://github.com/alexanderzobnin/grafana-zabbix/issues/1122)
+
 ## [4.0.2] - 2020-11-13
 ### Fixed
-- Query mode Text returns no data for last value, , [#1062](https://github.com/alexanderzobnin/grafana-zabbix/issues/1062)
+- Query mode Text returns no data for last value, [#1062](https://github.com/alexanderzobnin/grafana-zabbix/issues/1062)
 - Able to configure API request timeout, [#1046](https://github.com/alexanderzobnin/grafana-zabbix/issues/1046)
 - Support basic auth for backend requests, [#1048](https://github.com/alexanderzobnin/grafana-zabbix/issues/1048)
 - Problems: fix empty problems list when null value used as a filter

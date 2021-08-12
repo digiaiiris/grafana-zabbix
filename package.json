@@ -1,7 +1,7 @@
 {
   "name": "iiris-zabbix-triggers-panel",
   "private": false,
-  "version": "3.11.0",
+  "version": "4.1.5",
   "description": "Zabbix plugin for Grafana",
   "homepage": "http://grafana-zabbix.org",
   "scripts": {

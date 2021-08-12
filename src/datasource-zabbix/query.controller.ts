@@ -4,8 +4,9 @@ import * as c from './constants';
 import * as utils from './utils';
 import * as metricFunctions from './metricFunctions';
 import * as migrations from './migrations';
-import { ShowProblemTypes } from './types';
+import { ShowProblemTypes, ZabbixMetricsQuery } from './types';
 import { CURRENT_SCHEMA_VERSION } from '../panel-triggers/migrations';
+import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
 function getTargetDefaults() {
   return {
@@ -26,6 +27,8 @@ function getTargetDefaults() {
     options: {
       showDisabledItems: false,
       skipEmptyValues: false,
+      disableDataAlignment: false,
+      useZabbixValueMapping: false,
     },
     table: {
       'skipEmptyValues': false
@@ -77,7 +80,7 @@ export class ZabbixQueryController extends QueryCtrl {
 
   zabbix: any;
   replaceTemplateVars: any;
-  templateSrv: any;
+  templateSrv: TemplateSrv;
   editorModes: Array<{ value: string; text: string; queryType: number; }>;
   slaPropertyList: Array<{ name: string; property: string; }>;
   slaIntervals: Array<{ text: string; value: string; }>;
@@ -99,15 +102,16 @@ export class ZabbixQueryController extends QueryCtrl {
   queryOptionsText: string;
   metric: any;
   showQueryOptions: boolean;
+  oldTarget: any;
 
   /** @ngInject */
-  constructor($scope, $injector, $rootScope, $sce, templateSrv) {
+  constructor($scope, $injector, $rootScope) {
     super($scope, $injector);
     this.zabbix = this.datasource.zabbix;
 
     // Use custom format for template variables
     this.replaceTemplateVars = this.datasource.replaceTemplateVars;
-    this.templateSrv = templateSrv;
+    this.templateSrv = getTemplateSrv();
 
     this.editorModes = [
       {value: 'num',       text: 'Metrics',     queryType: c.MODE_METRICS},
@@ -275,7 +279,7 @@ export class ZabbixQueryController extends QueryCtrl {
     const metrics = _.uniq(_.map(this.metric[metricList], 'name'));
 
     // Add template variables
-    _.forEach(this.templateSrv.variables, variable => {
+    _.forEach(this.templateSrv.getVariables(), variable => {
       metrics.unshift('$' + variable.name);
     });
 
@@ -287,7 +291,7 @@ export class ZabbixQueryController extends QueryCtrl {
   }
 
   getTemplateVariables() {
-    return _.map(this.templateSrv.variables, variable => {
+    return _.map(this.templateSrv.getVariables(), variable => {
       return '$' + variable.name;
     });
   }
@@ -358,7 +362,7 @@ export class ZabbixQueryController extends QueryCtrl {
   }
 
   isVariable(str) {
-    return utils.isTemplateVariable(str, this.templateSrv.variables);
+    return utils.isTemplateVariable(str, this.templateSrv.getVariables());
   }
 
   onTargetBlur() {
@@ -367,9 +371,6 @@ export class ZabbixQueryController extends QueryCtrl {
       this.oldTarget = newTarget;
       this.targetChanged();
     }
-  }
-  oldTarget(oldTarget: any, target: any) {
-    throw new Error("Method not implemented.");
   }
 
   onVariableChange() {
@@ -384,7 +385,7 @@ export class ZabbixQueryController extends QueryCtrl {
   isContainsVariables() {
     return _.some(['group', 'host', 'application'], field => {
       if (this.target[field] && this.target[field].filter) {
-        return utils.isTemplateVariable(this.target[field].filter, this.templateSrv.variables);
+        return utils.isTemplateVariable(this.target[field].filter, this.templateSrv.getVariables());
       } else {
         return false;
       }
@@ -403,7 +404,7 @@ export class ZabbixQueryController extends QueryCtrl {
   targetChanged() {
     this.initFilters();
     this.parseTarget();
-    this.panelCtrl.refresh();
+    this.refresh();
   }
 
   addFunction(funcDef) {
@@ -454,6 +455,8 @@ export class ZabbixQueryController extends QueryCtrl {
   renderQueryOptionsText() {
     const metricOptionsMap = {
       showDisabledItems: "Show disabled items",
+      disableDataAlignment: "Disable data alignment",
+      useZabbixValueMapping: "Use Zabbix value mapping",
     };
 
     const problemsOptionsMap = {
@@ -463,6 +466,7 @@ export class ZabbixQueryController extends QueryCtrl {
       hostsInMaintenance: "Show hosts in maintenance",
       limit: "Limit problems",
       hostProxy: "Show proxy",
+      useTimeRange: "Use time range",
     };
 
     let optionsMap = {};
@@ -506,5 +510,9 @@ export class ZabbixQueryController extends QueryCtrl {
     this.queryOptionsText = this.renderQueryOptionsText();
     this.init();
     this.targetChanged();
+  }
+
+  appFilterDisabled() {
+    return !this.zabbix.supportsApplications();
   }
 }
