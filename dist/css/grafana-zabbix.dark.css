@@ -390,7 +390,8 @@
   .panel-problems .ReactTable {
     height: 100%;
     display: flex;
-    flex-direction: column; }
+    flex-direction: column;
+    overflow: hidden; }
     .panel-problems .ReactTable .rt-table {
       height: 100%; }
     .panel-problems .ReactTable .rt-thead.-header {

@@ -6,8 +6,8 @@
   "info": {
     "description": "Iiris Zabbix plugin for Grafana",
     "author": {
-      "name": "Alexander Zobnin",
-      "url": "https://github.com/alexanderzobnin"
+      "name": "Digia Finland Oy",
+      "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
     "keywords": ["zabbix"],
     "logos": {
@@ -15,9 +15,6 @@
       "large": "img/icn-zabbix-app.svg"
     },
     "links": [
-      {"name": "GitHub", "url": "https://github.com/alexanderzobnin/grafana-zabbix"},
-      {"name": "Docs", "url": "https://alexanderzobnin.github.io/grafana-zabbix"},
-      {"name": "License", "url": "https://github.com/alexanderzobnin/grafana-zabbix/blob/master/LICENSE"}
     ],
     "screenshots": [
       {"name": "Showcase", "path": "img/screenshot-showcase.png"},
@@ -26,8 +23,8 @@
       {"name": "Metric Editor", "path": "img/screenshot-metric_editor.png"},
       {"name": "Triggers", "path": "img/screenshot-triggers.png"}
     ],
-    "version": "4.0.2",
-    "updated": "2020-11-13"
+    "version": "4.1.5",
+    "updated": "2021-05-18"
   },
 
   "includes": [
@@ -42,8 +39,8 @@
   ],
 
   "dependencies": {
-    "grafanaDependency": ">=7.0.0",
-    "grafanaVersion": "7.0",
+    "grafanaDependency": ">=7.3.0",
+    "grafanaVersion": "7.3",
     "plugins": []
   }
 }

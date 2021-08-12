@@ -1,4 +1,4 @@
-define(["@grafana/data","@grafana/runtime","@grafana/ui","emotion","app/core/utils/datemath","app/core/utils/kbn","app/plugins/sdk","lodash","moment","react","react-dom"], function(__WEBPACK_EXTERNAL_MODULE__grafana_data__, __WEBPACK_EXTERNAL_MODULE__grafana_runtime__, __WEBPACK_EXTERNAL_MODULE__grafana_ui__, __WEBPACK_EXTERNAL_MODULE_emotion__, __WEBPACK_EXTERNAL_MODULE_grafana_app_core_utils_datemath__, __WEBPACK_EXTERNAL_MODULE_grafana_app_core_utils_kbn__, __WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__, __WEBPACK_EXTERNAL_MODULE_lodash__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) { return /******/ (function(modules) { // webpackBootstrap
+define(["@grafana/data","@grafana/runtime","@grafana/ui","emotion","app/core/utils/datemath","app/plugins/sdk","lodash","moment","react","react-dom"], function(__WEBPACK_EXTERNAL_MODULE__grafana_data__, __WEBPACK_EXTERNAL_MODULE__grafana_runtime__, __WEBPACK_EXTERNAL_MODULE__grafana_ui__, __WEBPACK_EXTERNAL_MODULE_emotion__, __WEBPACK_EXTERNAL_MODULE_grafana_app_core_utils_datemath__, __WEBPACK_EXTERNAL_MODULE_grafana_app_plugins_sdk__, __WEBPACK_EXTERNAL_MODULE_lodash__, __WEBPACK_EXTERNAL_MODULE_moment__, __WEBPACK_EXTERNAL_MODULE_react__, __WEBPACK_EXTERNAL_MODULE_react_dom__) { return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -8594,6 +8594,7 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 var getStyles = Object(_grafana_ui__WEBPACK_IMPORTED_MODULE_4__["stylesFactory"])(function () { return ({
     defaultTransitionStyles: Object(emotion__WEBPACK_IMPORTED_MODULE_1__["css"])(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n    transition: opacity 200ms linear;\n    opacity: 0;\n  "], ["\n    transition: opacity 200ms linear;\n    opacity: 0;\n  "]))),
+    tooltipContent: Object(emotion__WEBPACK_IMPORTED_MODULE_1__["css"])(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n    overflow-wrap: break-word;\n  "], ["\n    overflow-wrap: break-word;\n  "]))),
 }); });
 var transitionStyles = {
     exited: { opacity: 0 },
@@ -8616,12 +8617,12 @@ var Popper = function (_a) {
                 var ref = _a.ref, style = _a.style, placement = _a.placement, arrowProps = _a.arrowProps;
                 return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { ref: ref, style: __assign(__assign({}, style), transitionStyles[transitionState]), "data-placement": placement, className: popperClass },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "popper__background" },
-                        renderContent(content),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: styles.tooltipContent }, renderContent(content)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { ref: arrowProps.ref, "data-placement": placement, className: "popper__arrow" }))));
             }))); })));
 };
 /* harmony default export */ __webpack_exports__["default"] = (Popper);
-var templateObject_1;
+var templateObject_1, templateObject_2;
 
 
 /***/ }),
@@ -8965,7 +8966,7 @@ var ShowProblemTypes;
 /*!************************************!*\
   !*** ./datasource-zabbix/utils.ts ***!
   \************************************/
-/*! exports provided: variableRegex, expandItemName, expandItems, containsMacro, replaceMacro, parseLegacyVariableQuery, splitTemplateQuery, regexPattern, isRegex, isTemplateVariable, getRangeScopedVars, buildRegex, escapeRegex, parseInterval, parseTimeShiftInterval, formatAcknowledges, convertToZabbixAPIUrl, callOnce, sequence, isValidVersion, parseVersion, compactQuery, getArrayDepth, isNumeric, parseTags, mustArray */
+/*! exports provided: variableRegex, expandItemName, expandItems, containsMacro, replaceMacro, parseLegacyVariableQuery, splitTemplateQuery, regexPattern, isRegex, isTemplateVariable, getRangeScopedVars, buildRegex, escapeRegex, parseItemInterval, normalizeZabbixInterval, parseInterval, parseTimeShiftInterval, formatAcknowledges, convertToZabbixAPIUrl, callOnce, sequence, isValidVersion, parseVersion, compactQuery, getArrayDepth, isNumeric, parseTags, mustArray, convertZabbixUnit, getValueMapping, isProblemsDataFrame */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8983,6 +8984,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRangeScopedVars", function() { return getRangeScopedVars; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildRegex", function() { return buildRegex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "escapeRegex", function() { return escapeRegex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseItemInterval", function() { return parseItemInterval; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "normalizeZabbixInterval", function() { return normalizeZabbixInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseInterval", function() { return parseInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseTimeShiftInterval", function() { return parseTimeShiftInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatAcknowledges", function() { return formatAcknowledges; });
@@ -8996,14 +8999,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumeric", function() { return isNumeric; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseTags", function() { return parseTags; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mustArray", function() { return mustArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "convertZabbixUnit", function() { return convertZabbixUnit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValueMapping", function() { return getValueMapping; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isProblemsDataFrame", function() { return isProblemsDataFrame; });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "moment");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! grafana/app/core/utils/kbn */ "grafana/app/core/utils/kbn");
-/* harmony import */ var grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
@@ -9140,16 +9146,16 @@ function parseLegacyVariableQuery(query) {
     }
     switch (parts.length) {
         case 1:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Group;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Group;
             break;
         case 2:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Host;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Host;
             break;
         case 3:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Application;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Application;
             break;
         case 4:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Item;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Item;
             break;
     }
     var variableQuery = {
@@ -9204,12 +9210,12 @@ function isTemplateVariable(str, templateVariables) {
 function getRangeScopedVars(range) {
     var msRange = range.to.diff(range.from);
     var sRange = Math.round(msRange / 1000);
-    var regularRange = grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default.a.secondsToHms(msRange / 1000);
+    var regularRange = _grafana_data__WEBPACK_IMPORTED_MODULE_4__["rangeUtil"].secondsToHms(msRange / 1000);
     return {
         __range_ms: { text: msRange, value: msRange },
         __range_s: { text: sRange, value: sRange },
         __range: { text: regularRange, value: regularRange },
-        __range_series: { text: _constants__WEBPACK_IMPORTED_MODULE_3__["RANGE_VARIABLE_VALUE"], value: _constants__WEBPACK_IMPORTED_MODULE_3__["RANGE_VARIABLE_VALUE"] },
+        __range_series: { text: _constants__WEBPACK_IMPORTED_MODULE_2__["RANGE_VARIABLE_VALUE"], value: _constants__WEBPACK_IMPORTED_MODULE_2__["RANGE_VARIABLE_VALUE"] },
     };
 }
 function buildRegex(str) {
@@ -9222,6 +9228,24 @@ function buildRegex(str) {
 // From Grafana's templateSrv.js
 function escapeRegex(value) {
     return value.replace(/[\\^$*+?.()|[\]{}\/]/g, '\\$&');
+}
+/**
+ * Parses Zabbix item update interval. Returns 0 in case of custom intervals.
+ */
+function parseItemInterval(interval) {
+    var normalizedInterval = normalizeZabbixInterval(interval);
+    if (normalizedInterval) {
+        return parseInterval(normalizedInterval);
+    }
+    return 0;
+}
+function normalizeZabbixInterval(interval) {
+    var intervalPattern = /(^[\d]+)(y|M|w|d|h|m|s)?/g;
+    var parsedInterval = intervalPattern.exec(interval);
+    if (!parsedInterval || !interval || (parsedInterval.length > 2 && !parsedInterval[2])) {
+        return '';
+    }
+    return parsedInterval[1] + (parsedInterval.length > 2 ? parsedInterval[2] : 's');
 }
 function parseInterval(interval) {
     var intervalPattern = /(^[\d]+)(y|M|w|d|h|m|s)/g;
@@ -9361,6 +9385,63 @@ function parseTags(tagStr) {
 function mustArray(result) {
     return result || [];
 }
+var getUnitsMap = function () { return ({
+    '%': 'percent',
+    'b': 'decbits',
+    'bps': 'bps',
+    'B': 'bytes',
+    'Bps': 'binBps',
+    // 'unixtime': 'dateTimeAsSystem',
+    'uptime': 'dtdhms',
+    'qps': 'qps',
+    'iops': 'iops',
+    'Hz': 'hertz',
+    'V': 'volt',
+    'C': 'celsius',
+    'RPM': 'rotrpm',
+    'dBm': 'dBm',
+}); };
+var getKnownGrafanaUnits = function () {
+    var units = {};
+    var categories = Object(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["getValueFormats"])();
+    for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
+        var category = categories_1[_i];
+        for (var _a = 0, _b = category.submenu; _a < _b.length; _a++) {
+            var unitDesc = _b[_a];
+            var unit = unitDesc.value;
+            units[unit] = unit;
+        }
+    }
+    return units;
+};
+var unitsMap = getUnitsMap();
+var knownGrafanaUnits = getKnownGrafanaUnits();
+function convertZabbixUnit(zabbixUnit) {
+    var unit = unitsMap[zabbixUnit];
+    if (!unit) {
+        unit = knownGrafanaUnits[zabbixUnit];
+    }
+    return unit;
+}
+function getValueMapping(item, valueMappings) {
+    var valuemapid = item.valuemapid;
+    var mapping = valueMappings === null || valueMappings === void 0 ? void 0 : valueMappings.find(function (m) { return m.valuemapid === valuemapid; });
+    if (!mapping) {
+        return null;
+    }
+    return mapping.mappings.map(function (m, i) {
+        var valueMapping = {
+            id: i,
+            type: _grafana_data__WEBPACK_IMPORTED_MODULE_4__["MappingType"].ValueToText,
+            value: m.value,
+            text: m.newvalue,
+        };
+        return valueMapping;
+    });
+}
+function isProblemsDataFrame(data) {
+    return data.fields.length && data.fields[0].type === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].other && data.fields[0].config.custom['type'] === 'problems';
+}
 
 
 /***/ }),
@@ -9423,9 +9504,9 @@ var AckModalUnthemed = /** @class */ (function (_super) {
         _this.handleChange = function (event) {
             _this.setState({ value: event.target.value, error: false });
         };
-        _this.handleKeyUp = function (event) {
+        _this.handleKeyPress = function (event) {
             if (event.which === KEYBOARD_ENTER_KEY || event.key === 'Enter') {
-                _this.submit();
+                // this.submit();
             }
             else if (event.which === KEYBOARD_ESCAPE_KEY || event.key === 'Escape') {
                 _this.dismiss();
@@ -9526,7 +9607,7 @@ var AckModalUnthemed = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "p-l-1" }, "Acknowledge Problem")) },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: inputGroupClass },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { className: "gf-form-hint" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Input"], { className: inputClass, type: "text", name: "message", placeholder: "Message", maxLength: 64, autoComplete: "off", autoFocus: true, value: this.state.value, onChange: this.handleChange, onKeyUp: this.handleKeyUp }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["TextArea"], { className: inputClass, type: "text", name: "message", placeholder: "Message", autoComplete: "off", autoFocus: true, value: this.state.value, onChange: this.handleChange, onKeyDown: this.handleKeyPress }),
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", { className: inputHintClass }, "Press Enter to submit"),
                     this.state.error &&
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", { className: inputErrorClass }, this.state.errorMessage))),
@@ -10601,12 +10682,16 @@ var ProblemDetails = /** @class */ (function (_super) {
 function ProblemItem(props) {
     var item = props.item, showName = props.showName;
     var itemName = _datasource_zabbix_utils__WEBPACK_IMPORTED_MODULE_2__["expandItemName"](item.name, item.key_);
+    var tooltipContent = function () { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null,
+        itemName,
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null),
+        item.lastvalue); };
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "problem-item" },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_8__["FAIcon"], { icon: "thermometer-three-quarters" }),
         showName && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "problem-item-name" },
             item.name,
             ": "),
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_8__["Tooltip"], { placement: "top-start", content: itemName },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_8__["Tooltip"], { placement: "top-start", content: tooltipContent },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "problem-item-value" }, item.lastvalue))));
 }
 var ProblemItems = function (_a) {
@@ -11291,11 +11376,27 @@ var ProblemList = /** @class */ (function (_super) {
                 _this.props.onColumnResize(newResized);
             }
         };
-        _this.handleExpandedChange = function (expanded) {
+        _this.handleExpandedChange = function (expanded, event) {
+            var _a = _this.props, problems = _a.problems, pageSize = _a.pageSize;
+            var page = _this.state.page;
+            var expandedProblems = {};
+            for (var row in expanded) {
+                var rowId = Number(row);
+                var problemIndex = pageSize * page + rowId;
+                if (expanded[row] && problemIndex < problems.length) {
+                    var expandedProblem = problems[problemIndex].eventid;
+                    if (expandedProblem) {
+                        expandedProblems[expandedProblem] = true;
+                    }
+                }
+            }
             var nextExpanded = __assign({}, _this.state.expanded);
-            nextExpanded[_this.state.page] = expanded;
+            nextExpanded[page] = expanded;
+            var nextExpandedProblems = __assign({}, _this.state.expandedProblems);
+            nextExpandedProblems[page] = expandedProblems;
             _this.setState({
-                expanded: nextExpanded
+                expanded: nextExpanded,
+                expandedProblems: nextExpandedProblems,
             });
         };
         _this.handleTagClick = function (tag, datasource, ctrlKey, shiftKey) {
@@ -11304,10 +11405,24 @@ var ProblemList = /** @class */ (function (_super) {
             }
         };
         _this.getExpandedPage = function (page) {
-            return _this.state.expanded[page] || {};
+            var _a = _this.props, problems = _a.problems, pageSize = _a.pageSize;
+            var expandedProblems = _this.state.expandedProblems;
+            var expandedProblemsPage = expandedProblems[page] || {};
+            var expandedPage = {};
+            // Go through the page and search for expanded problems
+            var startIndex = pageSize * page;
+            var endIndex = Math.min(startIndex + pageSize, problems.length);
+            for (var i = startIndex; i < endIndex; i++) {
+                var problem = problems[i];
+                if (expandedProblemsPage[problem.eventid]) {
+                    expandedPage[i - startIndex] = {};
+                }
+            }
+            return expandedPage;
         };
         _this.state = {
             expanded: {},
+            expandedProblems: {},
             page: 0,
         };
         return _this;
@@ -12411,17 +12526,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_emotion__;
 /***/ (function(module, exports) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE_grafana_app_core_utils_datemath__;
-
-/***/ }),
-
-/***/ "grafana/app/core/utils/kbn":
-/*!*************************************!*\
-  !*** external "app/core/utils/kbn" ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_grafana_app_core_utils_kbn__;
 
 /***/ }),
 

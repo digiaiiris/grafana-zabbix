@@ -2539,7 +2539,7 @@ var ConfigEditor = function (props) {
             }
             options.secureJsonData.password = password;
         }
-        onOptionsChange(__assign(__assign({}, options), { jsonData: __assign({ trends: true, trendsFrom: '', trendsRange: '', cacheTTL: '', timeout: '' }, restJsonData) }));
+        onOptionsChange(__assign(__assign({}, options), { jsonData: __assign({ trends: true, trendsFrom: '', trendsRange: '', cacheTTL: '', timeout: '', disableDataAlignment: false }, restJsonData) }));
         if (options.jsonData.dbConnectionEnable) {
             if (!options.jsonData.dbConnectionDatasourceId) {
                 var dsName = options.jsonData.dbConnectionDatasourceName;
@@ -2595,7 +2595,8 @@ var ConfigEditor = function (props) {
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(FormField, { labelWidth: 9, inputWidth: 16, label: "Retention Policy", value: options.jsonData.dbConnectionRetentionPolicy || '', placeholder: "Retention policy name", onChange: jsonDataChangeHandler('dbConnectionRetentionPolicy', options, onOptionsChange), tooltip: "Specify retention policy name for fetching long-term stored data (optional).\n                    Leave it blank if only default retention policy used." })))),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "gf-form-group" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", { className: "page-heading" }, "Other"),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Switch, { label: "Disable acknowledges for read-only users", labelClass: "width-20", checked: options.jsonData.disableReadOnlyUsersAck, onChange: jsonDataSwitchHandler('disableReadOnlyUsersAck', options, onOptionsChange) }))));
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Switch, { label: "Disable acknowledges for read-only users", labelClass: "width-16", checked: options.jsonData.disableReadOnlyUsersAck, onChange: jsonDataSwitchHandler('disableReadOnlyUsersAck', options, onOptionsChange) }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(Switch, { label: "Disable data alignment", labelClass: "width-16", checked: !!options.jsonData.disableDataAlignment, onChange: jsonDataSwitchHandler('disableDataAlignment', options, onOptionsChange), tooltip: "Data alignment feature aligns points based on item update interval.\n            For instance, if value collected once per minute, then timestamp of the each point will be set to the start of corresponding minute.\n            This alignment required for proper work of the stacked graphs.\n            If you don't need stacked graphs and want to get exactly the same timestamps as in Zabbix, then you can disable this feature." }))));
 };
 var jsonDataChangeHandler = function (key, value, onChange) { return function (event) {
     var _a;
@@ -3334,16 +3335,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _migrations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./migrations */ "./datasource-zabbix/migrations.ts");
 /* harmony import */ var _metricFunctions__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./metricFunctions */ "./datasource-zabbix/metricFunctions.ts");
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
-/* harmony import */ var _dataProcessor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./dataProcessor */ "./datasource-zabbix/dataProcessor.ts");
-/* harmony import */ var _responseHandler__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./responseHandler */ "./datasource-zabbix/responseHandler.ts");
-/* harmony import */ var _problemsHandler__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./problemsHandler */ "./datasource-zabbix/problemsHandler.ts");
-/* harmony import */ var _zabbix_zabbix__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./zabbix/zabbix */ "./datasource-zabbix/zabbix/zabbix.ts");
-/* harmony import */ var _zabbix_connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./zabbix/connectors/zabbix_api/zabbixAPIConnector */ "./datasource-zabbix/zabbix/connectors/zabbix_api/zabbixAPIConnector.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
-/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @grafana/runtime */ "@grafana/runtime");
-/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_grafana_runtime__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
-/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _timeseries__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./timeseries */ "./datasource-zabbix/timeseries.ts");
+/* harmony import */ var _dataProcessor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./dataProcessor */ "./datasource-zabbix/dataProcessor.ts");
+/* harmony import */ var _responseHandler__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./responseHandler */ "./datasource-zabbix/responseHandler.ts");
+/* harmony import */ var _problemsHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./problemsHandler */ "./datasource-zabbix/problemsHandler.ts");
+/* harmony import */ var _zabbix_zabbix__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./zabbix/zabbix */ "./datasource-zabbix/zabbix/zabbix.ts");
+/* harmony import */ var _zabbix_connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./zabbix/connectors/zabbix_api/zabbixAPIConnector */ "./datasource-zabbix/zabbix/connectors/zabbix_api/zabbixAPIConnector.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
+/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @grafana/runtime */ "@grafana/runtime");
+/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_grafana_runtime__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_16__);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -3420,6 +3422,7 @@ var __generator = (undefined && undefined.__generator) || function (thisArg, bod
 
 
 
+
 var ZabbixDatasource = /** @class */ (function (_super) {
     __extends(ZabbixDatasource, _super);
     /** @ngInject */
@@ -3445,6 +3448,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         _this.cacheTTL = _utils__WEBPACK_IMPORTED_MODULE_4__["parseInterval"](ttl);
         // Other options
         _this.disableReadOnlyUsersAck = jsonData.disableReadOnlyUsersAck;
+        _this.disableDataAlignment = jsonData.disableDataAlignment;
         // Direct DB Connection options
         _this.enableDirectDBConnection = jsonData.dbConnectionEnable || false;
         _this.dbConnectionDatasourceId = jsonData.dbConnectionDatasourceId;
@@ -3460,7 +3464,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             dbConnectionRetentionPolicy: _this.dbConnectionRetentionPolicy,
             datasourceId: _this.datasourceId,
         };
-        _this.zabbix = new _zabbix_zabbix__WEBPACK_IMPORTED_MODULE_11__["Zabbix"](zabbixOptions);
+        _this.zabbix = new _zabbix_zabbix__WEBPACK_IMPORTED_MODULE_12__["Zabbix"](zabbixOptions);
         return _this;
     }
     ////////////////////////
@@ -3540,7 +3544,20 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         return Promise.all(lodash__WEBPACK_IMPORTED_MODULE_0___default.a.flatten(promises))
             .then(lodash__WEBPACK_IMPORTED_MODULE_0___default.a.flatten)
             .then(function (data) {
-            return { data: data };
+            if (data && data.length > 0 && Object(_grafana_data__WEBPACK_IMPORTED_MODULE_16__["isDataFrame"])(data[0]) && !_utils__WEBPACK_IMPORTED_MODULE_4__["isProblemsDataFrame"](data[0])) {
+                data = _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].alignFrames(data);
+                if (_responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].isConvertibleToWide(data)) {
+                    console.log('Converting response to the wide format');
+                    data = _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].convertToWide(data);
+                }
+            }
+            return data;
+        }).then(function (data) {
+            return {
+                data: data,
+                state: _grafana_data__WEBPACK_IMPORTED_MODULE_16__["LoadingState"].Done,
+                key: options.requestId,
+            };
         });
     };
     ZabbixDatasource.prototype.doTsdbRequest = function (options) {
@@ -3556,7 +3573,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             tsdbRequestData.from = options.range.from.valueOf().toString();
             tsdbRequestData.to = options.range.to.valueOf().toString();
         }
-        return Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_14__["getBackendSrv"])().post('/api/tsdb/query', tsdbRequestData);
+        return Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_15__["getBackendSrv"])().post('/api/tsdb/query', tsdbRequestData);
     };
     /**
      * @returns {Promise<TSDBResponse>}
@@ -3573,27 +3590,38 @@ var ZabbixDatasource = /** @class */ (function (_super) {
                 }
             ]
         };
-        return Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_14__["getBackendSrv"])().post('/api/tsdb/query', tsdbRequestData);
+        return Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_15__["getBackendSrv"])().post('/api/tsdb/query', tsdbRequestData);
     };
     /**
      * Query target data for Metrics
      */
     ZabbixDatasource.prototype.queryNumericData = function (target, timeRange, useTrends, options) {
-        var _this = this;
-        var queryStart, queryEnd;
-        var getItemOptions = {
-            itemtype: 'num'
-        };
-        return this.zabbix.getItemsFromTarget(target, getItemOptions)
-            .then(function (items) {
-            queryStart = new Date().getTime();
-            return _this.queryNumericDataForItems(items, target, timeRange, useTrends, options);
-        }).then(function (result) {
-            queryEnd = new Date().getTime();
-            if (_this.enableDebugLog) {
-                console.log("Datasource::Performance Query Time (" + _this.name + "): " + (queryEnd - queryStart));
-            }
-            return result;
+        return __awaiter(this, void 0, void 0, function () {
+            var getItemOptions, items, queryStart, result, queryEnd, valueMappings, dataFrames;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        getItemOptions = {
+                            itemtype: 'num'
+                        };
+                        return [4 /*yield*/, this.zabbix.getItemsFromTarget(target, getItemOptions)];
+                    case 1:
+                        items = _a.sent();
+                        queryStart = new Date().getTime();
+                        return [4 /*yield*/, this.queryNumericDataForItems(items, target, timeRange, useTrends, options)];
+                    case 2:
+                        result = _a.sent();
+                        queryEnd = new Date().getTime();
+                        if (this.enableDebugLog) {
+                            console.log("Datasource::Performance Query Time (" + this.name + "): " + (queryEnd - queryStart));
+                        }
+                        return [4 /*yield*/, this.zabbix.getValueMappings()];
+                    case 3:
+                        valueMappings = _a.sent();
+                        dataFrames = result.map(function (s) { return _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].seriesToDataFrame(s, target, valueMappings); });
+                        return [2 /*return*/, dataFrames];
+                }
+            });
         });
     };
     /**
@@ -3601,14 +3629,22 @@ var ZabbixDatasource = /** @class */ (function (_super) {
      */
     ZabbixDatasource.prototype.queryNumericDataForItems = function (items, target, timeRange, useTrends, options) {
         var _this = this;
+        var _a;
         var getHistoryPromise;
         options.valueType = this.getTrendValueType(target);
         options.consolidateBy = getConsolidateBy(target) || options.valueType;
+        var disableDataAlignment = this.disableDataAlignment || ((_a = target.options) === null || _a === void 0 ? void 0 : _a.disableDataAlignment);
         if (useTrends) {
-            getHistoryPromise = this.zabbix.getTrends(items, timeRange, options);
+            getHistoryPromise = this.zabbix.getTrends(items, timeRange, options)
+                .then(function (timeseries) {
+                return !disableDataAlignment ? _this.fillTrendTimeSeriesWithNulls(timeseries) : timeseries;
+            });
         }
         else {
-            getHistoryPromise = this.zabbix.getHistoryTS(items, timeRange, options);
+            getHistoryPromise = this.zabbix.getHistoryTS(items, timeRange, options)
+                .then(function (timeseries) {
+                return !disableDataAlignment ? _this.alignTimeSeriesData(timeseries) : timeseries;
+            });
         }
         return getHistoryPromise
             .then(function (timeseries) { return _this.applyDataProcessingFunctions(timeseries, target); })
@@ -3621,6 +3657,22 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.includes(trendFunctions, func.def.name);
         });
         return trendValueFunc ? trendValueFunc.params[0] : "avg";
+    };
+    ZabbixDatasource.prototype.alignTimeSeriesData = function (timeseries) {
+        var _a;
+        for (var _i = 0, timeseries_1 = timeseries; _i < timeseries_1.length; _i++) {
+            var ts = timeseries_1[_i];
+            var interval = _utils__WEBPACK_IMPORTED_MODULE_4__["parseItemInterval"]((_a = ts.scopedVars['__zbx_item_interval']) === null || _a === void 0 ? void 0 : _a.value);
+            ts.datapoints = Object(_timeseries__WEBPACK_IMPORTED_MODULE_8__["align"])(ts.datapoints, interval);
+        }
+        return timeseries;
+    };
+    ZabbixDatasource.prototype.fillTrendTimeSeriesWithNulls = function (timeseries) {
+        for (var _i = 0, timeseries_2 = timeseries; _i < timeseries_2.length; _i++) {
+            var ts = timeseries_2[_i];
+            ts.datapoints = Object(_timeseries__WEBPACK_IMPORTED_MODULE_8__["fillTrendsWithNulls"])(ts.datapoints);
+        }
+        return timeseries;
     };
     ZabbixDatasource.prototype.applyDataProcessingFunctions = function (timeseries_data, target) {
         var transformFunctions = bindFunctionDefs(target.functions, 'Transform');
@@ -3664,7 +3716,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         if (timeShiftFunc) {
             var shift_1 = timeShiftFunc.params[0];
             lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(timeseries_data, function (series) {
-                series.datapoints = _dataProcessor__WEBPACK_IMPORTED_MODULE_8__["default"].unShiftTimeSeries(shift_1, series.datapoints);
+                series.datapoints = _dataProcessor__WEBPACK_IMPORTED_MODULE_9__["default"].unShiftTimeSeries(shift_1, series.datapoints);
             });
         }
     };
@@ -3679,6 +3731,12 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         return this.zabbix.getItemsFromTarget(target, options)
             .then(function (items) {
             return _this.zabbix.getHistoryText(items, timeRange, target);
+        })
+            .then(function (result) {
+            if (target.resultFormat !== 'table') {
+                return result.map(function (s) { return _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].seriesToDataFrame(s, target, [], _grafana_data__WEBPACK_IMPORTED_MODULE_16__["FieldType"].string); });
+            }
+            return result;
         });
     };
     /**
@@ -3695,6 +3753,9 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         return this.zabbix.getItemsByIDs(itemids)
             .then(function (items) {
             return _this.queryNumericDataForItems(items, target, timeRange, useTrends, options);
+        })
+            .then(function (result) {
+            return result.map(function (s) { return _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].seriesToDataFrame(s, target); });
         });
     };
     /**
@@ -3724,7 +3785,11 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             }
             return _this.zabbix.getSLA(itservices, timeRange, target, options);
         })
-            .then(function (itservicesdp) { return _this.applyDataProcessingFunctions(itservicesdp, target); });
+            .then(function (itservicesdp) { return _this.applyDataProcessingFunctions(itservicesdp, target); })
+            .then(function (result) {
+            var dataFrames = result.map(function (s) { return _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].seriesToDataFrame(s, target); });
+            return dataFrames;
+        });
     };
     ZabbixDatasource.prototype.queryTriggersData = function (target, timeRange) {
         var _this = this;
@@ -3749,7 +3814,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
                 ])
                     .then(function (_a) {
                     var triggers = _a[0], groups = _a[1];
-                    return _responseHandler__WEBPACK_IMPORTED_MODULE_9__["default"].handleTriggersResponse(triggers, groups, timeRange);
+                    return _responseHandler__WEBPACK_IMPORTED_MODULE_10__["default"].handleTriggersResponse(triggers, groups, timeRange);
                 });
             }
             else {
@@ -3758,12 +3823,12 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         });
     };
     ZabbixDatasource.prototype.queryProblems = function (target, timeRange, options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
         var timeFrom = timeRange[0], timeTo = timeRange[1];
         var userIsEditor = grafana_app_core_core__WEBPACK_IMPORTED_MODULE_2__["contextSrv"].isEditor || grafana_app_core_core__WEBPACK_IMPORTED_MODULE_2__["contextSrv"].isGrafanaAdmin;
         var proxies;
         var showAckButton = true;
-        var showProblems = target.showProblems || _types__WEBPACK_IMPORTED_MODULE_13__["ShowProblemTypes"].Problems;
+        var showProblems = target.showProblems || _types__WEBPACK_IMPORTED_MODULE_14__["ShowProblemTypes"].Problems;
         var showProxy = target.options.hostProxy;
         var getProxiesPromise = showProxy ? this.zabbix.getProxies() : function () { return []; };
         showAckButton = !this.disableReadOnlyUsersAck || userIsEditor;
@@ -3783,7 +3848,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             tag.operator = 1;
         });
         var problemsOptions = {
-            recent: showProblems === _types__WEBPACK_IMPORTED_MODULE_13__["ShowProblemTypes"].Recent,
+            recent: showProblems === _types__WEBPACK_IMPORTED_MODULE_14__["ShowProblemTypes"].Recent,
             minSeverity: (_g = target.options) === null || _g === void 0 ? void 0 : _g.minSeverity,
             limit: (_h = target.options) === null || _h === void 0 ? void 0 : _h.limit,
         };
@@ -3801,7 +3866,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             problemsOptions.severities = severities;
         }
         var getProblemsPromise;
-        if (showProblems === _types__WEBPACK_IMPORTED_MODULE_13__["ShowProblemTypes"].History) {
+        if (showProblems === _types__WEBPACK_IMPORTED_MODULE_14__["ShowProblemTypes"].History || ((_p = target.options) === null || _p === void 0 ? void 0 : _p.useTimeRange)) {
             problemsOptions.timeFrom = timeFrom;
             problemsOptions.timeTo = timeTo;
             getProblemsPromise = this.zabbix.getProblemsHistory(groupFilter, hostFilter, appFilter, proxyFilter, problemsOptions);
@@ -3818,14 +3883,14 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             proxies = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.keyBy(sourceProxies, 'proxyid');
             return problems;
         })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].setMaintenanceStatus(problems); })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].setAckButtonStatus(problems, showAckButton); })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].filterTriggersPre(problems, replacedTarget); })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].sortProblems(problems, target); })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].addTriggerDataSource(problems, target); })
-            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].addTriggerHostProxy(problems, proxies); });
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].setMaintenanceStatus(problems); })
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].setAckButtonStatus(problems, showAckButton); })
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].filterTriggersPre(problems, replacedTarget); })
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].sortProblems(problems, target); })
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].addTriggerDataSource(problems, target); })
+            .then(function (problems) { return _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].addTriggerHostProxy(problems, proxies); });
         return problemsPromises.then(function (problems) {
-            var problemsDataFrame = _problemsHandler__WEBPACK_IMPORTED_MODULE_10__["default"].toDataFrame(problems);
+            var problemsDataFrame = _problemsHandler__WEBPACK_IMPORTED_MODULE_11__["default"].toDataFrame(problems);
             return problemsDataFrame;
         });
     };
@@ -3853,7 +3918,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
                             }];
                     case 2:
                         error_1 = _b.sent();
-                        if (error_1 instanceof _zabbix_connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_12__["ZabbixAPIError"]) {
+                        if (error_1 instanceof _zabbix_connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_13__["ZabbixAPIError"]) {
                             return [2 /*return*/, {
                                     status: "error",
                                     title: error_1.message,
@@ -3914,19 +3979,19 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         }
         var group = queryModel.group, host = queryModel.host, application = queryModel.application, item = queryModel.item;
         switch (queryModel.queryType) {
-            case _types__WEBPACK_IMPORTED_MODULE_13__["VariableQueryTypes"].Group:
+            case _types__WEBPACK_IMPORTED_MODULE_14__["VariableQueryTypes"].Group:
                 resultPromise = this.zabbix.getGroups(queryModel.group);
                 break;
-            case _types__WEBPACK_IMPORTED_MODULE_13__["VariableQueryTypes"].Host:
+            case _types__WEBPACK_IMPORTED_MODULE_14__["VariableQueryTypes"].Host:
                 resultPromise = this.zabbix.getHosts(queryModel.group, queryModel.host);
                 break;
-            case _types__WEBPACK_IMPORTED_MODULE_13__["VariableQueryTypes"].Application:
+            case _types__WEBPACK_IMPORTED_MODULE_14__["VariableQueryTypes"].Application:
                 resultPromise = this.zabbix.getApps(queryModel.group, queryModel.host, queryModel.application);
                 break;
-            case _types__WEBPACK_IMPORTED_MODULE_13__["VariableQueryTypes"].Item:
+            case _types__WEBPACK_IMPORTED_MODULE_14__["VariableQueryTypes"].Item:
                 resultPromise = this.zabbix.getItems(queryModel.group, queryModel.host, queryModel.application, queryModel.item);
                 break;
-            case _types__WEBPACK_IMPORTED_MODULE_13__["VariableQueryTypes"].ItemValues:
+            case _types__WEBPACK_IMPORTED_MODULE_14__["VariableQueryTypes"].ItemValues:
                 var range = options === null || options === void 0 ? void 0 : options.range;
                 resultPromise = this.zabbix.getItemValues(group, host, application, item, { range: range });
                 break;
@@ -3937,6 +4002,18 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         return resultPromise.then(function (metrics) {
             return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(metrics, formatMetric);
         });
+    };
+    ZabbixDatasource.prototype.targetContainsTemplate = function (target) {
+        var _a, _b, _c, _d, _e, _f;
+        var templateSrv = Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_15__["getTemplateSrv"])();
+        return (templateSrv.variableExists((_a = target.group) === null || _a === void 0 ? void 0 : _a.filter) ||
+            templateSrv.variableExists((_b = target.host) === null || _b === void 0 ? void 0 : _b.filter) ||
+            templateSrv.variableExists((_c = target.application) === null || _c === void 0 ? void 0 : _c.filter) ||
+            templateSrv.variableExists((_d = target.item) === null || _d === void 0 ? void 0 : _d.filter) ||
+            templateSrv.variableExists((_e = target.proxy) === null || _e === void 0 ? void 0 : _e.filter) ||
+            templateSrv.variableExists((_f = target.trigger) === null || _f === void 0 ? void 0 : _f.filter) ||
+            templateSrv.variableExists(target.textFilter) ||
+            templateSrv.variableExists(target.itServiceFilter));
     };
     /////////////////
     // Annotations //
@@ -4008,7 +4085,9 @@ var ZabbixDatasource = /** @class */ (function (_super) {
                 target[p].filter = _this.replaceTemplateVars(target[p].filter, options.scopedVars);
             }
         });
-        target.textFilter = this.replaceTemplateVars(target.textFilter, options.scopedVars);
+        if (target.textFilter) {
+            target.textFilter = this.replaceTemplateVars(target.textFilter, options.scopedVars);
+        }
         lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(target.functions, function (func) {
             func.params = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(func.params, function (param) {
                 if (typeof param === 'number') {
@@ -4029,7 +4108,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         return useTrends;
     };
     return ZabbixDatasource;
-}(_grafana_data__WEBPACK_IMPORTED_MODULE_15__["DataSourceApi"]));
+}(_grafana_data__WEBPACK_IMPORTED_MODULE_16__["DataSourceApi"]));
 
 function bindFunctionDefs(functionDefs, category) {
     var aggregationFunctions = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(_metricFunctions__WEBPACK_IMPORTED_MODULE_6__["getCategories"]()[category], 'name');
@@ -4038,7 +4117,7 @@ function bindFunctionDefs(functionDefs, category) {
     });
     return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(aggFuncDefs, function (func) {
         var funcInstance = _metricFunctions__WEBPACK_IMPORTED_MODULE_6__["createFuncInstance"](func.def, func.params);
-        return funcInstance.bindFunction(_dataProcessor__WEBPACK_IMPORTED_MODULE_8__["default"].metricFunctions);
+        return funcInstance.bindFunction(_dataProcessor__WEBPACK_IMPORTED_MODULE_9__["default"].metricFunctions);
     });
 }
 function getConsolidateBy(target) {
@@ -4052,11 +4131,11 @@ function getConsolidateBy(target) {
     return consolidateBy;
 }
 function downsampleSeries(timeseries_data, options) {
-    var defaultAgg = _dataProcessor__WEBPACK_IMPORTED_MODULE_8__["default"].aggregationFunctions['avg'];
-    var consolidateByFunc = _dataProcessor__WEBPACK_IMPORTED_MODULE_8__["default"].aggregationFunctions[options.consolidateBy] || defaultAgg;
+    var defaultAgg = _dataProcessor__WEBPACK_IMPORTED_MODULE_9__["default"].aggregationFunctions['avg'];
+    var consolidateByFunc = _dataProcessor__WEBPACK_IMPORTED_MODULE_9__["default"].aggregationFunctions[options.consolidateBy] || defaultAgg;
     return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(timeseries_data, function (timeseries) {
         if (timeseries.datapoints.length > options.maxDataPoints) {
-            timeseries.datapoints = _dataProcessor__WEBPACK_IMPORTED_MODULE_8__["default"]
+            timeseries.datapoints = _dataProcessor__WEBPACK_IMPORTED_MODULE_9__["default"]
                 .groupBy(options.interval, consolidateByFunc, timeseries.datapoints);
         }
         return timeseries;
@@ -5080,7 +5159,11 @@ function toDataFrame(problems) {
         name: 'Problems',
         type: _grafana_data__WEBPACK_IMPORTED_MODULE_2__["FieldType"].other,
         values: new _grafana_data__WEBPACK_IMPORTED_MODULE_2__["ArrayVector"](problems),
-        config: {},
+        config: {
+            custom: {
+                type: 'problems',
+            },
+        },
     };
     var response = {
         name: 'problems',
@@ -5125,6 +5208,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _migrations__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./migrations */ "./datasource-zabbix/migrations.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
 /* harmony import */ var _panel_triggers_migrations__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../panel-triggers/migrations */ "./panel-triggers/migrations.ts");
+/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @grafana/runtime */ "@grafana/runtime");
+/* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_grafana_runtime__WEBPACK_IMPORTED_MODULE_8__);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -5138,6 +5223,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
 
 
 
@@ -5165,6 +5251,8 @@ function getTargetDefaults() {
         options: {
             showDisabledItems: false,
             skipEmptyValues: false,
+            disableDataAlignment: false,
+            useZabbixValueMapping: false,
         },
         table: {
             'skipEmptyValues': false
@@ -5209,12 +5297,12 @@ function mapSeverityOptionsFromPanel(severityOptions) {
 var ZabbixQueryController = /** @class */ (function (_super) {
     __extends(ZabbixQueryController, _super);
     /** @ngInject */
-    function ZabbixQueryController($scope, $injector, $rootScope, $sce, templateSrv) {
+    function ZabbixQueryController($scope, $injector, $rootScope) {
         var _this = _super.call(this, $scope, $injector) || this;
         _this.zabbix = _this.datasource.zabbix;
         // Use custom format for template variables
         _this.replaceTemplateVars = _this.datasource.replaceTemplateVars;
-        _this.templateSrv = templateSrv;
+        _this.templateSrv = Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_8__["getTemplateSrv"])();
         _this.editorModes = [
             { value: 'num', text: 'Metrics', queryType: _constants__WEBPACK_IMPORTED_MODULE_2__["MODE_METRICS"] },
             { value: 'text', text: 'Text', queryType: _constants__WEBPACK_IMPORTED_MODULE_2__["MODE_TEXT"] },
@@ -5353,7 +5441,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
     ZabbixQueryController.prototype.getMetricNames = function (metricList, addAllValue) {
         var metrics = lodash__WEBPACK_IMPORTED_MODULE_1___default.a.uniq(lodash__WEBPACK_IMPORTED_MODULE_1___default.a.map(this.metric[metricList], 'name'));
         // Add template variables
-        lodash__WEBPACK_IMPORTED_MODULE_1___default.a.forEach(this.templateSrv.variables, function (variable) {
+        lodash__WEBPACK_IMPORTED_MODULE_1___default.a.forEach(this.templateSrv.getVariables(), function (variable) {
             metrics.unshift('$' + variable.name);
         });
         if (addAllValue) {
@@ -5362,7 +5450,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
         return metrics;
     };
     ZabbixQueryController.prototype.getTemplateVariables = function () {
-        return lodash__WEBPACK_IMPORTED_MODULE_1___default.a.map(this.templateSrv.variables, function (variable) {
+        return lodash__WEBPACK_IMPORTED_MODULE_1___default.a.map(this.templateSrv.getVariables(), function (variable) {
             return '$' + variable.name;
         });
     };
@@ -5431,7 +5519,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
         return _utils__WEBPACK_IMPORTED_MODULE_3__["isRegex"](str);
     };
     ZabbixQueryController.prototype.isVariable = function (str) {
-        return _utils__WEBPACK_IMPORTED_MODULE_3__["isTemplateVariable"](str, this.templateSrv.variables);
+        return _utils__WEBPACK_IMPORTED_MODULE_3__["isTemplateVariable"](str, this.templateSrv.getVariables());
     };
     ZabbixQueryController.prototype.onTargetBlur = function () {
         var newTarget = lodash__WEBPACK_IMPORTED_MODULE_1___default.a.cloneDeep(this.target);
@@ -5439,9 +5527,6 @@ var ZabbixQueryController = /** @class */ (function (_super) {
             this.oldTarget = newTarget;
             this.targetChanged();
         }
-    };
-    ZabbixQueryController.prototype.oldTarget = function (oldTarget, target) {
-        throw new Error("Method not implemented.");
     };
     ZabbixQueryController.prototype.onVariableChange = function () {
         if (this.isContainsVariables()) {
@@ -5455,7 +5540,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
         var _this = this;
         return lodash__WEBPACK_IMPORTED_MODULE_1___default.a.some(['group', 'host', 'application'], function (field) {
             if (_this.target[field] && _this.target[field].filter) {
-                return _utils__WEBPACK_IMPORTED_MODULE_3__["isTemplateVariable"](_this.target[field].filter, _this.templateSrv.variables);
+                return _utils__WEBPACK_IMPORTED_MODULE_3__["isTemplateVariable"](_this.target[field].filter, _this.templateSrv.getVariables());
             }
             else {
                 return false;
@@ -5472,7 +5557,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
     ZabbixQueryController.prototype.targetChanged = function () {
         this.initFilters();
         this.parseTarget();
-        this.panelCtrl.refresh();
+        this.refresh();
     };
     ZabbixQueryController.prototype.addFunction = function (funcDef) {
         var newFunc = _metricFunctions__WEBPACK_IMPORTED_MODULE_4__["createFuncInstance"](funcDef);
@@ -5513,6 +5598,8 @@ var ZabbixQueryController = /** @class */ (function (_super) {
     ZabbixQueryController.prototype.renderQueryOptionsText = function () {
         var metricOptionsMap = {
             showDisabledItems: "Show disabled items",
+            disableDataAlignment: "Disable data alignment",
+            useZabbixValueMapping: "Use Zabbix value mapping",
         };
         var problemsOptionsMap = {
             sortProblems: "Sort problems",
@@ -5521,6 +5608,7 @@ var ZabbixQueryController = /** @class */ (function (_super) {
             hostsInMaintenance: "Show hosts in maintenance",
             limit: "Limit problems",
             hostProxy: "Show proxy",
+            useTimeRange: "Use time range",
         };
         var optionsMap = {};
         if (this.target.queryType === _constants__WEBPACK_IMPORTED_MODULE_2__["MODE_METRICS"]) {
@@ -5564,6 +5652,9 @@ var ZabbixQueryController = /** @class */ (function (_super) {
         this.init();
         this.targetChanged();
     };
+    ZabbixQueryController.prototype.appFilterDisabled = function () {
+        return !this.zabbix.supportsApplications();
+    };
     return ZabbixQueryController;
 }(grafana_app_plugins_sdk__WEBPACK_IMPORTED_MODULE_0__["QueryCtrl"]));
 
@@ -5600,16 +5691,23 @@ function react2AngularDirective(name, component, options) {
 /*!**********************************************!*\
   !*** ./datasource-zabbix/responseHandler.ts ***!
   \**********************************************/
-/*! exports provided: default */
+/*! exports provided: seriesToDataFrame, isConvertibleToWide, alignFrames, convertToWide, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "seriesToDataFrame", function() { return seriesToDataFrame; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isConvertibleToWide", function() { return isConvertibleToWide; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "alignFrames", function() { return alignFrames; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "convertToWide", function() { return convertToWide; });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var grafana_app_core_table_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! grafana/app/core/table_model */ "grafana/app/core/table_model");
 /* harmony import */ var grafana_app_core_table_model__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(grafana_app_core_table_model__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./datasource-zabbix/utils.ts");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_4__);
 var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -5617,6 +5715,8 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+
+
 
 
 
@@ -5650,6 +5750,7 @@ function convertHistory(history, items, addHostName, convertPointCallback) {
             '__zbx_item': { value: item.name },
             '__zbx_item_name': { value: item.name },
             '__zbx_item_key': { value: item.key_ },
+            '__zbx_item_interval': { value: item.delay },
         };
         if (lodash__WEBPACK_IMPORTED_MODULE_0___default.a.keys(hosts).length > 0) {
             var host = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.find(hosts, { 'hostid': item.hostid });
@@ -5664,8 +5765,159 @@ function convertHistory(history, items, addHostName, convertPointCallback) {
             target: alias,
             datapoints: lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(hist, convertPointCallback),
             scopedVars: scopedVars,
+            item: item
         };
     });
+}
+function seriesToDataFrame(timeseries, target, valueMappings, fieldType) {
+    var _a, _b, _c, _d, _e, _f;
+    var datapoints = timeseries.datapoints, scopedVars = timeseries.scopedVars, seriesName = timeseries.target, item = timeseries.item;
+    var timeFiled = {
+        name: _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_TIME_FIELD_NAME"],
+        type: _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].time,
+        config: {
+            custom: {}
+        },
+        values: new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["ArrayVector"](datapoints.map(function (p) { return p[_constants__WEBPACK_IMPORTED_MODULE_2__["DATAPOINT_TS"]]; })),
+    };
+    var values;
+    if (fieldType === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].string) {
+        values = new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["ArrayVector"](datapoints.map(function (p) { return p[_constants__WEBPACK_IMPORTED_MODULE_2__["DATAPOINT_VALUE"]]; }));
+    }
+    else {
+        values = new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["ArrayVector"](datapoints.map(function (p) { return p[_constants__WEBPACK_IMPORTED_MODULE_2__["DATAPOINT_VALUE"]]; }));
+    }
+    var valueFiled = {
+        name: _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_VALUE_FIELD_NAME"],
+        type: fieldType !== null && fieldType !== void 0 ? fieldType : _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].number,
+        labels: {},
+        config: {
+            displayNameFromDS: seriesName,
+            custom: {}
+        },
+        values: values,
+    };
+    if (scopedVars) {
+        timeFiled.config.custom = {
+            itemInterval: (_a = scopedVars['__zbx_item_interval']) === null || _a === void 0 ? void 0 : _a.value,
+        };
+        valueFiled.labels = {
+            host: (_b = scopedVars['__zbx_host_name']) === null || _b === void 0 ? void 0 : _b.value,
+            item: (_c = scopedVars['__zbx_item']) === null || _c === void 0 ? void 0 : _c.value,
+            item_key: (_d = scopedVars['__zbx_item_key']) === null || _d === void 0 ? void 0 : _d.value,
+        };
+        valueFiled.config.custom = {
+            itemInterval: (_e = scopedVars['__zbx_item_interval']) === null || _e === void 0 ? void 0 : _e.value,
+        };
+    }
+    if (item) {
+        // Try to use unit configured in Zabbix
+        var unit = _utils__WEBPACK_IMPORTED_MODULE_3__["convertZabbixUnit"](item.units);
+        if (unit) {
+            console.log("Datasource: unit detected: " + unit + " (" + item.units + ")");
+            valueFiled.config.unit = unit;
+            if (unit === 'percent') {
+                valueFiled.config.min = 0;
+                valueFiled.config.max = 100;
+            }
+        }
+        // Try to use value mapping from Zabbix
+        var mappings = _utils__WEBPACK_IMPORTED_MODULE_3__["getValueMapping"](item, valueMappings);
+        if (mappings && ((_f = target.options) === null || _f === void 0 ? void 0 : _f.useZabbixValueMapping)) {
+            console.log("Datasource: using Zabbix value mapping");
+            valueFiled.config.mappings = mappings;
+        }
+    }
+    var fields = [timeFiled, valueFiled];
+    var frame = {
+        name: seriesName,
+        refId: target.refId,
+        fields: fields,
+        length: datapoints.length,
+    };
+    var mutableFrame = new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["MutableDataFrame"](frame);
+    return mutableFrame;
+}
+function isConvertibleToWide(data) {
+    if (!data || data.length < 2) {
+        return false;
+    }
+    var first = data[0].fields.find(function (f) { return f.type === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].time; });
+    if (!first) {
+        return false;
+    }
+    for (var i = 1; i < data.length; i++) {
+        var timeField = data[i].fields.find(function (f) { return f.type === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].time; });
+        for (var j = 0; j < Math.min(data.length, 2); j++) {
+            if (timeField.values.get(j) !== first.values.get(j)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+function alignFrames(data) {
+    var _a;
+    if (!data || data.length === 0) {
+        return data;
+    }
+    // Get oldest time stamp for all frames
+    var minTimestamp = data[0].fields.find(function (f) { return f.name === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_TIME_FIELD_NAME"]; }).values.get(0);
+    for (var i = 0; i < data.length; i++) {
+        var timeField = data[i].fields.find(function (f) { return f.name === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_TIME_FIELD_NAME"]; });
+        var firstTs = timeField.values.get(0);
+        if (firstTs < minTimestamp) {
+            minTimestamp = firstTs;
+        }
+    }
+    for (var i = 0; i < data.length; i++) {
+        var frame = data[i];
+        var timeField = frame.fields.find(function (f) { return f.name === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_TIME_FIELD_NAME"]; });
+        var valueField = frame.fields.find(function (f) { return f.name === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_VALUE_FIELD_NAME"]; });
+        var firstTs = timeField.values.get(0);
+        if (firstTs > minTimestamp) {
+            console.log('Data frames: adding missing points');
+            var timestamps = timeField.values.toArray();
+            var values = valueField.values.toArray();
+            var missingTimestamps = [];
+            var missingValues = [];
+            var frameInterval = (_a = timeField.config.custom) === null || _a === void 0 ? void 0 : _a.itemInterval;
+            for (var j = minTimestamp; j < firstTs; j += frameInterval) {
+                missingTimestamps.push(j);
+                missingValues.push(null);
+            }
+            timestamps = missingTimestamps.concat(timestamps);
+            values = missingValues.concat(values);
+            timeField.values = new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["ArrayVector"](timestamps);
+            valueField.values = new _grafana_data__WEBPACK_IMPORTED_MODULE_4__["ArrayVector"](values);
+        }
+    }
+    return data;
+}
+function convertToWide(data) {
+    var timeField = data[0].fields.find(function (f) { return f.type === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].time; });
+    if (!timeField) {
+        return [];
+    }
+    var fields = [timeField];
+    for (var i = 0; i < data.length; i++) {
+        var valueField = data[i].fields.find(function (f) { return f.name === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["TIME_SERIES_VALUE_FIELD_NAME"]; });
+        if (!valueField) {
+            continue;
+        }
+        valueField.name = data[i].name;
+        // Add null value to the end if series is shifted by 1 time frame
+        if (timeField.values.length - valueField.values.length === 1) {
+            valueField.values.add(null);
+        }
+        fields.push(valueField);
+    }
+    var frame = {
+        name: "wide",
+        fields: fields,
+        length: timeField.values.length,
+    };
+    return [frame];
 }
 function sortTimeseries(timeseries) {
     // Sort trend data, issue #202
@@ -5832,10 +6084,10 @@ function convertTrendPoint(valueType, point) {
             value = point.value_avg;
             break;
         case "sum":
-            value = point.value_sum;
+            value = point.value_avg * point.num;
             break;
         case "count":
-            value = point.value_count;
+            value = point.num;
             break;
         default:
             value = point.value_avg;
@@ -5853,7 +6105,11 @@ function convertTrendPoint(valueType, point) {
     handleHistoryAsTable: handleHistoryAsTable,
     handleSLAResponse: handleSLAResponse,
     handleTriggersResponse: handleTriggersResponse,
-    sortTimeseries: sortTimeseries
+    sortTimeseries: sortTimeseries,
+    seriesToDataFrame: seriesToDataFrame,
+    isConvertibleToWide: isConvertibleToWide,
+    convertToWide: convertToWide,
+    alignFrames: alignFrames,
 });
 
 
@@ -5863,11 +6119,13 @@ function convertTrendPoint(valueType, point) {
 /*!*****************************************!*\
   !*** ./datasource-zabbix/timeseries.ts ***!
   \*****************************************/
-/*! exports provided: groupBy_perf, groupByRange, default */
+/*! exports provided: align, fillTrendsWithNulls, groupBy_perf, groupByRange, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "align", function() { return align; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fillTrendsWithNulls", function() { return fillTrendsWithNulls; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupBy_perf", function() { return groupBy_perf; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "groupByRange", function() { return groupByRange; });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
@@ -5889,6 +6147,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var POINT_VALUE = 0;
 var POINT_TIMESTAMP = 1;
+var HOUR_MS = 3600 * 1000;
 /**
  * Downsample time series by using given function (avg, min, max).
  */
@@ -5930,6 +6189,77 @@ function downsample(datapoints, time_to, ms_interval, func) {
         }
     }
     return downsampledSeries.reverse();
+}
+/**
+ * Detects interval between data points and aligns time series. If there's no value in the interval, puts null as a value.
+ */
+function align(datapoints, interval) {
+    if (!interval) {
+        interval = detectSeriesInterval(datapoints);
+    }
+    if (interval <= 0 || datapoints.length <= 1) {
+        return datapoints;
+    }
+    var aligned_ts = [];
+    var frame_ts = getPointTimeFrame(datapoints[0][POINT_TIMESTAMP], interval);
+    var point_frame_ts = frame_ts;
+    var point;
+    for (var i = 0; i < datapoints.length; i++) {
+        point = datapoints[i];
+        point_frame_ts = getPointTimeFrame(point[POINT_TIMESTAMP], interval);
+        if (point_frame_ts > frame_ts) {
+            // Move frame window to next non-empty interval and fill empty by null
+            while (frame_ts < point_frame_ts) {
+                aligned_ts.push([null, frame_ts]);
+                frame_ts += interval;
+            }
+        }
+        aligned_ts.push([point[POINT_VALUE], point_frame_ts]);
+        frame_ts += interval;
+    }
+    return aligned_ts;
+}
+/**
+ * Detects interval between data points in milliseconds.
+ */
+function detectSeriesInterval(datapoints) {
+    if (datapoints.length < 2) {
+        return -1;
+    }
+    var deltas = [];
+    for (var i = 1; i < datapoints.length; i++) {
+        // Get deltas (in seconds)
+        var d = (datapoints[i][POINT_TIMESTAMP] - datapoints[i - 1][POINT_TIMESTAMP]) / 1000;
+        deltas.push(Math.round(d));
+    }
+    // Use 50th percentile (median) as an interval
+    deltas = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.sortBy(deltas);
+    var intervalSec = deltas[Math.floor(deltas.length * 0.5)];
+    return intervalSec * 1000;
+}
+function fillTrendsWithNulls(datapoints) {
+    if (datapoints.length <= 1) {
+        return datapoints;
+    }
+    var interval = HOUR_MS;
+    var filled_ts = [];
+    var frame_ts = datapoints[0][POINT_TIMESTAMP];
+    var point_frame_ts = frame_ts;
+    var point;
+    for (var i = 0; i < datapoints.length; i++) {
+        point = datapoints[i];
+        point_frame_ts = point[POINT_TIMESTAMP];
+        if (point_frame_ts > frame_ts) {
+            // Move frame window to next non-empty interval and fill empty by null
+            while (frame_ts < point_frame_ts) {
+                filled_ts.push([null, frame_ts]);
+                frame_ts += interval;
+            }
+        }
+        filled_ts.push(point);
+        frame_ts += interval;
+    }
+    return filled_ts;
 }
 /**
  * Group points by given time interval
@@ -6098,6 +6428,8 @@ function rate(datapoints) {
     return newSeries;
 }
 function simpleMovingAverage(datapoints, n) {
+    // It's not possible to calculate MA if n greater than number of points
+    n = Math.min(n, datapoints.length);
     var sma = [];
     var w_sum;
     var w_avg = null;
@@ -6140,6 +6472,8 @@ function simpleMovingAverage(datapoints, n) {
     return sma;
 }
 function expMovingAverage(datapoints, n) {
+    // It's not possible to calculate MA if n greater than number of points
+    n = Math.min(n, datapoints.length);
     var ema = [datapoints[0]];
     var ema_prev = datapoints[0][POINT_VALUE];
     var ema_cur;
@@ -6348,6 +6682,7 @@ var exportedFunctions = {
     PERCENTILE: PERCENTILE,
     sortByTime: sortByTime,
     flattenDatapoints: flattenDatapoints,
+    align: align,
 };
 /* harmony default export */ __webpack_exports__["default"] = (exportedFunctions);
 
@@ -6387,7 +6722,7 @@ var ShowProblemTypes;
 /*!************************************!*\
   !*** ./datasource-zabbix/utils.ts ***!
   \************************************/
-/*! exports provided: variableRegex, expandItemName, expandItems, containsMacro, replaceMacro, parseLegacyVariableQuery, splitTemplateQuery, regexPattern, isRegex, isTemplateVariable, getRangeScopedVars, buildRegex, escapeRegex, parseInterval, parseTimeShiftInterval, formatAcknowledges, convertToZabbixAPIUrl, callOnce, sequence, isValidVersion, parseVersion, compactQuery, getArrayDepth, isNumeric, parseTags, mustArray */
+/*! exports provided: variableRegex, expandItemName, expandItems, containsMacro, replaceMacro, parseLegacyVariableQuery, splitTemplateQuery, regexPattern, isRegex, isTemplateVariable, getRangeScopedVars, buildRegex, escapeRegex, parseItemInterval, normalizeZabbixInterval, parseInterval, parseTimeShiftInterval, formatAcknowledges, convertToZabbixAPIUrl, callOnce, sequence, isValidVersion, parseVersion, compactQuery, getArrayDepth, isNumeric, parseTags, mustArray, convertZabbixUnit, getValueMapping, isProblemsDataFrame */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6405,6 +6740,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRangeScopedVars", function() { return getRangeScopedVars; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "buildRegex", function() { return buildRegex; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "escapeRegex", function() { return escapeRegex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseItemInterval", function() { return parseItemInterval; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "normalizeZabbixInterval", function() { return normalizeZabbixInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseInterval", function() { return parseInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseTimeShiftInterval", function() { return parseTimeShiftInterval; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatAcknowledges", function() { return formatAcknowledges; });
@@ -6418,14 +6755,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumeric", function() { return isNumeric; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseTags", function() { return parseTags; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mustArray", function() { return mustArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "convertZabbixUnit", function() { return convertZabbixUnit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getValueMapping", function() { return getValueMapping; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isProblemsDataFrame", function() { return isProblemsDataFrame; });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "lodash");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "moment");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! grafana/app/core/utils/kbn */ "grafana/app/core/utils/kbn");
-/* harmony import */ var grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constants */ "./datasource-zabbix/constants.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./types */ "./datasource-zabbix/types.ts");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
@@ -6562,16 +6902,16 @@ function parseLegacyVariableQuery(query) {
     }
     switch (parts.length) {
         case 1:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Group;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Group;
             break;
         case 2:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Host;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Host;
             break;
         case 3:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Application;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Application;
             break;
         case 4:
-            queryType = _types__WEBPACK_IMPORTED_MODULE_4__["VariableQueryTypes"].Item;
+            queryType = _types__WEBPACK_IMPORTED_MODULE_3__["VariableQueryTypes"].Item;
             break;
     }
     var variableQuery = {
@@ -6626,12 +6966,12 @@ function isTemplateVariable(str, templateVariables) {
 function getRangeScopedVars(range) {
     var msRange = range.to.diff(range.from);
     var sRange = Math.round(msRange / 1000);
-    var regularRange = grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default.a.secondsToHms(msRange / 1000);
+    var regularRange = _grafana_data__WEBPACK_IMPORTED_MODULE_4__["rangeUtil"].secondsToHms(msRange / 1000);
     return {
         __range_ms: { text: msRange, value: msRange },
         __range_s: { text: sRange, value: sRange },
         __range: { text: regularRange, value: regularRange },
-        __range_series: { text: _constants__WEBPACK_IMPORTED_MODULE_3__["RANGE_VARIABLE_VALUE"], value: _constants__WEBPACK_IMPORTED_MODULE_3__["RANGE_VARIABLE_VALUE"] },
+        __range_series: { text: _constants__WEBPACK_IMPORTED_MODULE_2__["RANGE_VARIABLE_VALUE"], value: _constants__WEBPACK_IMPORTED_MODULE_2__["RANGE_VARIABLE_VALUE"] },
     };
 }
 function buildRegex(str) {
@@ -6644,6 +6984,24 @@ function buildRegex(str) {
 // From Grafana's templateSrv.js
 function escapeRegex(value) {
     return value.replace(/[\\^$*+?.()|[\]{}\/]/g, '\\$&');
+}
+/**
+ * Parses Zabbix item update interval. Returns 0 in case of custom intervals.
+ */
+function parseItemInterval(interval) {
+    var normalizedInterval = normalizeZabbixInterval(interval);
+    if (normalizedInterval) {
+        return parseInterval(normalizedInterval);
+    }
+    return 0;
+}
+function normalizeZabbixInterval(interval) {
+    var intervalPattern = /(^[\d]+)(y|M|w|d|h|m|s)?/g;
+    var parsedInterval = intervalPattern.exec(interval);
+    if (!parsedInterval || !interval || (parsedInterval.length > 2 && !parsedInterval[2])) {
+        return '';
+    }
+    return parsedInterval[1] + (parsedInterval.length > 2 ? parsedInterval[2] : 's');
 }
 function parseInterval(interval) {
     var intervalPattern = /(^[\d]+)(y|M|w|d|h|m|s)/g;
@@ -6782,6 +7140,63 @@ function parseTags(tagStr) {
 }
 function mustArray(result) {
     return result || [];
+}
+var getUnitsMap = function () { return ({
+    '%': 'percent',
+    'b': 'decbits',
+    'bps': 'bps',
+    'B': 'bytes',
+    'Bps': 'binBps',
+    // 'unixtime': 'dateTimeAsSystem',
+    'uptime': 'dtdhms',
+    'qps': 'qps',
+    'iops': 'iops',
+    'Hz': 'hertz',
+    'V': 'volt',
+    'C': 'celsius',
+    'RPM': 'rotrpm',
+    'dBm': 'dBm',
+}); };
+var getKnownGrafanaUnits = function () {
+    var units = {};
+    var categories = Object(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["getValueFormats"])();
+    for (var _i = 0, categories_1 = categories; _i < categories_1.length; _i++) {
+        var category = categories_1[_i];
+        for (var _a = 0, _b = category.submenu; _a < _b.length; _a++) {
+            var unitDesc = _b[_a];
+            var unit = unitDesc.value;
+            units[unit] = unit;
+        }
+    }
+    return units;
+};
+var unitsMap = getUnitsMap();
+var knownGrafanaUnits = getKnownGrafanaUnits();
+function convertZabbixUnit(zabbixUnit) {
+    var unit = unitsMap[zabbixUnit];
+    if (!unit) {
+        unit = knownGrafanaUnits[zabbixUnit];
+    }
+    return unit;
+}
+function getValueMapping(item, valueMappings) {
+    var valuemapid = item.valuemapid;
+    var mapping = valueMappings === null || valueMappings === void 0 ? void 0 : valueMappings.find(function (m) { return m.valuemapid === valuemapid; });
+    if (!mapping) {
+        return null;
+    }
+    return mapping.mappings.map(function (m, i) {
+        var valueMapping = {
+            id: i,
+            type: _grafana_data__WEBPACK_IMPORTED_MODULE_4__["MappingType"].ValueToText,
+            value: m.value,
+            text: m.newvalue,
+        };
+        return valueMapping;
+    });
+}
+function isProblemsDataFrame(data) {
+    return data.fields.length && data.fields[0].type === _grafana_data__WEBPACK_IMPORTED_MODULE_4__["FieldType"].other && data.fields[0].config.custom['type'] === 'problems';
 }
 
 
@@ -6942,7 +7357,8 @@ function convertGrafanaTSResponse(time_series, items, addHostName) {
     var scopedVars = {
       '__zbx_item': { value: item.name },
       '__zbx_item_name': { value: item.name },
-      '__zbx_item_key': { value: item.key_ } };
+      '__zbx_item_key': { value: item.key_ },
+      '__zbx_item_interval': { value: item.delay } };
 
 
     if (lodash__WEBPACK_IMPORTED_MODULE_0___default.a.keys(hosts).length > 0) {
@@ -6961,7 +7377,8 @@ function convertGrafanaTSResponse(time_series, items, addHostName) {
     return {
       target: alias,
       datapoints: datapoints,
-      scopedVars: scopedVars };
+      scopedVars: scopedVars,
+      item: item };
 
   });
 
@@ -7410,6 +7827,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../types */ "./datasource-zabbix/types.ts");
 /* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @grafana/runtime */ "@grafana/runtime");
 /* harmony import */ var _grafana_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_grafana_runtime__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @grafana/data */ "@grafana/data");
+/* harmony import */ var _grafana_data__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_grafana_data__WEBPACK_IMPORTED_MODULE_7__);
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
 
 
 
@@ -7418,6 +7874,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var DEFAULT_ZABBIX_VERSION = '3.0.0';
+// Backward compatibility. Since Grafana 7.2 roundInterval() func was moved to @grafana/data package
+var roundInterval = (_grafana_data__WEBPACK_IMPORTED_MODULE_7__["rangeUtil"] === null || _grafana_data__WEBPACK_IMPORTED_MODULE_7__["rangeUtil"] === void 0 ? void 0 : _grafana_data__WEBPACK_IMPORTED_MODULE_7__["rangeUtil"].roundInterval) || grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default.a.roundInterval || grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default.a.round_interval;
 /**
  * Zabbix API Wrapper.
  * Creates Zabbix API instance with given parameters (url, credentials and other).
@@ -7439,39 +7897,53 @@ var ZabbixAPIConnector = /** @class */ (function () {
     // Core method wrappers //
     //////////////////////////
     ZabbixAPIConnector.prototype.request = function (method, params) {
-        return this.backendAPIRequest(method, params).then(function (response) {
-            var _a;
-            return (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.result;
-        });
+        var _this = this;
+        if (!this.version) {
+            return this.initVersion().then(function () { return _this.request(method, params); });
+        }
+        return this.backendAPIRequest(method, params);
     };
     ZabbixAPIConnector.prototype.backendAPIRequest = function (method, params) {
+        var _a;
         if (params === void 0) { params = {}; }
-        var requestOptions = {
-            url: this.backendAPIUrl,
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: {
-                datasourceId: this.datasourceId,
-                method: method,
-                params: params,
-            },
-        };
-        // Set request options for basic auth
-        if (this.requestOptions.basicAuth || this.requestOptions.withCredentials) {
-            requestOptions.withCredentials = true;
-        }
-        if (this.requestOptions.basicAuth) {
-            requestOptions.headers.Authorization = this.requestOptions.basicAuth;
-        }
-        return Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_6__["getBackendSrv"])().datasourceRequest(requestOptions);
+        return __awaiter(this, void 0, void 0, function () {
+            var requestOptions, response;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        requestOptions = {
+                            url: this.backendAPIUrl,
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            hideFromInspector: false,
+                            data: {
+                                datasourceId: this.datasourceId,
+                                method: method,
+                                params: params,
+                            },
+                        };
+                        // Set request options for basic auth
+                        if (this.requestOptions.basicAuth || this.requestOptions.withCredentials) {
+                            requestOptions.withCredentials = true;
+                        }
+                        if (this.requestOptions.basicAuth) {
+                            requestOptions.headers.Authorization = this.requestOptions.basicAuth;
+                        }
+                        return [4 /*yield*/, Object(_grafana_runtime__WEBPACK_IMPORTED_MODULE_6__["getBackendSrv"])().datasourceRequest(requestOptions)];
+                    case 1:
+                        response = _b.sent();
+                        return [2 /*return*/, (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.result];
+                }
+            });
+        });
     };
     /**
      * Get Zabbix API version
      */
     ZabbixAPIConnector.prototype.getVersion = function () {
-        return this.request('apiinfo.version');
+        return this.backendAPIRequest('apiinfo.version');
     };
     ZabbixAPIConnector.prototype.initVersion = function () {
         var _this = this;
@@ -7502,7 +7974,7 @@ var ZabbixAPIConnector = /** @class */ (function () {
             message: message,
             action: action
         };
-        if (severity) {
+        if (severity !== undefined) {
             params.severity = severity;
         }
         return this.request('event.acknowledge', params);
@@ -7526,11 +7998,19 @@ var ZabbixAPIConnector = /** @class */ (function () {
         return this.request('host.get', params);
     };
     ZabbixAPIConnector.prototype.getApps = function (hostids) {
-        var params = {
-            output: 'extend',
-            hostids: hostids
-        };
-        return this.request('application.get', params);
+        return __awaiter(this, void 0, void 0, function () {
+            var params;
+            return __generator(this, function (_a) {
+                if (semver__WEBPACK_IMPORTED_MODULE_1___default.a.gte(this.version, '5.4.0')) {
+                    return [2 /*return*/, []];
+                }
+                params = {
+                    output: 'extend',
+                    hostids: hostids
+                };
+                return [2 /*return*/, this.request('application.get', params)];
+            });
+        });
     };
     /**
      * Get Zabbix items
@@ -7542,11 +8022,15 @@ var ZabbixAPIConnector = /** @class */ (function () {
     ZabbixAPIConnector.prototype.getItems = function (hostids, appids, itemtype) {
         var params = {
             output: [
-                'name', 'key_',
+                'name',
+                'key_',
                 'value_type',
                 'hostid',
                 'status',
-                'state'
+                'state',
+                'units',
+                'valuemapid',
+                'delay'
             ],
             sortfield: 'name',
             webitems: true,
@@ -7574,11 +8058,15 @@ var ZabbixAPIConnector = /** @class */ (function () {
         var params = {
             itemids: itemids,
             output: [
-                'name', 'key_',
+                'name',
+                'key_',
                 'value_type',
                 'hostid',
                 'status',
-                'state'
+                'state',
+                'units',
+                'valuemapid',
+                'delay'
             ],
             webitems: true,
             selectHosts: ['hostid', 'name']
@@ -7965,6 +8453,13 @@ var ZabbixAPIConnector = /** @class */ (function () {
         };
         return this.request('script.execute', params);
     };
+    ZabbixAPIConnector.prototype.getValueMappings = function () {
+        var params = {
+            output: 'extend',
+            selectMappings: "extend",
+        };
+        return this.request('valuemap.get', params);
+    };
     return ZabbixAPIConnector;
 }());
 
@@ -7982,7 +8477,7 @@ function filterTriggersByAcknowledge(triggers, acknowledged) {
 function getSLAInterval(intervalMs) {
     // Too many intervals may cause significant load on the database, so decrease number of resulting points
     var resolutionRatio = 100;
-    var interval = grafana_app_core_utils_kbn__WEBPACK_IMPORTED_MODULE_2___default.a.round_interval(intervalMs * resolutionRatio) / 1000;
+    var interval = roundInterval(intervalMs * resolutionRatio) / 1000;
     return Math.max(interval, _constants__WEBPACK_IMPORTED_MODULE_4__["MIN_SLA_INTERVAL"]);
 }
 function buildSLAIntervals(timeRange, interval) {
@@ -8150,14 +8645,52 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! moment */ "moment");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utils */ "./datasource-zabbix/utils.ts");
-/* harmony import */ var _responseHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../responseHandler */ "./datasource-zabbix/responseHandler.ts");
-/* harmony import */ var _proxy_cachingProxy__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./proxy/cachingProxy */ "./datasource-zabbix/zabbix/proxy/cachingProxy.ts");
-/* harmony import */ var _connectors_dbConnector__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./connectors/dbConnector */ "./datasource-zabbix/zabbix/connectors/dbConnector.js");
-/* harmony import */ var _connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./connectors/zabbix_api/zabbixAPIConnector */ "./datasource-zabbix/zabbix/connectors/zabbix_api/zabbixAPIConnector.ts");
-/* harmony import */ var _connectors_sql_sqlConnector__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./connectors/sql/sqlConnector */ "./datasource-zabbix/zabbix/connectors/sql/sqlConnector.js");
-/* harmony import */ var _connectors_influxdb_influxdbConnector__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./connectors/influxdb/influxdbConnector */ "./datasource-zabbix/zabbix/connectors/influxdb/influxdbConnector.js");
-/* harmony import */ var _problemsHandler__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../problemsHandler */ "./datasource-zabbix/problemsHandler.ts");
+/* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! semver */ "../node_modules/semver/index.js");
+/* harmony import */ var semver__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(semver__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utils */ "./datasource-zabbix/utils.ts");
+/* harmony import */ var _responseHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../responseHandler */ "./datasource-zabbix/responseHandler.ts");
+/* harmony import */ var _proxy_cachingProxy__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./proxy/cachingProxy */ "./datasource-zabbix/zabbix/proxy/cachingProxy.ts");
+/* harmony import */ var _connectors_dbConnector__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./connectors/dbConnector */ "./datasource-zabbix/zabbix/connectors/dbConnector.js");
+/* harmony import */ var _connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./connectors/zabbix_api/zabbixAPIConnector */ "./datasource-zabbix/zabbix/connectors/zabbix_api/zabbixAPIConnector.ts");
+/* harmony import */ var _connectors_sql_sqlConnector__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./connectors/sql/sqlConnector */ "./datasource-zabbix/zabbix/connectors/sql/sqlConnector.js");
+/* harmony import */ var _connectors_influxdb_influxdbConnector__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./connectors/influxdb/influxdbConnector */ "./datasource-zabbix/zabbix/connectors/influxdb/influxdbConnector.js");
+/* harmony import */ var _problemsHandler__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../problemsHandler */ "./datasource-zabbix/problemsHandler.ts");
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -8165,6 +8698,7 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+
 
 
 
@@ -8180,16 +8714,16 @@ var REQUESTS_TO_PROXYFY = [
     'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
     'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
     'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-    'getGlobalMacros'
+    'getGlobalMacros', 'getValueMappings'
 ];
 var REQUESTS_TO_CACHE = [
     'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-    'getGlobalMacros'
+    'getGlobalMacros', 'getValueMappings'
 ];
 var REQUESTS_TO_BIND = [
     'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
-    'getAcknowledges', 'getITService', 'getVersion', 'acknowledgeEvent', 'getProxies', 'getEventAlerts',
-    'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros'
+    'getAcknowledges', 'getITService', 'acknowledgeEvent', 'getProxies', 'getEventAlerts',
+    'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros', 'getValueMappings'
 ];
 var Zabbix = /** @class */ (function () {
     function Zabbix(options) {
@@ -8201,8 +8735,8 @@ var Zabbix = /** @class */ (function () {
             enabled: true,
             ttl: cacheTTL
         };
-        this.cachingProxy = new _proxy_cachingProxy__WEBPACK_IMPORTED_MODULE_4__["CachingProxy"](cacheOptions);
-        this.zabbixAPI = new _connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_6__["ZabbixAPIConnector"](basicAuth, withCredentials, datasourceId);
+        this.cachingProxy = new _proxy_cachingProxy__WEBPACK_IMPORTED_MODULE_5__["CachingProxy"](cacheOptions);
+        this.zabbixAPI = new _connectors_zabbix_api_zabbixAPIConnector__WEBPACK_IMPORTED_MODULE_7__["ZabbixAPIConnector"](basicAuth, withCredentials, datasourceId);
         this.proxifyRequests();
         this.cacheRequests();
         this.bindRequests();
@@ -8217,15 +8751,15 @@ var Zabbix = /** @class */ (function () {
     }
     Zabbix.prototype.initDBConnector = function (datasourceId, datasourceName, options) {
         var _this = this;
-        return _connectors_dbConnector__WEBPACK_IMPORTED_MODULE_5__["DBConnector"].loadDatasource(datasourceId, datasourceName)
+        return _connectors_dbConnector__WEBPACK_IMPORTED_MODULE_6__["DBConnector"].loadDatasource(datasourceId, datasourceName)
             .then(function (ds) {
             var connectorOptions = { datasourceId: datasourceId, datasourceName: datasourceName };
             if (ds.type === 'influxdb') {
                 connectorOptions.retentionPolicy = options.dbConnectionRetentionPolicy;
-                _this.dbConnector = new _connectors_influxdb_influxdbConnector__WEBPACK_IMPORTED_MODULE_8__["InfluxDBConnector"](connectorOptions);
+                _this.dbConnector = new _connectors_influxdb_influxdbConnector__WEBPACK_IMPORTED_MODULE_9__["InfluxDBConnector"](connectorOptions);
             }
             else {
-                _this.dbConnector = new _connectors_sql_sqlConnector__WEBPACK_IMPORTED_MODULE_7__["SQLConnector"](connectorOptions);
+                _this.dbConnector = new _connectors_sql_sqlConnector__WEBPACK_IMPORTED_MODULE_8__["SQLConnector"](connectorOptions);
             }
             return _this.dbConnector;
         });
@@ -8291,6 +8825,26 @@ var Zabbix = /** @class */ (function () {
             return { zabbixVersion: zabbixVersion, dbConnectorStatus: dbConnectorStatus };
         });
     };
+    Zabbix.prototype.getVersion = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!!this.version) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, this.zabbixAPI.initVersion()];
+                    case 1:
+                        _a.version = _b.sent();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this.version];
+                }
+            });
+        });
+    };
+    Zabbix.prototype.supportsApplications = function () {
+        return this.version ? semver__WEBPACK_IMPORTED_MODULE_2___default.a.lt(this.version, '5.4.0') : true;
+    };
     Zabbix.prototype.getItemsFromTarget = function (target, options) {
         var parts = ['group', 'host', 'application', 'item'];
         var filters = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(parts, function (p) { return target[p].filter; });
@@ -8337,28 +8891,51 @@ var Zabbix = /** @class */ (function () {
      * Get list of applications belonging to given groups and hosts.
      */
     Zabbix.prototype.getAllApps = function (groupFilter, hostFilter) {
-        var _this = this;
-        return this.getHosts(groupFilter, hostFilter)
-            .then(function (hosts) {
-            var hostids = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(hosts, 'hostid');
-            return _this.zabbixAPI.getApps(hostids);
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getVersion()];
+                    case 1:
+                        _a.sent();
+                        if (!this.supportsApplications()) {
+                            return [2 /*return*/, []];
+                        }
+                        return [2 /*return*/, this.getHosts(groupFilter, hostFilter)
+                                .then(function (hosts) {
+                                var hostids = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(hosts, 'hostid');
+                                return _this.zabbixAPI.getApps(hostids);
+                            })];
+                }
+            });
         });
     };
     Zabbix.prototype.getApps = function (groupFilter, hostFilter, appFilter) {
-        var _this = this;
-        return this.getHosts(groupFilter, hostFilter)
-            .then(function (hosts) {
-            var hostids = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(hosts, 'hostid');
-            if (appFilter) {
-                return _this.zabbixAPI.getApps(hostids)
-                    .then(function (apps) { return filterByQuery(apps, appFilter); });
-            }
-            else {
-                var appsResponse = hostids;
-                appsResponse.hostids = hostids;
-                appsResponse.appFilterEmpty = true;
-                return Promise.resolve(appsResponse);
-            }
+        return __awaiter(this, void 0, void 0, function () {
+            var skipAppFilter;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.getVersion()];
+                    case 1:
+                        _a.sent();
+                        skipAppFilter = !this.supportsApplications();
+                        return [2 /*return*/, this.getHosts(groupFilter, hostFilter)
+                                .then(function (hosts) {
+                                var hostids = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(hosts, 'hostid');
+                                if (appFilter && !skipAppFilter) {
+                                    return _this.zabbixAPI.getApps(hostids)
+                                        .then(function (apps) { return filterByQuery(apps, appFilter); });
+                                }
+                                else {
+                                    var appsResponse = hostids;
+                                    appsResponse.hostids = hostids;
+                                    appsResponse.appFilterEmpty = true;
+                                    return Promise.resolve(appsResponse);
+                                }
+                            })];
+                }
+            });
         });
     };
     Zabbix.prototype.getAllItems = function (groupFilter, hostFilter, appFilter, options) {
@@ -8404,23 +8981,23 @@ var Zabbix = /** @class */ (function () {
             return _this.getMacros(hostids)
                 .then(function (macros) {
                 lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                    if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                    if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                         if (isTriggerItem) {
-                            item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
+                            item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
                         }
                         else {
-                            item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, macros);
+                            item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros);
                         }
                     }
                 });
                 return _this.getGlobalMacros().then(function (globalMacros) {
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                        if (_utils__WEBPACK_IMPORTED_MODULE_2__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                        if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                             if (isTriggerItem) {
-                                item.url = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros, isTriggerItem);
+                                item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros, isTriggerItem);
                             }
                             else {
-                                item.name = _utils__WEBPACK_IMPORTED_MODULE_2__["replaceMacro"](item, globalMacros);
+                                item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros);
                             }
                         }
                     });
@@ -8490,7 +9067,7 @@ var Zabbix = /** @class */ (function () {
         })
             .then(function (_a) {
             var problems = _a[0], triggers = _a[1];
-            return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_9__["joinTriggersWithProblems"])(problems, triggers);
+            return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_10__["joinTriggersWithProblems"])(problems, triggers);
         })
             .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); })
             .then(function (triggers) { return _this.expandUserMacro.bind(_this)(triggers, true); });
@@ -8525,7 +9102,7 @@ var Zabbix = /** @class */ (function () {
         })
             .then(function (_a) {
             var problems = _a[0], triggers = _a[1];
-            return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_9__["joinTriggersWithEvents"])(problems, triggers, { valueFromEvent: valueFromEvent });
+            return Object(_problemsHandler__WEBPACK_IMPORTED_MODULE_10__["joinTriggersWithEvents"])(problems, triggers, { valueFromEvent: valueFromEvent });
         })
             .then(function (triggers) { return _this.filterTriggersByProxy(triggers, proxyFilter); })
             .then(function (triggers) { return _this.expandUserMacro.bind(_this)(triggers, true); });
@@ -8564,7 +9141,7 @@ var Zabbix = /** @class */ (function () {
         }
         else {
             return this.zabbixAPI.getHistory(items, timeFrom, timeTo)
-                .then(function (history) { return _responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].handleHistory(history, items); });
+                .then(function (history) { return _responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].handleHistory(history, items); });
         }
     };
     Zabbix.prototype.getTrends = function (items, timeRange, options) {
@@ -8577,8 +9154,8 @@ var Zabbix = /** @class */ (function () {
         else {
             var valueType_1 = options.consolidateBy || options.valueType;
             return this.zabbixAPI.getTrend(items, timeFrom, timeTo)
-                .then(function (history) { return _responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].handleTrends(history, items, valueType_1); })
-                .then(_responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].sortTimeseries); // Sort trend data, issue #202
+                .then(function (history) { return _responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].handleTrends(history, items, valueType_1); })
+                .then(_responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].sortTimeseries); // Sort trend data, issue #202
         }
     };
     Zabbix.prototype.getHistoryText = function (items, timeRange, target) {
@@ -8587,10 +9164,10 @@ var Zabbix = /** @class */ (function () {
             return this.zabbixAPI.getHistory(items, timeFrom, timeTo)
                 .then(function (history) {
                 if (target.resultFormat === 'table') {
-                    return _responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].handleHistoryAsTable(history, items, target);
+                    return _responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].handleHistoryAsTable(history, items, target);
                 }
                 else {
-                    return _responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].handleText(history, items, target);
+                    return _responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].handleText(history, items, target);
                 }
             });
         }
@@ -8604,7 +9181,7 @@ var Zabbix = /** @class */ (function () {
             .then(function (slaResponse) {
             return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.map(itServiceIds, function (serviceid) {
                 var itservice = lodash__WEBPACK_IMPORTED_MODULE_0___default.a.find(itservices, { 'serviceid': serviceid });
-                return _responseHandler__WEBPACK_IMPORTED_MODULE_3__["default"].handleSLAResponse(itservice, target.slaProperty, slaResponse);
+                return _responseHandler__WEBPACK_IMPORTED_MODULE_4__["default"].handleSLAResponse(itservice, target.slaProperty, slaResponse);
             });
         });
     };
@@ -8645,13 +9222,13 @@ function filterByName(list, name) {
     }
 }
 function filterByRegex(list, regex) {
-    var filterPattern = _utils__WEBPACK_IMPORTED_MODULE_2__["buildRegex"](regex);
+    var filterPattern = _utils__WEBPACK_IMPORTED_MODULE_3__["buildRegex"](regex);
     return lodash__WEBPACK_IMPORTED_MODULE_0___default.a.filter(list, function (zbx_obj) {
         return filterPattern.test(zbx_obj.name);
     });
 }
 function findByFilter(list, filter) {
-    if (_utils__WEBPACK_IMPORTED_MODULE_2__["isRegex"](filter)) {
+    if (_utils__WEBPACK_IMPORTED_MODULE_3__["isRegex"](filter)) {
         return filterByRegex(list, filter);
     }
     else {
@@ -8659,7 +9236,7 @@ function findByFilter(list, filter) {
     }
 }
 function filterByQuery(list, filter) {
-    if (_utils__WEBPACK_IMPORTED_MODULE_2__["isRegex"](filter)) {
+    if (_utils__WEBPACK_IMPORTED_MODULE_3__["isRegex"](filter)) {
         return filterByRegex(list, filter);
     }
     else {
