@@ -4,6 +4,7 @@ import { ZBXTrigger } from '../../types';
 interface AlertAcknowledgesProps {
   problem: ZBXTrigger;
   onClick: (event?) => void;
+  texts: any;
 }
 
 export default class AlertAcknowledges extends PureComponent<AlertAcknowledgesProps> {
@@ -12,7 +13,7 @@ export default class AlertAcknowledges extends PureComponent<AlertAcknowledgesPr
   }
 
   render() {
-    const { problem } = this.props;
+    const { problem, texts } = this.props;
     const ackRows = problem.acknowledges && problem.acknowledges.map(ack => {
       return (
         <tr key={ack.acknowledgeid}>
@@ -27,9 +28,9 @@ export default class AlertAcknowledges extends PureComponent<AlertAcknowledgesPr
         <table className="table">
           <thead>
             <tr>
-              <th className="ack-time">Time</th>
-              <th className="ack-user">User</th>
-              <th className="ack-comments">Comments</th>
+              <th className="ack-time">{texts.time}</th>
+              <th className="ack-user">{texts.user}</th>
+              <th className="ack-comments">{texts.comments}</th>
             </tr>
           </thead>
           <tbody>

@@ -117,12 +117,12 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
 
     // Check for Iiris language
     this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
-    DEFAULT_SEVERITY[0].severity = texts[this.storedLanguage].unknown;
-    DEFAULT_SEVERITY[1].severity = texts[this.storedLanguage].info;
-    DEFAULT_SEVERITY[2].severity = texts[this.storedLanguage].minor;
-    DEFAULT_SEVERITY[3].severity = texts[this.storedLanguage].average;
-    DEFAULT_SEVERITY[4].severity = texts[this.storedLanguage].major;
-    DEFAULT_SEVERITY[5].severity = texts[this.storedLanguage].critical;
+    PANEL_DEFAULTS.triggerSeverity[0].severity = texts[this.storedLanguage].unknown;
+    PANEL_DEFAULTS.triggerSeverity[1].severity = texts[this.storedLanguage].info;
+    PANEL_DEFAULTS.triggerSeverity[2].severity = texts[this.storedLanguage].minor;
+    PANEL_DEFAULTS.triggerSeverity[3].severity = texts[this.storedLanguage].average;
+    PANEL_DEFAULTS.triggerSeverity[4].severity = texts[this.storedLanguage].major;
+    PANEL_DEFAULTS.triggerSeverity[5].severity = texts[this.storedLanguage].critical;
   }
 
   onInitEditMode() {

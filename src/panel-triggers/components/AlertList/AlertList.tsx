@@ -58,7 +58,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   }
 
   render() {
-    const { problems, panelOptions } = this.props;
+    const { problems, panelOptions, texts } = this.props;
     const currentProblems = this.getCurrentProblems(this.state.page);
     let fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
     fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -75,12 +75,13 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
                 panelOptions={panelOptions}
                 onTagClick={this.handleTagClick}
                 onProblemAck={this.handleProblemAck}
+                texts={texts}
               />
             )}
           </ol>
         </section>
         {(currentProblems.length === 0
-          ? <div className="no-data-container">Ei aktiivisia häiriöitä</div>
+          ? <div className="no-data-container">{texts.noActiveAlerts}</div>
           : null)
         }
         <div className="triggers-panel-footer" key="alertListFooter">
