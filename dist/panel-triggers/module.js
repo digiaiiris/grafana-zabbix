@@ -11600,6 +11600,38 @@ function CustomExpander(props) {
 
 /***/ }),
 
+/***/ "./panel-triggers/localization.ts":
+/*!****************************************!*\
+  !*** ./panel-triggers/localization.ts ***!
+  \****************************************/
+/*! exports provided: texts */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "texts", function() { return texts; });
+var texts = {
+    fi: {
+        critical: 'Kriittinen',
+        major: 'Vakava',
+        average: 'Keskitaso',
+        minor: 'Matala',
+        info: 'Informatiivinen',
+        unknown: 'Tuntematon',
+    },
+    en: {
+        critical: 'Critical',
+        major: 'Major',
+        average: 'Average',
+        minor: 'Minor',
+        info: 'Informative',
+        unknown: 'Unknown',
+    },
+};
+
+
+/***/ }),
+
 /***/ "./panel-triggers/migrations.ts":
 /*!**************************************!*\
   !*** ./panel-triggers/migrations.ts ***!
@@ -11930,6 +11962,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _migrations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./migrations */ "./panel-triggers/migrations.ts");
 /* harmony import */ var _components_Problems_Problems__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Problems/Problems */ "./panel-triggers/components/Problems/Problems.tsx");
 /* harmony import */ var _components_AlertList_AlertList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/AlertList/AlertList */ "./panel-triggers/components/AlertList/AlertList.tsx");
+/* harmony import */ var _localization__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./localization */ "./panel-triggers/localization.ts");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11943,6 +11976,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
 
 
 
@@ -12034,6 +12068,14 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
         _this.events.on('data-frames-received', _this.onDataFramesReceived.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].editModeInitialized, _this.onInitEditMode.bind(_this));
+        // Check for Iiris language
+        _this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+        DEFAULT_SEVERITY[0].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].unknown;
+        DEFAULT_SEVERITY[1].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].info;
+        DEFAULT_SEVERITY[2].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].minor;
+        DEFAULT_SEVERITY[3].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].average;
+        DEFAULT_SEVERITY[4].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].major;
+        DEFAULT_SEVERITY[5].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].critical;
         return _this;
     }
     TriggerPanelCtrl.prototype.onInitEditMode = function () {
@@ -12331,7 +12373,8 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
                     else {
                         ctrl.addTagFilter(tag, datasource);
                     }
-                }
+                },
+                texts: _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][ctrl.storedLanguage]
             };
             var problemsReactElem;
             if (panel.layout === 'list') {

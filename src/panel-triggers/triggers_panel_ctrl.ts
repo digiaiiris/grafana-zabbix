@@ -11,6 +11,7 @@ import { migratePanelSchema, CURRENT_SCHEMA_VERSION } from './migrations';
 import ProblemList from './components/Problems/Problems';
 import AlertList from './components/AlertList/AlertList';
 import { ProblemDTO } from 'datasource-zabbix/types';
+import { texts } from './localization';
 
 const PROBLEM_EVENTS_LIMIT = 100;
 
@@ -89,6 +90,7 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
   problems: any[];
   contextSrv: any;
   static templateUrl: string;
+  storedLanguage: string;
 
   /** @ngInject */
   constructor($scope, $injector, $timeout) {
@@ -112,6 +114,15 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     this.events.on('data-frames-received', this.onDataFramesReceived.bind(this));
     this.events.on(PanelEvents.dataSnapshotLoad, this.onDataSnapshotLoad.bind(this));
     this.events.on(PanelEvents.editModeInitialized, this.onInitEditMode.bind(this));
+
+    // Check for Iiris language
+    this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+    DEFAULT_SEVERITY[0].severity = texts[this.storedLanguage].unknown;
+    DEFAULT_SEVERITY[1].severity = texts[this.storedLanguage].info;
+    DEFAULT_SEVERITY[2].severity = texts[this.storedLanguage].minor;
+    DEFAULT_SEVERITY[3].severity = texts[this.storedLanguage].average;
+    DEFAULT_SEVERITY[4].severity = texts[this.storedLanguage].major;
+    DEFAULT_SEVERITY[5].severity = texts[this.storedLanguage].critical;
   }
 
   onInitEditMode() {
@@ -433,7 +444,8 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
           } else {
             ctrl.addTagFilter(tag, datasource);
           }
-        }
+        },
+        texts: texts[ctrl.storedLanguage]
       };
 
       let problemsReactElem;
