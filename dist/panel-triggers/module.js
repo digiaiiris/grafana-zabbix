@@ -9793,13 +9793,6 @@ var AlertCard = /** @class */ (function (_super) {
         var lastchange = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["formatLastChange"])(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
         var storedLanguage = localStorage.getItem('iiris_language') || 'fi';
         var age = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
-        var ageString = '';
-        if (storedLanguage === 'fi') {
-            ageString = age + ' ' + texts.for;
-        }
-        else if (storedLanguage === 'en') {
-            ageString = texts.for + ' ' + age;
-        }
         var newProblem = false;
         if (panelOptions.highlightNewerThan) {
             newProblem = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["isNewProblem"])(problem, panelOptions.highlightNewerThan);
@@ -9833,7 +9826,7 @@ var AlertCard = /** @class */ (function (_super) {
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: descriptionClass },
                         panelOptions.statusField && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertStatus, { problem: problem, blink: blink }),
                         panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, highlightBackground: panelOptions.highlightBackground })),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && ageString),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && texts.lastedFor + ' ' + age),
                         panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))),
                     panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__text zbx-description--newline" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__info zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))))),
@@ -11650,7 +11643,7 @@ var texts = {
         changeSeverity: 'Muuta prioriteettia',
         acknowledge: 'Merkitse käsitellyksi',
         closeProblem: 'Sulje häiriö',
-        for: 'ajan',
+        lastedFor: 'kestänyt',
     },
     en: {
         critical: 'Critical',
@@ -11671,7 +11664,7 @@ var texts = {
         changeSeverity: 'Change severity',
         acknowledge: 'Acknowledge',
         closeProblem: 'Close problem',
-        for: 'for',
+        lastedFor: 'lasted for',
     },
 };
 

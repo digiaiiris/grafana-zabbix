@@ -18,7 +18,7 @@ export const texts = {
     changeSeverity: 'Muuta prioriteettia',
     acknowledge: 'Merkitse käsitellyksi',
     closeProblem: 'Sulje häiriö',
-    for: 'ajan',
+    lastedFor: 'kestänyt',
   },
   en: {
     critical: 'Critical',
@@ -39,6 +39,6 @@ export const texts = {
     changeSeverity: 'Change severity',
     acknowledge: 'Acknowledge',
     closeProblem: 'Close problem',
-    for: 'for',
+    lastedFor: 'lasted for',
   },
 };

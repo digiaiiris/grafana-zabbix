@@ -48,12 +48,6 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     const lastchange = formatLastChange(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
     const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
-    let ageString = '';
-    if (storedLanguage === 'fi') {
-      ageString = age + ' ' + texts.for;
-    } else if (storedLanguage === 'en') {
-      ageString = texts.for + ' ' + age;
-    }
 
     let newProblem = false;
     if (panelOptions.highlightNewerThan) {
@@ -108,7 +102,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 <AlertSeverity severityDesc={severityDesc} blink={blink} highlightBackground={panelOptions.highlightBackground} />
               )}
               <span className="alert-rule-item__time">
-                {panelOptions.ageField && ageString}
+                {panelOptions.ageField && texts.lastedFor + ' ' + age}
               </span>
               {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                 <span className="zbx-description" dangerouslySetInnerHTML={{ __html: problem.comments }} />
