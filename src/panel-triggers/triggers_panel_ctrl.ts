@@ -420,6 +420,7 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
       for (const prop in PANEL_DEFAULTS) {
         panelOptions[prop] = ctrl.panel[prop];
       }
+      panelOptions['triggerSeverity'] = PANEL_DEFAULTS.triggerSeverity;
       const problemsListProps = {
         problems,
         panelOptions,
