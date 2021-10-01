@@ -9497,6 +9497,17 @@ var severityOptions = [
     { value: 4, label: 'High' },
     { value: 5, label: 'Disaster' }
 ];
+function getSeverityOptions(texts) {
+    return [
+        { value: 0, label: texts.unknown },
+        { value: 1, label: texts.info },
+        { value: 2, label: texts.minor },
+        { value: 3, label: texts.average },
+        { value: 4, label: texts.major },
+        { value: 5, label: texts.critical }
+    ];
+}
+;
 var AckModalUnthemed = /** @class */ (function (_super) {
     __extends(AckModalUnthemed, _super);
     function AckModalUnthemed(props) {
@@ -9581,20 +9592,20 @@ var AckModalUnthemed = /** @class */ (function (_super) {
         return _this;
     }
     AckModalUnthemed.prototype.renderActions = function () {
-        var canClose = this.props.canClose;
+        var _a = this.props, canClose = _a.canClose, texts = _a.texts;
         var actions = [
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "ack", label: "Acknowledge", value: this.state.acknowledge, onChange: this.onAcknowledgeToggle }),
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "change-severity", label: "Change severity", description: "", value: this.state.changeSeverity, onChange: this.onChangeSeverityToggle }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "ack", label: texts.acknowledge, value: this.state.acknowledge, onChange: this.onAcknowledgeToggle }),
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "change-severity", label: texts.changeSeverity, description: "", value: this.state.changeSeverity, onChange: this.onChangeSeverityToggle }),
             this.state.changeSeverity &&
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["RadioButtonGroup"], { key: "severity", size: "sm", options: severityOptions, value: this.state.selectedSeverity, onChange: this.onChangeSelectedSeverity }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["RadioButtonGroup"], { key: "severity", size: "sm", options: getSeverityOptions(texts), value: this.state.selectedSeverity, onChange: this.onChangeSelectedSeverity }),
             canClose &&
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "close", label: "Close problem", disabled: !canClose, value: this.state.closeProblem, onChange: this.onCloseProblemToggle }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "close", label: texts.closeProblem, disabled: !canClose, value: this.state.closeProblem, onChange: this.onCloseProblemToggle }),
         ];
         // <VerticalGroup /> doesn't handle empty elements properly, so don't return it
         return actions.filter(function (e) { return e; });
     };
     AckModalUnthemed.prototype.render = function () {
-        var theme = this.props.theme;
+        var _a = this.props, theme = _a.theme, texts = _a.texts;
         var styles = getStyles(theme);
         var modalClass = Object(emotion__WEBPACK_IMPORTED_MODULE_1__["cx"])(styles.modal);
         var modalTitleClass = Object(emotion__WEBPACK_IMPORTED_MODULE_1__["cx"])(styles.modalHeaderTitle);
@@ -9604,11 +9615,11 @@ var AckModalUnthemed = /** @class */ (function (_super) {
         var inputErrorClass = Object(emotion__WEBPACK_IMPORTED_MODULE_1__["cx"])('gf-form-hint-text', styles.inputError);
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Modal"], { isOpen: true, onDismiss: this.dismiss, className: modalClass, title: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: modalTitleClass },
                 this.state.loading ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Spinner"], { size: 18 }) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_4__["FAIcon"], { icon: "reply-all" }),
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "p-l-1" }, "Acknowledge Problem")) },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "p-l-1" }, texts.acknowledgeProblem)) },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: inputGroupClass },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { className: "gf-form-hint" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["TextArea"], { className: inputClass, type: "text", name: "message", placeholder: "Message", autoComplete: "off", autoFocus: true, value: this.state.value, onChange: this.handleChange, onKeyDown: this.handleKeyPress }),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", { className: inputHintClass }, "Press Enter to submit"),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["TextArea"], { className: inputClass, type: "text", name: "message", placeholder: texts.message, autoComplete: "off", autoFocus: true, value: this.state.value, onChange: this.handleChange, onKeyDown: this.handleKeyPress }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", { className: inputHintClass }, texts.pressEnterToSubmit),
                     this.state.error &&
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", { className: inputErrorClass }, this.state.errorMessage))),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "gf-form" },
@@ -9617,8 +9628,8 @@ var AckModalUnthemed = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "gf-form ack-request-error" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: styles.ackError }, this.state.ackError)),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "gf-form-button-row text-center" },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Button"], { variant: "primary", onClick: this.submit }, "Update"),
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Button"], { variant: "secondary", onClick: this.dismiss }, "Cancel"))));
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Button"], { variant: "primary", onClick: this.submit }, texts.update),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Button"], { variant: "secondary", onClick: this.dismiss }, texts.cancel))));
     };
     AckModalUnthemed.defaultProps = {
         withBackdrop: true,
@@ -9679,7 +9690,7 @@ var AlertAcknowledges = /** @class */ (function (_super) {
         return _this;
     }
     AlertAcknowledges.prototype.render = function () {
-        var problem = this.props.problem;
+        var _a = this.props, problem = _a.problem, texts = _a.texts;
         var ackRows = problem.acknowledges && problem.acknowledges.map(function (ack) {
             return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", { key: ack.acknowledgeid },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, ack.time),
@@ -9690,9 +9701,9 @@ var AlertAcknowledges = /** @class */ (function (_super) {
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "table" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null,
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-time" }, "Time"),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-user" }, "User"),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-comments" }, "Comments"))),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-time" }, texts.time),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-user" }, texts.user),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", { className: "ack-comments" }, texts.comments))),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, ackRows)),
             problem.showAckButton &&
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "ack-add-button" },
@@ -9769,7 +9780,7 @@ var AlertCard = /** @class */ (function (_super) {
     }
     AlertCard.prototype.render = function () {
         var _this = this;
-        var _a = this.props, problem = _a.problem, panelOptions = _a.panelOptions;
+        var _a = this.props, problem = _a.problem, panelOptions = _a.panelOptions, texts = _a.texts;
         var showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
         var cardClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground });
         var descriptionClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item__text', { 'zbx-description--newline': panelOptions.descriptionAtNewLine });
@@ -9780,7 +9791,8 @@ var AlertCard = /** @class */ (function (_super) {
             severityDesc = lodash__WEBPACK_IMPORTED_MODULE_2___default.a.find(panelOptions.triggerSeverity, function (s) { return s.priority === problemSeverity; });
         }
         var lastchange = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["formatLastChange"])(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
-        var age = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).fromNow(true);
+        var storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+        var age = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
         var newProblem = false;
         if (panelOptions.highlightNewerThan) {
             newProblem = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["isNewProblem"])(problem, panelOptions.highlightNewerThan);
@@ -9814,7 +9826,7 @@ var AlertCard = /** @class */ (function (_super) {
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: descriptionClass },
                         panelOptions.statusField && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertStatus, { problem: problem, blink: blink }),
                         panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, highlightBackground: panelOptions.highlightBackground })),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && "for " + age),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && texts.lastedFor + ' ' + age),
                         panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))),
                     panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__text zbx-description--newline" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__info zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))))),
@@ -9838,8 +9850,9 @@ var AlertCard = /** @class */ (function (_super) {
                                     severity: problemSeverity,
                                     onSubmit: _this.ackProblem,
                                     onDismiss: hideModal,
+                                    texts: texts
                                 });
-                            } }));
+                            }, texts: texts }));
                     }))))));
     };
     return AlertCard;
@@ -9898,12 +9911,12 @@ var AlertAcknowledgesButton = /** @class */ (function (_super) {
             _this.props.onClick(event);
         };
         _this.renderTooltipContent = function () {
-            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertAcknowledges__WEBPACK_IMPORTED_MODULE_7__["default"], { problem: _this.props.problem, onClick: _this.handleClick });
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertAcknowledges__WEBPACK_IMPORTED_MODULE_7__["default"], { problem: _this.props.problem, onClick: _this.handleClick, texts: _this.props.texts });
         };
         return _this;
     }
     AlertAcknowledgesButton.prototype.render = function () {
-        var problem = this.props.problem;
+        var _a = this.props, problem = _a.problem, texts = _a.texts;
         var content = null;
         if (problem.acknowledges && problem.acknowledges.length) {
             content = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", popperClassName: "ack-tooltip", content: this.renderTooltipContent },
@@ -9911,7 +9924,7 @@ var AlertAcknowledgesButton = /** @class */ (function (_super) {
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-comments" }))));
         }
         else if (problem.showAckButton) {
-            content = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: "Acknowledge problem" },
+            content = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: texts.acknowledgeProblem },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { role: "button", onClick: this.handleClick },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-comments-o" }))));
         }
@@ -10024,7 +10037,7 @@ var AlertList = /** @class */ (function (_super) {
     AlertList.prototype.render = function () {
         var _a;
         var _this = this;
-        var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions;
+        var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
         var currentProblems = this.getCurrentProblems(this.state.page);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -10032,10 +10045,10 @@ var AlertList = /** @class */ (function (_super) {
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
-                    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck });
+                    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
                 }))),
             (currentProblems.length === 0
-                ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "no-data-container" }, "Ei aktiivisia h\u00E4iri\u00F6it\u00E4")
+                ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "no-data-container" }, texts.noActiveAlerts)
                 : null),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-footer", key: "alertListFooter" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PaginationControl, { itemsLength: problems.length, pageSize: this.props.pageSize, pageIndex: this.state.page, onPageChange: this.handlePageChange }))));
@@ -11600,6 +11613,64 @@ function CustomExpander(props) {
 
 /***/ }),
 
+/***/ "./panel-triggers/localization.ts":
+/*!****************************************!*\
+  !*** ./panel-triggers/localization.ts ***!
+  \****************************************/
+/*! exports provided: texts */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "texts", function() { return texts; });
+var texts = {
+    fi: {
+        critical: 'Kriittinen',
+        major: 'Vakava',
+        average: 'Keskitaso',
+        minor: 'Matala',
+        info: 'Informatiivinen',
+        unknown: 'Tuntematon',
+        noActiveAlerts: 'Ei aktiivisia häiriöitä',
+        acknowledgeProblem: 'Kommentoi',
+        time: 'Aika',
+        user: 'Käyttäjä',
+        comments: 'Kommentit',
+        message: 'Viesti',
+        pressEnterToSubmit: 'Paina Enter lähettääksesi',
+        update: 'Päivitä',
+        cancel: 'Peruuta',
+        changeSeverity: 'Muuta prioriteettia',
+        acknowledge: 'Merkitse käsitellyksi',
+        closeProblem: 'Sulje häiriö',
+        lastedFor: 'kestänyt',
+    },
+    en: {
+        critical: 'Critical',
+        major: 'Major',
+        average: 'Average',
+        minor: 'Minor',
+        info: 'Informative',
+        unknown: 'Unknown',
+        noActiveAlerts: 'No active alerts',
+        acknowledgeProblem: 'Acknowledge Problem',
+        time: 'Time',
+        user: 'User',
+        comments: 'Comments',
+        message: 'Message',
+        pressEnterToSubmit: 'Press Enter to submit',
+        update: 'Update',
+        cancel: 'Cancel',
+        changeSeverity: 'Change severity',
+        acknowledge: 'Acknowledge',
+        closeProblem: 'Close problem',
+        lastedFor: 'lasted for',
+    },
+};
+
+
+/***/ }),
+
 /***/ "./panel-triggers/migrations.ts":
 /*!**************************************!*\
   !*** ./panel-triggers/migrations.ts ***!
@@ -11930,6 +12001,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _migrations__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./migrations */ "./panel-triggers/migrations.ts");
 /* harmony import */ var _components_Problems_Problems__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/Problems/Problems */ "./panel-triggers/components/Problems/Problems.tsx");
 /* harmony import */ var _components_AlertList_AlertList__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/AlertList/AlertList */ "./panel-triggers/components/AlertList/AlertList.tsx");
+/* harmony import */ var _localization__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./localization */ "./panel-triggers/localization.ts");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -11943,6 +12015,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
 
 
 
@@ -12034,6 +12107,14 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
         _this.events.on('data-frames-received', _this.onDataFramesReceived.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].editModeInitialized, _this.onInitEditMode.bind(_this));
+        // Check for Iiris language
+        _this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+        PANEL_DEFAULTS.triggerSeverity[0].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].unknown;
+        PANEL_DEFAULTS.triggerSeverity[1].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].info;
+        PANEL_DEFAULTS.triggerSeverity[2].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].minor;
+        PANEL_DEFAULTS.triggerSeverity[3].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].average;
+        PANEL_DEFAULTS.triggerSeverity[4].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].major;
+        PANEL_DEFAULTS.triggerSeverity[5].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].critical;
         return _this;
     }
     TriggerPanelCtrl.prototype.onInitEditMode = function () {
@@ -12306,6 +12387,7 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
             for (var prop in PANEL_DEFAULTS) {
                 panelOptions[prop] = ctrl.panel[prop];
             }
+            panelOptions['triggerSeverity'] = PANEL_DEFAULTS.triggerSeverity;
             var problemsListProps = {
                 problems: problems,
                 panelOptions: panelOptions,
@@ -12331,7 +12413,8 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
                     else {
                         ctrl.addTagFilter(tag, datasource);
                     }
-                }
+                },
+                texts: _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][ctrl.storedLanguage]
             };
             var problemsReactElem;
             if (panel.layout === 'list') {

@@ -15,6 +15,7 @@ interface Props extends Themeable {
   withBackdrop?: boolean;
   onSubmit: (data?: AckProblemData) => Promise<any> | any;
   onDismiss?: () => void;
+  texts: any;
 }
 
 interface State {
@@ -44,6 +45,17 @@ const severityOptions = [
   {value: 4, label: 'High'},
   {value: 5, label: 'Disaster'}
 ];
+
+function getSeverityOptions(texts: any) {
+  return [
+    {value: 0, label: texts.unknown},
+    {value: 1, label: texts.info},
+    {value: 2, label: texts.minor},
+    {value: 3, label: texts.average},
+    {value: 4, label: texts.major},
+    {value: 5, label: texts.critical}
+  ]
+};
 
 export class AckModalUnthemed extends PureComponent<Props, State> {
   static defaultProps: Partial<Props> = {
@@ -144,13 +156,13 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   }
 
   renderActions() {
-    const { canClose } = this.props;
+    const { canClose, texts } = this.props;
 
     const actions = [
-      <Checkbox key="ack" label="Acknowledge" value={this.state.acknowledge} onChange={this.onAcknowledgeToggle} />,
+      <Checkbox key="ack" label={texts.acknowledge} value={this.state.acknowledge} onChange={this.onAcknowledgeToggle} />,
       <Checkbox
         key="change-severity"
-        label="Change severity"
+        label={texts.changeSeverity}
         description=""
         value={this.state.changeSeverity}
         onChange={this.onChangeSeverityToggle}
@@ -159,12 +171,12 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         <RadioButtonGroup
           key="severity"
           size="sm"
-          options={severityOptions}
+          options={getSeverityOptions(texts)}
           value={this.state.selectedSeverity}
           onChange={this.onChangeSelectedSeverity}
         />,
       canClose &&
-        <Checkbox key="close" label="Close problem" disabled={!canClose} value={this.state.closeProblem} onChange={this.onCloseProblemToggle} />,
+        <Checkbox key="close" label={texts.closeProblem} disabled={!canClose} value={this.state.closeProblem} onChange={this.onCloseProblemToggle} />,
     ];
 
     // <VerticalGroup /> doesn't handle empty elements properly, so don't return it
@@ -172,7 +184,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   }
 
   render() {
-    const { theme } = this.props;
+    const { theme, texts } = this.props;
 
     const styles = getStyles(theme);
     const modalClass = cx(styles.modal);
@@ -190,7 +202,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         title={
           <div className={modalTitleClass}>
             {this.state.loading ? <Spinner size={18} /> : <FAIcon icon="reply-all" />}
-            <span className="p-l-1">Acknowledge Problem</span>
+            <span className="p-l-1">{texts.acknowledgeProblem}</span>
           </div>
         }
       >
@@ -199,14 +211,14 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
             <TextArea className={inputClass}
               type="text"
               name="message"
-              placeholder="Message"
+              placeholder={texts.message}
               autoComplete="off"
               autoFocus={true}
               value={this.state.value}
               onChange={this.handleChange}
               onKeyDown={this.handleKeyPress}>
             </TextArea>
-            <small className={inputHintClass}>Press Enter to submit</small>
+            <small className={inputHintClass}>{texts.pressEnterToSubmit}</small>
             {this.state.error &&
               <small className={inputErrorClass}>{this.state.errorMessage}</small>
             }
@@ -226,8 +238,8 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         }
 
         <div className="gf-form-button-row text-center">
-          <Button variant="primary" onClick={this.submit}>Update</Button>
-          <Button variant="secondary" onClick={this.dismiss}>Cancel</Button>
+          <Button variant="primary" onClick={this.submit}>{texts.update}</Button>
+          <Button variant="secondary" onClick={this.dismiss}>{texts.cancel}</Button>
         </div>
       </Modal>
     );

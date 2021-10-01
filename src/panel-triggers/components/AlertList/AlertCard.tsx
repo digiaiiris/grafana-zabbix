@@ -16,6 +16,7 @@ interface AlertCardProps {
   panelOptions: ProblemsPanelOptions;
   onTagClick?: (tag: ZBXTag, datasource: string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => Promise<any> | any;
+  texts: any;
 }
 
 export default class AlertCard extends PureComponent<AlertCardProps> {
@@ -32,7 +33,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
   }
 
   render() {
-    const { problem, panelOptions } = this.props;
+    const { problem, panelOptions, texts } = this.props;
     const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
     const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground });
     const descriptionClass = classNames('alert-rule-item__text', { 'zbx-description--newline': panelOptions.descriptionAtNewLine });
@@ -45,7 +46,8 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     }
 
     const lastchange = formatLastChange(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
-    const age = moment.unix(problem.timestamp).fromNow(true);
+    const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+    const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
 
     let newProblem = false;
     if (panelOptions.highlightNewerThan) {
@@ -100,7 +102,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 <AlertSeverity severityDesc={severityDesc} blink={blink} highlightBackground={panelOptions.highlightBackground} />
               )}
               <span className="alert-rule-item__time">
-                {panelOptions.ageField && "for " + age}
+                {panelOptions.ageField && texts.lastedFor + ' ' + age}
               </span>
               {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                 <span className="zbx-description" dangerouslySetInnerHTML={{ __html: problem.comments }} />
@@ -148,8 +150,10 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                       severity: problemSeverity,
                       onSubmit: this.ackProblem,
                       onDismiss: hideModal,
+                      texts: texts
                     });
                   }}
+                  texts={texts}
                 />
               )}
             </ModalController>
@@ -243,6 +247,7 @@ function AlertSeverity(props) {
 interface AlertAcknowledgesButtonProps {
   problem: ProblemDTO;
   onClick: (event?) => void;
+  texts: any;
 }
 
 class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps> {
@@ -251,11 +256,11 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
   }
 
   renderTooltipContent = () => {
-    return <AlertAcknowledges problem={this.props.problem} onClick={this.handleClick} />;
+    return <AlertAcknowledges problem={this.props.problem} onClick={this.handleClick} texts={this.props.texts} />;
   }
 
   render() {
-    const { problem } = this.props;
+    const { problem, texts } = this.props;
     let content = null;
     if (problem.acknowledges && problem.acknowledges.length) {
       content = (
@@ -265,7 +270,7 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
       );
     } else if (problem.showAckButton) {
       content = (
-        <Tooltip placement="bottom" content="Acknowledge problem">
+        <Tooltip placement="bottom" content={texts.acknowledgeProblem}>
           <span role="button" onClick={this.handleClick}><i className="fa fa-comments-o"></i></span>
         </Tooltip>
       );
