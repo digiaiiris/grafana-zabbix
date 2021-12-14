@@ -9780,8 +9780,6 @@ var AlertCard = /** @class */ (function (_super) {
         };
         _this.onAlertItemClick = function (showModal, hideModal, priority, startTime, age) {
             var _a = _this.props, texts = _a.texts, problem = _a.problem;
-            console.log('Alert Item Clicked');
-            console.log(problem);
             showModal(_AlertModal__WEBPACK_IMPORTED_MODULE_10__["AlertModal"], { onSubmit: hideModal, onDismiss: hideModal, problem: problem, texts: texts, priority: priority, startTime: startTime, age: age });
         };
         _this.onLinkIconClick = function (event, url) {
@@ -10177,33 +10175,33 @@ var AlertModal = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-event-table full-width-container" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "table" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.priority),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.priority),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, priority)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.startTime),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.startTime),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, startTime)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.duration),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.duration),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, age)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.title),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.title),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.name)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.description),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.description),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, this.getDescriptionArray(problem).map(function (pairArray) {
                                 return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
                                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, pairArray[0]),
                                     pairArray[1] && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: pairArray[1], target: "_blank" }, pairArray[1])));
                             }))),
                         problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.dashboard),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.dashboard),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: problem.url, target: "_top" }, problem.url))),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.eventId),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.eventId),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.eventid)),
-                        problem.acknowledged && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.acknowledgements),
+                        problem.acknowledged === '1' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.acknowledgements),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "iiris-inner-table" }, problem.acknowledges.map(function (acknowledge) {
                                     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
