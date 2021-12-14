@@ -9778,11 +9778,11 @@ var AlertCard = /** @class */ (function (_super) {
             var problem = _this.props.problem;
             return _this.props.onProblemAck(problem, data);
         };
-        _this.onAlertItemClick = function (showModal, hideModal) {
-            var problem = _this.props.problem;
+        _this.onAlertItemClick = function (showModal, hideModal, priority, startTime, age) {
+            var _a = _this.props, texts = _a.texts, problem = _a.problem;
             console.log('Alert Item Clicked');
             console.log(problem);
-            showModal(_AlertModal__WEBPACK_IMPORTED_MODULE_10__["AlertModal"], { onSubmit: hideModal, onDismiss: hideModal, problem: problem, isEnglish: false });
+            showModal(_AlertModal__WEBPACK_IMPORTED_MODULE_10__["AlertModal"], { onSubmit: hideModal, onDismiss: hideModal, problem: problem, texts: texts, priority: priority, startTime: startTime, age: age });
         };
         _this.onLinkIconClick = function (event, url) {
             event.stopPropagation();
@@ -9805,6 +9805,7 @@ var AlertCard = /** @class */ (function (_super) {
         var lastchange = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["formatLastChange"])(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
         var storedLanguage = localStorage.getItem('iiris_language') || 'fi';
         var age = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
+        var startTime = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).format('DD.MM.YYYY HH:mm');
         var newProblem = false;
         if (panelOptions.highlightNewerThan) {
             newProblem = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["isNewProblem"])(problem, panelOptions.highlightNewerThan);
@@ -9826,7 +9827,7 @@ var AlertCard = /** @class */ (function (_super) {
         }
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["ModalController"], null, function (_a) {
             var showModal = _a.showModal, hideModal = _a.hideModal;
-            return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle, onClick: function () { return _this.onAlertItemClick(showModal, hideModal); } },
+            return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle, onClick: function () { return _this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age); } },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertIcon__WEBPACK_IMPORTED_MODULE_8__["default"], { problem: problem, color: problemColor, highlightBackground: panelOptions.highlightBackground, blink: blink }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__body" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__header" },
@@ -10116,6 +10117,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _grafana_ui__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @grafana/ui */ "@grafana/ui");
 /* harmony import */ var _grafana_ui__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_grafana_ui__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment */ "moment");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_2__);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -10131,6 +10134,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
 })();
 
 
+
 var AlertModal = /** @class */ (function (_super) {
     __extends(AlertModal, _super);
     function AlertModal(props) {
@@ -10140,21 +10144,72 @@ var AlertModal = /** @class */ (function (_super) {
         };
         return _this;
     }
-    AlertModal.prototype.renderTitle = function (isEnglish) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-title-text" }, isEnglish ? 'Maintenance Information' : 'Huollon tiedot');
+    AlertModal.prototype.renderTitle = function (texts) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-title-text" }, texts.information);
+    };
+    AlertModal.prototype.getDescriptionArray = function (eventObj) {
+        var descriptionArray = [];
+        if (eventObj.comments) {
+            var description = eventObj.comments;
+            var urlId = new RegExp('https?://');
+            var startIndex = description.search(urlId);
+            var endIndex = -1;
+            while (startIndex > -1) {
+                endIndex = description.slice(startIndex).search('\\s');
+                endIndex = endIndex >= 0 ? startIndex + endIndex : description.length;
+                var pairArray = [];
+                pairArray.push(description.substring(0, startIndex));
+                pairArray.push(description.substring(startIndex, endIndex));
+                descriptionArray.push(pairArray);
+                description = description.substring(endIndex);
+                startIndex = description.search(urlId);
+            }
+            if (description) {
+                descriptionArray.push([description, '']);
+            }
+        }
+        return descriptionArray;
     };
     AlertModal.prototype.render = function () {
-        var _a = this.props, problem = _a.problem, isEnglish = _a.isEnglish;
-        return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_1__["Modal"], { isOpen: true, title: this.renderTitle(isEnglish), onDismiss: this.onDismiss, className: "iiris-modal-box" },
+        var _a = this.props, problem = _a.problem, texts = _a.texts, priority = _a.priority, startTime = _a.startTime, age = _a.age;
+        return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_1__["Modal"], { isOpen: true, title: this.renderTitle(texts), onDismiss: this.onDismiss, className: "iiris-modal-box" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-content" },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-event-table" },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-event-table full-width-container" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "table" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, isEnglish ? 'Description:' : 'Kuvaus:'),
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.description)),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.priority),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, priority)),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, isEnglish ? 'Comments:' : 'Kommentit:'),
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.comments)))))));
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.startTime),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, startTime)),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.duration),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, age)),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.title),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.name)),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.description),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, this.getDescriptionArray(problem).map(function (pairArray) {
+                                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
+                                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, pairArray[0]),
+                                    pairArray[1] && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: pairArray[1], target: "_blank" }, pairArray[1])));
+                            }))),
+                        problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.dashboard),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null,
+                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: problem.url, target: "_top" }, problem.url))),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.eventId),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.eventid)),
+                        problem.acknowledged && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, texts.acknowledgements),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null,
+                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "iiris-inner-table" }, problem.acknowledges.map(function (acknowledge) {
+                                    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, moment__WEBPACK_IMPORTED_MODULE_2___default.a.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm')),
+                                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, acknowledge.message)));
+                                })))))))));
     };
     return AlertModal;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));
@@ -11718,6 +11773,16 @@ var texts = {
         acknowledge: 'Merkitse käsitellyksi',
         closeProblem: 'Sulje häiriö',
         lastedFor: 'kestänyt',
+        information: 'Tietoja',
+        title: 'Otsikko',
+        description: 'Kuvaus',
+        priority: 'Prioriteetti',
+        eventId: 'Häiriön ID',
+        startTime: 'Aloitusaika',
+        endTime: 'Päätösaika',
+        duration: 'Kesto',
+        acknowledgements: 'Kommentit',
+        dashboard: 'Tilannekuvanäkymä',
     },
     en: {
         critical: 'Critical',
@@ -11739,6 +11804,16 @@ var texts = {
         acknowledge: 'Acknowledge',
         closeProblem: 'Close problem',
         lastedFor: 'lasted for',
+        information: 'Information',
+        title: 'Title',
+        description: 'Description',
+        priority: 'Priority',
+        eventId: 'Event ID',
+        startTime: 'Start time',
+        endTime: 'End time',
+        duration: 'Duration',
+        acknowledgements: 'Acknowledgements',
+        dashboard: 'Dashboard',
     },
 };
 

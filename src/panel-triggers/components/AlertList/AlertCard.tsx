@@ -33,11 +33,11 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     return this.props.onProblemAck(problem, data);
   }
 
-  onAlertItemClick = (showModal: any, hideModal: any) => {
-    const problem = this.props.problem;
+  onAlertItemClick = (showModal: any, hideModal: any, priority: string, startTime: string, age: string) => {
+    const { texts, problem } = this.props;
     console.log('Alert Item Clicked');
     console.log(problem);
-    showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, isEnglish: false })
+    showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, texts, priority, startTime, age })
   }
 
   onLinkIconClick = (event: any, url: string) => {
@@ -61,6 +61,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     const lastchange = formatLastChange(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
     const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
+    const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm');
 
     let newProblem = false;
     if (panelOptions.highlightNewerThan) {
@@ -85,7 +86,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     return (
       <ModalController>
         {({ showModal, hideModal }) => (
-          <li className={cardClass} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal)}>
+          <li className={cardClass} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
             <AlertIcon problem={problem} color={problemColor} highlightBackground={panelOptions.highlightBackground} blink={blink} />
             <div className="alert-rule-item__body">
               <div className="alert-rule-item__header">

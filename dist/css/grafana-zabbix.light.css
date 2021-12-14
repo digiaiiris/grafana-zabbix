@@ -379,6 +379,9 @@
 .body--phantomjs .triggers-panel-container .alert-rule-item__icon {
   display: block; }
 
+.full-width-container {
+  width: 100%; }
+
 .panel-problems {
   height: 100%; }
   .panel-problems .fa-icon-container {
