@@ -9820,52 +9820,48 @@ var AlertCard = /** @class */ (function (_super) {
         if (panelOptions.highlightBackground) {
             cardStyle.backgroundColor = problemColor;
         }
-        return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle },
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["ModalController"], null, function (_a) {
-                var showModal = _a.showModal, hideModal = _a.hideModal;
-                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { onClick: function () { return _this.onAlertItemClick(showModal, hideModal); } },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertIcon__WEBPACK_IMPORTED_MODULE_8__["default"], { problem: problem, color: problemColor, highlightBackground: panelOptions.highlightBackground, blink: blink }),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__body" },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__header" },
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__name" },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zabbix-trigger-name" }, problem.description),
-                                (panelOptions.hostField || panelOptions.hostTechNameField) && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertHost, { problem: problem, panelOptions: panelOptions })),
-                                panelOptions.hostGroups && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertGroup, { problem: problem, panelOptions: panelOptions }),
-                                panelOptions.showTags && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-trigger-tags" }, problem.tags && problem.tags.map(function (tag) {
-                                    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_EventTag__WEBPACK_IMPORTED_MODULE_6__["default"], { key: tag.tag + tag.value, tag: tag, highlight: tag.tag === problem.correlation_tag, onClick: _this.handleTagClick });
-                                })))),
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: descriptionClass },
-                                panelOptions.statusField && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertStatus, { problem: problem, blink: blink }),
-                                panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, highlightBackground: panelOptions.highlightBackground })),
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && texts.lastedFor + ' ' + age),
-                                panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))),
-                            panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__text zbx-description--newline" },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__info zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))))),
-                    showDatasourceName && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zabbix-trigger-source" },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-database" }),
-                            problem.datasource))),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, lastchange || "last change unknown"),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
-                            problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: problem.url, target: "_blank" },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })),
-                            problem.state === '1' && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: problem.error },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
-                                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-question-circle" })))),
-                            problem.eventid && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["ModalController"], null, function (_a) {
-                                var showModal = _a.showModal, hideModal = _a.hideModal;
-                                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertAcknowledgesButton, { problem: problem, onClick: function () {
-                                        showModal(_AckModal__WEBPACK_IMPORTED_MODULE_5__["AckModal"], {
-                                            canClose: problem.manual_close === '1',
-                                            severity: problemSeverity,
-                                            onSubmit: _this.ackProblem,
-                                            onDismiss: hideModal,
-                                            texts: texts
-                                        });
-                                    }, texts: texts }));
-                            }))))));
-            })));
+        return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["ModalController"], null, function (_a) {
+            var showModal = _a.showModal, hideModal = _a.hideModal;
+            return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle, onClick: function () { return _this.onAlertItemClick(showModal, hideModal); } },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertIcon__WEBPACK_IMPORTED_MODULE_8__["default"], { problem: problem, color: problemColor, highlightBackground: panelOptions.highlightBackground, blink: blink }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__body" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__header" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__name" },
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zabbix-trigger-name" }, problem.description),
+                            (panelOptions.hostField || panelOptions.hostTechNameField) && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertHost, { problem: problem, panelOptions: panelOptions })),
+                            panelOptions.hostGroups && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertGroup, { problem: problem, panelOptions: panelOptions }),
+                            panelOptions.showTags && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-trigger-tags" }, problem.tags && problem.tags.map(function (tag) {
+                                return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_EventTag__WEBPACK_IMPORTED_MODULE_6__["default"], { key: tag.tag + tag.value, tag: tag, highlight: tag.tag === problem.correlation_tag, onClick: _this.handleTagClick });
+                            })))),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: descriptionClass },
+                            panelOptions.statusField && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertStatus, { problem: problem, blink: blink }),
+                            panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, highlightBackground: panelOptions.highlightBackground })),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && texts.lastedFor + ' ' + age),
+                            panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))),
+                        panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__text zbx-description--newline" },
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__info zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))))),
+                showDatasourceName && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zabbix-trigger-source" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-database" }),
+                        problem.datasource))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, lastchange || "last change unknown"),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
+                        problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: problem.url, target: "_blank" },
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })),
+                        problem.state === '1' && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: problem.error },
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
+                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-question-circle" })))),
+                        problem.eventid && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertAcknowledgesButton, { problem: problem, onClick: function () {
+                                showModal(_AckModal__WEBPACK_IMPORTED_MODULE_5__["AckModal"], {
+                                    canClose: problem.manual_close === '1',
+                                    severity: problemSeverity,
+                                    onSubmit: _this.ackProblem,
+                                    onDismiss: hideModal,
+                                    texts: texts
+                                });
+                            }, texts: texts }))))));
+        }));
     };
     return AlertCard;
 }(react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"]));
@@ -10145,7 +10141,14 @@ var AlertModal = /** @class */ (function (_super) {
     AlertModal.prototype.render = function () {
         var _a = this.props, problem = _a.problem, isEnglish = _a.isEnglish;
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_1__["Modal"], { isOpen: true, title: this.renderTitle(isEnglish), onDismiss: this.onDismiss, className: "iiris-modal-box" },
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-content" }, problem + '')));
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-content" },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-block" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-row" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-label" }, isEnglish ? 'Description:' : 'Kuvaus:'),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-normal" }, problem.description)),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-row" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-label" }, isEnglish ? 'Comments:' : 'Kommentit:'),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-normal" }, problem.comments))))));
     };
     return AlertModal;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));

@@ -78,10 +78,9 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     }
 
     return (
-      <li className={cardClass} style={cardStyle}>
-        <ModalController>
+      <ModalController>
         {({ showModal, hideModal }) => (
-          <div onClick={() => this.onAlertItemClick(showModal, hideModal)}>
+          <li className={cardClass} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal)}>
             <AlertIcon problem={problem} color={problemColor} highlightBackground={panelOptions.highlightBackground} blink={blink} />
             <div className="alert-rule-item__body">
               <div className="alert-rule-item__header">
@@ -150,29 +149,24 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                   </Tooltip>
                 )}
                 {problem.eventid && (
-                  <ModalController>
-                  {({ showModal, hideModal }) => (
-                    <AlertAcknowledgesButton
-                      problem={problem}
-                      onClick={() => {
-                        showModal(AckModal, {
-                          canClose: problem.manual_close === '1',
-                          severity: problemSeverity,
-                          onSubmit: this.ackProblem,
-                          onDismiss: hideModal,
-                          texts: texts
-                        });
-                      }}
-                      texts={texts}
-                    />
-                  )}
-                </ModalController>
+                  <AlertAcknowledgesButton
+                    problem={problem}
+                    onClick={() => {
+                      showModal(AckModal, {
+                        canClose: problem.manual_close === '1',
+                        severity: problemSeverity,
+                        onSubmit: this.ackProblem,
+                        onDismiss: hideModal,
+                        texts: texts
+                      });
+                    }}
+                    texts={texts}
+                  />
                 )}
               </div>
             </div>
-          </div>)}
-        </ModalController>
-      </li>
+        </li>)}
+      </ModalController>
     );
   }
 }

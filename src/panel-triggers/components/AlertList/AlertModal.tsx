@@ -27,7 +27,16 @@ export class AlertModal extends React.Component<Props, State> {
     return (
       <Modal isOpen={true} title={this.renderTitle(isEnglish)} onDismiss={this.onDismiss} className="iiris-modal-box">
         <div className="iiris-modal-content">
-          {problem + ''}
+          <div className="iiris-modal-text-block">
+            <div className="iiris-modal-text-row">
+              <div className="iiris-modal-text-label">{isEnglish ? 'Description:' : 'Kuvaus:'}</div>
+              <div className="iiris-modal-text-normal">{problem.description}</div>
+            </div>
+            <div className="iiris-modal-text-row">
+              <div className="iiris-modal-text-label">{isEnglish ? 'Comments:' : 'Kommentit:'}</div>
+              <div className="iiris-modal-text-normal">{problem.comments}</div>
+            </div>
+          </div>
         </div>
       </Modal>
     );
