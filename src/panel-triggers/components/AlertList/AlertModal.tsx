@@ -59,23 +59,23 @@ export class AlertModal extends React.Component<Props, State> {
           <div className="iiris-event-table full-width-container">
             <table className="table">
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.priority}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.priority}</td>
                 <td>{priority}</td>
               </tr>
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.startTime}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.startTime}</td>
                 <td>{startTime}</td>
               </tr>
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.duration}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.duration}</td>
                 <td>{age}</td>
               </tr>
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.title}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.title}</td>
                 <td>{problem.name}</td>
               </tr>
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.description}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
                 <td>
                   {
                     this.getDescriptionArray(problem).map((pairArray: any[]) => {
@@ -90,17 +90,17 @@ export class AlertModal extends React.Component<Props, State> {
                 </td>
               </tr>
               {problem.url && <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.dashboard}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
                 <td>
                   <a href={problem.url} target="_top">{problem.url}</a>
                 </td>
               </tr>}
               <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.eventId}</td>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
                 <td>{problem.eventid}</td>
               </tr>
-              {problem.acknowledged && <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10">{texts.acknowledgements}</td>
+              {problem.acknowledged === '1' && <tr>
+                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
                 <td>
                   <table className="iiris-inner-table">
                     {

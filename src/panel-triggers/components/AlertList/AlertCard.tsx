@@ -35,8 +35,6 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
 
   onAlertItemClick = (showModal: any, hideModal: any, priority: string, startTime: string, age: string) => {
     const { texts, problem } = this.props;
-    console.log('Alert Item Clicked');
-    console.log(problem);
     showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, texts, priority, startTime, age })
   }
 
