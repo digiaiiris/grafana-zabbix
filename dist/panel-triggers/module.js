@@ -9784,6 +9784,10 @@ var AlertCard = /** @class */ (function (_super) {
             console.log(problem);
             showModal(_AlertModal__WEBPACK_IMPORTED_MODULE_10__["AlertModal"], { onSubmit: hideModal, onDismiss: hideModal, problem: problem, isEnglish: false });
         };
+        _this.onLinkIconClick = function (event, url) {
+            event.stopPropagation();
+            window.open(url, '_blank');
+        };
         return _this;
     }
     AlertCard.prototype.render = function () {
@@ -9847,12 +9851,13 @@ var AlertCard = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, lastchange || "last change unknown"),
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
-                        problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { href: problem.url, target: "_blank" },
+                        problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })),
                         problem.state === '1' && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: problem.error },
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-question-circle" })))),
-                        problem.eventid && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertAcknowledgesButton, { problem: problem, onClick: function () {
+                        problem.eventid && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertAcknowledgesButton, { problem: problem, onClick: function (event) {
+                                event.stopPropagation();
                                 showModal(_AckModal__WEBPACK_IMPORTED_MODULE_5__["AckModal"], {
                                     canClose: problem.manual_close === '1',
                                     severity: problemSeverity,
@@ -10142,13 +10147,14 @@ var AlertModal = /** @class */ (function (_super) {
         var _a = this.props, problem = _a.problem, isEnglish = _a.isEnglish;
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_1__["Modal"], { isOpen: true, title: this.renderTitle(isEnglish), onDismiss: this.onDismiss, className: "iiris-modal-box" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-content" },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-block" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-row" },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-label" }, isEnglish ? 'Description:' : 'Kuvaus:'),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-normal" }, problem.description)),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-row" },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-label" }, isEnglish ? 'Comments:' : 'Kommentit:'),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-modal-text-normal" }, problem.comments))))));
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "iiris-event-table" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "table" },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, isEnglish ? 'Description:' : 'Kuvaus:'),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.description)),
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10" }, isEnglish ? 'Comments:' : 'Kommentit:'),
+                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.comments)))))));
     };
     return AlertModal;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));

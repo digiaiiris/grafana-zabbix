@@ -40,6 +40,11 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, isEnglish: false })
   }
 
+  onLinkIconClick = (event: any, url: string) => {
+    event.stopPropagation();
+    window.open(url, '_blank');
+  }
+
   render() {
     const { problem, panelOptions, texts } = this.props;
     const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
@@ -142,7 +147,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
             <div className="alert-rule-item__time zbx-trigger-lastchange">
               <span>{lastchange || "last change unknown"}</span>
               <div className="trigger-info-block zbx-status-icons">
-                {problem.url && <a href={problem.url} target="_blank"><i className="fa fa-external-link"></i></a>}
+                {problem.url && <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>}
                 {problem.state === '1' && (
                   <Tooltip placement="bottom" content={problem.error}>
                     <span><i className="fa fa-question-circle"></i></span>
@@ -151,7 +156,8 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 {problem.eventid && (
                   <AlertAcknowledgesButton
                     problem={problem}
-                    onClick={() => {
+                    onClick={(event) => {
+                      event.stopPropagation();
                       showModal(AckModal, {
                         canClose: problem.manual_close === '1',
                         severity: problemSeverity,
