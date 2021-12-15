@@ -15,6 +15,7 @@
 
     .alert-rule-list {
       .alert-rule-item {
+        cursor: pointer;
         .alert-rule-item__text {
           display: flex;
           max-height: 1.6em;
@@ -293,4 +294,8 @@
       display: block;
     }
   }
+}
+
+.full-width-container {
+  width: 100%;
 }

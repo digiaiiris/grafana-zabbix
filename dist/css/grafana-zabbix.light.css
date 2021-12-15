@@ -10,22 +10,24 @@
     padding: 2px;
     margin-bottom: 0.4rem;
     overflow: auto; }
-    .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text {
-      display: flex;
-      max-height: 1.6em;
-      overflow: hidden;
-      align-items: center;
-      padding-right: 1em; }
-      .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text.zbx-description--newline {
-        max-height: unset; }
-        .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text.zbx-description--newline .zbx-description {
-          margin-left: 0px; }
-      .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text .zbx-description {
+    .triggers-panel-container .card-section .alert-rule-list .alert-rule-item {
+      cursor: pointer; }
+      .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text {
+        display: flex;
+        max-height: 1.6em;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap; }
-      .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text span {
-        padding-right: 0.4em; }
+        align-items: center;
+        padding-right: 1em; }
+        .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text.zbx-description--newline {
+          max-height: unset; }
+          .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text.zbx-description--newline .zbx-description {
+            margin-left: 0px; }
+        .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text .zbx-description {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap; }
+        .triggers-panel-container .card-section .alert-rule-list .alert-rule-item .alert-rule-item__text span {
+          padding-right: 0.4em; }
     .triggers-panel-container .card-section .alert-rule-list.font-size--80,
     .triggers-panel-container .card-section .alert-rule-list.font-size--80 .alert-rule-item__name {
       font-size: 80%; }
@@ -376,6 +378,9 @@
 .body--phantomjs .triggers-panel-container .alert-rule-item__body,
 .body--phantomjs .triggers-panel-container .alert-rule-item__icon {
   display: block; }
+
+.full-width-container {
+  width: 100%; }
 
 .panel-problems {
   height: 100%; }
