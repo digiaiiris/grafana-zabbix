@@ -9803,7 +9803,7 @@ var AlertCard = /** @class */ (function (_super) {
         var lastchange = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["formatLastChange"])(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
         var storedLanguage = localStorage.getItem('iiris_language') || 'fi';
         var age = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
-        var startTime = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).format('DD.MM.YYYY HH:mm');
+        var startTime = moment__WEBPACK_IMPORTED_MODULE_3___default.a.unix(problem.timestamp).format('DD.MM.YYYY HH:mm:ss');
         var newProblem = false;
         if (panelOptions.highlightNewerThan) {
             newProblem = Object(_utils__WEBPACK_IMPORTED_MODULE_4__["isNewProblem"])(problem, panelOptions.highlightNewerThan);
@@ -9848,7 +9848,7 @@ var AlertCard = /** @class */ (function (_super) {
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-database" }),
                         problem.datasource))),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, lastchange || "last change unknown"),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, startTime || "last change unknown"),
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
                         problem.url && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })),
@@ -10200,12 +10200,12 @@ var AlertModal = /** @class */ (function (_super) {
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.eventId),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, problem.eventid)),
-                        problem.acknowledged === '1' && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
+                        problem.acknowledges.length > 0 && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", { className: "iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap" }, texts.acknowledgements),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", { className: "iiris-inner-table" }, problem.acknowledges.map(function (acknowledge) {
                                     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null,
-                                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, moment__WEBPACK_IMPORTED_MODULE_2___default.a.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm')),
+                                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, moment__WEBPACK_IMPORTED_MODULE_2___default.a.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')),
                                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, acknowledge.message)));
                                 })))))))));
     };
