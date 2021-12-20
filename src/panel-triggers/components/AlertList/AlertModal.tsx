@@ -99,7 +99,7 @@ export class AlertModal extends React.Component<Props, State> {
                 <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
                 <td>{problem.eventid}</td>
               </tr>
-              {problem.acknowledged === '1' && <tr>
+              {problem.acknowledges.length > 0 && <tr>
                 <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
                 <td>
                   <table className="iiris-inner-table">
@@ -107,7 +107,7 @@ export class AlertModal extends React.Component<Props, State> {
                       problem.acknowledges.map((acknowledge: any) => {
                         return (
                           <tr>
-                            <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm')}</td>
+                            <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
                             <td>{acknowledge.message}</td>
                           </tr>
                         )

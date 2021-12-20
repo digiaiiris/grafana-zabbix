@@ -59,7 +59,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     const lastchange = formatLastChange(problem.timestamp, panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat);
     const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
-    const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm');
+    const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm:ss');
 
     let newProblem = false;
     if (panelOptions.highlightNewerThan) {
@@ -144,7 +144,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
             )}
 
             <div className="alert-rule-item__time zbx-trigger-lastchange">
-              <span>{lastchange || "last change unknown"}</span>
+              <span>{startTime || "last change unknown"}</span>
               <div className="trigger-info-block zbx-status-icons">
                 {problem.url && <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>}
                 {problem.state === '1' && (
