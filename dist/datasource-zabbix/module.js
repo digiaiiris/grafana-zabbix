@@ -7981,6 +7981,16 @@ var ZabbixAPIConnector = /** @class */ (function () {
         }
         return this.request('event.acknowledge', params);
     };
+    ZabbixAPIConnector.prototype.getGroupsWithHosts = function () {
+        // Adding random limit to get past Zabbix server cache, this query is cached in datasource instead
+        var randomLimit = Math.floor(Math.random() * 1000) + 1000;
+        var params = {
+            selectHosts: ['hostid', 'name', 'maintenance_status'],
+            output: ['groupid', 'name'],
+            limit: randomLimit
+        };
+        return this.request('hostgroup.get', params);
+    };
     ZabbixAPIConnector.prototype.getGroups = function () {
         var params = {
             output: ['name'],
@@ -8556,10 +8566,10 @@ var CachingProxy = /** @class */ (function () {
         var proxified = this.proxify(func, funcName, funcScope);
         return this.cacheRequest(proxified, funcName, funcScope);
     };
-    CachingProxy.prototype._isExpired = function (cacheObject) {
+    CachingProxy.prototype._isExpired = function (cacheObject, hasShortExpiration) {
         if (cacheObject) {
             var object_age = Date.now() - cacheObject.timestamp;
-            return !(cacheObject.timestamp && object_age < this.ttl);
+            return !(cacheObject.timestamp && object_age < (hasShortExpiration ? 60 * 1000 : this.ttl));
         }
         else {
             return true;
@@ -8597,7 +8607,8 @@ function cacheRequest(func, funcName, funcScope, self) {
         }
         var cacheObject = self.cache[funcName];
         var hash = getRequestHash(arguments);
-        if (self.cacheEnabled && !self._isExpired(cacheObject[hash])) {
+        var hasShortExpiration = funcName === 'getGroupsWithHosts';
+        if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== 'forceCacheUpdate') {
             return Promise.resolve(cacheObject[hash].value);
         }
         else {
@@ -8720,7 +8731,7 @@ var REQUESTS_TO_PROXYFY = [
 ];
 var REQUESTS_TO_CACHE = [
     'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-    'getGlobalMacros', 'getValueMappings'
+    'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts'
 ];
 var REQUESTS_TO_BIND = [
     'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
@@ -8866,6 +8877,9 @@ var Zabbix = /** @class */ (function () {
             }
             return [hosts, apps];
         });
+    };
+    Zabbix.prototype.getGroupsWithHosts = function () {
+        return this.zabbixAPI.getGroupsWithHosts();
     };
     Zabbix.prototype.getAllGroups = function () {
         return this.zabbixAPI.getGroups();

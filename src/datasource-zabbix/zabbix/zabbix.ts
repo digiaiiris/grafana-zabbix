@@ -27,7 +27,7 @@ const REQUESTS_TO_PROXYFY = [
 
 const REQUESTS_TO_CACHE = [
   'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-  'getGlobalMacros', 'getValueMappings'
+  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts'
 ];
 
 const REQUESTS_TO_BIND = [
@@ -203,6 +203,10 @@ export class Zabbix implements ZabbixConnector {
       }
       return [hosts, apps];
     });
+  }
+
+  getGroupsWithHosts() {
+    return this.zabbixAPI.getGroupsWithHosts();
   }
 
   getAllGroups() {
