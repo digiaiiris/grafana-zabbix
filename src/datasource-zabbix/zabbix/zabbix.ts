@@ -287,47 +287,57 @@ export class Zabbix implements ZabbixConnector {
 
   expandUserMacro(items, isTriggerItem) {
     const hostids = getHostIds(items);
-    return this.zabbixAPI
-      .request('host.get', {
-        hostids,
-        selectParentTemplates: ['name', 'templateid'],
-        output: ['name', 'hostid'],
-      })
-      .then((parentHosts: any) => {
-        parentHosts.map((host: any) => {
-          if (host.parentTemplates) {
-            host.parentTemplates.map((template: any) => {
-              if (hostids.indexOf(template.templateid) === -1) {
-                hostids.push(template.templateid);
-              }
-            });
-          }
-        });
-        return this.getMacros(hostids)
-        .then(macros => {
-          _.forEach(items, item => {
-            if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
-              if (isTriggerItem) {
-                item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
-              } else {
-                item.name = utils.replaceMacro(item, macros);
-              }
+    if (hostids && hostids.length > 0) {
+      return this.zabbixAPI
+        .request('host.get', {
+          hostids,
+          selectParentTemplates: ['name', 'templateid'],
+          output: ['name', 'hostid'],
+        })
+        .then((parentHosts: any) => {
+          parentHosts.map((host: any) => {
+            if (host.parentTemplates) {
+              host.parentTemplates.map((template: any) => {
+                if (hostids.indexOf(template.templateid) === -1) {
+                  hostids.push(template.templateid);
+                }
+              });
             }
           });
-          return this.getGlobalMacros().then(globalMacros => {
+          return this.getMacros(hostids)
+          .then(macros => {
             _.forEach(items, item => {
               if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
                 if (isTriggerItem) {
-                  item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
+                  item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
                 } else {
-                  item.name = utils.replaceMacro(item, globalMacros);
+                  item.name = utils.replaceMacro(item, macros);
                 }
               }
-            })
-            return items;
+            });
+            return this.getGlobalMacros().then(globalMacros => {
+              return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+            });
           });
         });
+    } else {
+      return this.getGlobalMacros().then(globalMacros => {
+        return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
       });
+    }
+  }
+
+  getExpandedGlobalMacros(globalMacros, items, isTriggerItem) {
+    _.forEach(items, item => {
+      if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+        if (isTriggerItem) {
+          item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
+        } else {
+          item.name = utils.replaceMacro(item, globalMacros);
+        }
+      }
+    })
+    return items;
   }
 
   getItems(groupFilter?, hostFilter?, appFilter?, itemFilter?, options = {}) {

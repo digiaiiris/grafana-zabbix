@@ -3503,8 +3503,10 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             var useTrends = _this.isUseTrends(timeRange);
             // Metrics or Text query
             if (!target.queryType || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_METRICS"] || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_TEXT"]) {
-                // Don't request undefined targets
-                if (!target.group || !target.host || !target.item) {
+                // Don't send request if group/host/item doesn't exist or all filters are empty
+                // if (!(target.group || {}).filter || !(target.host || {}).filter || !(target.item || {}).filter) {
+                if (!target.group || !target.host || !target.item ||
+                    (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
                     return [];
                 }
                 if (!target.queryType || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_METRICS"]) {
@@ -8962,49 +8964,59 @@ var Zabbix = /** @class */ (function () {
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
         var _this = this;
         var hostids = getHostIds(items);
-        return this.zabbixAPI
-            .request('host.get', {
-            hostids: hostids,
-            selectParentTemplates: ['name', 'templateid'],
-            output: ['name', 'hostid'],
-        })
-            .then(function (parentHosts) {
-            parentHosts.map(function (host) {
-                if (host.parentTemplates) {
-                    host.parentTemplates.map(function (template) {
-                        if (hostids.indexOf(template.templateid) === -1) {
-                            hostids.push(template.templateid);
-                        }
-                    });
-                }
-            });
-            return _this.getMacros(hostids)
-                .then(function (macros) {
-                lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                    if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
-                        if (isTriggerItem) {
-                            item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
-                        }
-                        else {
-                            item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros);
-                        }
+        if (hostids && hostids.length > 0) {
+            return this.zabbixAPI
+                .request('host.get', {
+                hostids: hostids,
+                selectParentTemplates: ['name', 'templateid'],
+                output: ['name', 'hostid'],
+            })
+                .then(function (parentHosts) {
+                parentHosts.map(function (host) {
+                    if (host.parentTemplates) {
+                        host.parentTemplates.map(function (template) {
+                            if (hostids.indexOf(template.templateid) === -1) {
+                                hostids.push(template.templateid);
+                            }
+                        });
                     }
                 });
-                return _this.getGlobalMacros().then(function (globalMacros) {
+                return _this.getMacros(hostids)
+                    .then(function (macros) {
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                         if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                             if (isTriggerItem) {
-                                item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros, isTriggerItem);
+                                item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
                             }
                             else {
-                                item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros);
+                                item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros);
                             }
                         }
                     });
-                    return items;
+                    return _this.getGlobalMacros().then(function (globalMacros) {
+                        return _this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+                    });
                 });
             });
+        }
+        else {
+            return this.getGlobalMacros().then(function (globalMacros) {
+                return _this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+            });
+        }
+    };
+    Zabbix.prototype.getExpandedGlobalMacros = function (globalMacros, items, isTriggerItem) {
+        lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
+            if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                if (isTriggerItem) {
+                    item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros, isTriggerItem);
+                }
+                else {
+                    item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros);
+                }
+            }
         });
+        return items;
     };
     Zabbix.prototype.getItems = function (groupFilter, hostFilter, appFilter, itemFilter, options) {
         if (options === void 0) { options = {}; }
