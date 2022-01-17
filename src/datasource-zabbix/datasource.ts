@@ -132,7 +132,6 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
       // Metrics or Text query
       if (!target.queryType || target.queryType === c.MODE_METRICS || target.queryType === c.MODE_TEXT) {
         // Don't send request if group/host/item doesn't exist or all filters are empty
-        // if (!(target.group || {}).filter || !(target.host || {}).filter || !(target.item || {}).filter) {
         if (!target.group || !target.host || !target.item || 
           (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
           return [];

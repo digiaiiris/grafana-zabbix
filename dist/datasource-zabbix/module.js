@@ -3504,7 +3504,6 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             // Metrics or Text query
             if (!target.queryType || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_METRICS"] || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_TEXT"]) {
                 // Don't send request if group/host/item doesn't exist or all filters are empty
-                // if (!(target.group || {}).filter || !(target.host || {}).filter || !(target.item || {}).filter) {
                 if (!target.group || !target.host || !target.item ||
                     (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
                     return [];
