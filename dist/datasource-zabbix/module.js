@@ -8726,7 +8726,7 @@ var REQUESTS_TO_PROXYFY = [
     'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
     'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
     'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-    'getGlobalMacros', 'getValueMappings'
+    'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts'
 ];
 var REQUESTS_TO_CACHE = [
     'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
