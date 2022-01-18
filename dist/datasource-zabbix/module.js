@@ -7981,12 +7981,9 @@ var ZabbixAPIConnector = /** @class */ (function () {
         return this.request('event.acknowledge', params);
     };
     ZabbixAPIConnector.prototype.getGroupsWithHosts = function () {
-        // Adding random limit to get past Zabbix server cache, this query is cached in datasource instead
-        var randomLimit = Math.floor(Math.random() * 1000) + 1000;
         var params = {
             selectHosts: ['hostid', 'name', 'maintenance_status'],
-            output: ['groupid', 'name'],
-            limit: randomLimit
+            output: ['groupid', 'name']
         };
         return this.request('hostgroup.get', params);
     };
@@ -8533,6 +8530,7 @@ var ZabbixAPIError = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CachingProxy", function() { return CachingProxy; });
+var FORCE_CACHE_UPDATE = 'forceCacheUpdate';
 /**
  * This module allows to deduplicate function calls with the same params and
  * cache result of function call.
@@ -8565,6 +8563,10 @@ var CachingProxy = /** @class */ (function () {
         var proxified = this.proxify(func, funcName, funcScope);
         return this.cacheRequest(proxified, funcName, funcScope);
     };
+    /**
+     * Check for cache object expiration
+     * Normal expiration time is set to 10 minutes but some queries need short expiration of just 1 minute
+     */
     CachingProxy.prototype._isExpired = function (cacheObject, hasShortExpiration) {
         if (cacheObject) {
             var object_age = Date.now() - cacheObject.timestamp;
@@ -8606,8 +8608,10 @@ function cacheRequest(func, funcName, funcScope, self) {
         }
         var cacheObject = self.cache[funcName];
         var hash = getRequestHash(arguments);
+        // Querying getGroupsWithHosts needs a short expiration time because it contains maintenance status
+        // Receiving FORCE_CACHE_UPDATE as an argument bypasses the cache 
         var hasShortExpiration = funcName === 'getGroupsWithHosts';
-        if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== 'forceCacheUpdate') {
+        if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== FORCE_CACHE_UPDATE) {
             return Promise.resolve(cacheObject[hash].value);
         }
         else {
@@ -8977,6 +8981,7 @@ var Zabbix = /** @class */ (function () {
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
         var _this = this;
         var hostids = getHostIds(items);
+        // Don't try to fetch host macros if no hostids are given
         if (hostids && hostids.length > 0) {
             return this.zabbixAPI
                 .request('host.get', {
