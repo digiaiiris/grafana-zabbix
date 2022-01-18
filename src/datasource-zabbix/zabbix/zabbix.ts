@@ -291,6 +291,7 @@ export class Zabbix implements ZabbixConnector {
 
   expandUserMacro(items, isTriggerItem) {
     const hostids = getHostIds(items);
+    // Don't try to fetch host macros if no hostids are given
     if (hostids && hostids.length > 0) {
       return this.zabbixAPI
         .request('host.get', {
