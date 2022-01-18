@@ -7981,9 +7981,12 @@ var ZabbixAPIConnector = /** @class */ (function () {
         return this.request('event.acknowledge', params);
     };
     ZabbixAPIConnector.prototype.getGroupsWithHosts = function () {
+        // Adding random limit to get past Zabbix server cache, this query is cached in datasource instead
+        var randomLimit = Math.floor(Math.random() * 1000) + 1000;
         var params = {
             selectHosts: ['hostid', 'name', 'maintenance_status'],
-            output: ['groupid', 'name']
+            output: ['groupid', 'name'],
+            limit: randomLimit
         };
         return this.request('hostgroup.get', params);
     };
