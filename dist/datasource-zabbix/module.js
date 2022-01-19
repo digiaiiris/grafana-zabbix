@@ -3503,8 +3503,9 @@ var ZabbixDatasource = /** @class */ (function (_super) {
             var useTrends = _this.isUseTrends(timeRange);
             // Metrics or Text query
             if (!target.queryType || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_METRICS"] || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_TEXT"]) {
-                // Don't request undefined targets
-                if (!target.group || !target.host || !target.item) {
+                // Don't send request if group/host/item doesn't exist or all filters are empty
+                if (!target.group || !target.host || !target.item ||
+                    (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
                     return [];
                 }
                 if (!target.queryType || target.queryType === _constants__WEBPACK_IMPORTED_MODULE_7__["MODE_METRICS"]) {
@@ -7979,6 +7980,16 @@ var ZabbixAPIConnector = /** @class */ (function () {
         }
         return this.request('event.acknowledge', params);
     };
+    ZabbixAPIConnector.prototype.getGroupsWithHosts = function () {
+        // Adding random limit to get past Zabbix server cache, this query is cached in datasource instead
+        var randomLimit = Math.floor(Math.random() * 1000) + 1000;
+        var params = {
+            selectHosts: ['hostid', 'name', 'maintenance_status'],
+            output: ['groupid', 'name'],
+            limit: randomLimit
+        };
+        return this.request('hostgroup.get', params);
+    };
     ZabbixAPIConnector.prototype.getGroups = function () {
         var params = {
             output: ['name'],
@@ -8522,6 +8533,7 @@ var ZabbixAPIError = /** @class */ (function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CachingProxy", function() { return CachingProxy; });
+var FORCE_CACHE_UPDATE = 'forceCacheUpdate';
 /**
  * This module allows to deduplicate function calls with the same params and
  * cache result of function call.
@@ -8554,10 +8566,14 @@ var CachingProxy = /** @class */ (function () {
         var proxified = this.proxify(func, funcName, funcScope);
         return this.cacheRequest(proxified, funcName, funcScope);
     };
-    CachingProxy.prototype._isExpired = function (cacheObject) {
+    /**
+     * Check for cache object expiration
+     * Normal expiration time is set to 10 minutes but some queries need short expiration of just 1 minute
+     */
+    CachingProxy.prototype._isExpired = function (cacheObject, hasShortExpiration) {
         if (cacheObject) {
             var object_age = Date.now() - cacheObject.timestamp;
-            return !(cacheObject.timestamp && object_age < this.ttl);
+            return !(cacheObject.timestamp && object_age < (hasShortExpiration ? 60 * 1000 : this.ttl));
         }
         else {
             return true;
@@ -8595,7 +8611,10 @@ function cacheRequest(func, funcName, funcScope, self) {
         }
         var cacheObject = self.cache[funcName];
         var hash = getRequestHash(arguments);
-        if (self.cacheEnabled && !self._isExpired(cacheObject[hash])) {
+        // Querying getGroupsWithHosts needs a short expiration time because it contains maintenance status
+        // Receiving FORCE_CACHE_UPDATE as an argument bypasses the cache 
+        var hasShortExpiration = funcName === 'getGroupsWithHosts';
+        if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== FORCE_CACHE_UPDATE) {
             return Promise.resolve(cacheObject[hash].value);
         }
         else {
@@ -8714,11 +8733,11 @@ var REQUESTS_TO_PROXYFY = [
     'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
     'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
     'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-    'getGlobalMacros', 'getValueMappings'
+    'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts'
 ];
 var REQUESTS_TO_CACHE = [
     'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-    'getGlobalMacros', 'getValueMappings'
+    'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts'
 ];
 var REQUESTS_TO_BIND = [
     'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
@@ -8865,6 +8884,9 @@ var Zabbix = /** @class */ (function () {
             return [hosts, apps];
         });
     };
+    Zabbix.prototype.getGroupsWithHosts = function () {
+        return this.zabbixAPI.getGroupsWithHosts();
+    };
     Zabbix.prototype.getAllGroups = function () {
         return this.zabbixAPI.getGroups();
     };
@@ -8962,49 +8984,60 @@ var Zabbix = /** @class */ (function () {
     Zabbix.prototype.expandUserMacro = function (items, isTriggerItem) {
         var _this = this;
         var hostids = getHostIds(items);
-        return this.zabbixAPI
-            .request('host.get', {
-            hostids: hostids,
-            selectParentTemplates: ['name', 'templateid'],
-            output: ['name', 'hostid'],
-        })
-            .then(function (parentHosts) {
-            parentHosts.map(function (host) {
-                if (host.parentTemplates) {
-                    host.parentTemplates.map(function (template) {
-                        if (hostids.indexOf(template.templateid) === -1) {
-                            hostids.push(template.templateid);
-                        }
-                    });
-                }
-            });
-            return _this.getMacros(hostids)
-                .then(function (macros) {
-                lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
-                    if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
-                        if (isTriggerItem) {
-                            item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
-                        }
-                        else {
-                            item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros);
-                        }
+        // Don't try to fetch host macros if no hostids are given
+        if (hostids && hostids.length > 0) {
+            return this.zabbixAPI
+                .request('host.get', {
+                hostids: hostids,
+                selectParentTemplates: ['name', 'templateid'],
+                output: ['name', 'hostid'],
+            })
+                .then(function (parentHosts) {
+                parentHosts.map(function (host) {
+                    if (host.parentTemplates) {
+                        host.parentTemplates.map(function (template) {
+                            if (hostids.indexOf(template.templateid) === -1) {
+                                hostids.push(template.templateid);
+                            }
+                        });
                     }
                 });
-                return _this.getGlobalMacros().then(function (globalMacros) {
+                return _this.getMacros(hostids)
+                    .then(function (macros) {
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
                         if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
                             if (isTriggerItem) {
-                                item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros, isTriggerItem);
+                                item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros, isTriggerItem, parentHosts);
                             }
                             else {
-                                item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros);
+                                item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, macros);
                             }
                         }
                     });
-                    return items;
+                    return _this.getGlobalMacros().then(function (globalMacros) {
+                        return _this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+                    });
                 });
             });
+        }
+        else {
+            return this.getGlobalMacros().then(function (globalMacros) {
+                return _this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+            });
+        }
+    };
+    Zabbix.prototype.getExpandedGlobalMacros = function (globalMacros, items, isTriggerItem) {
+        lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(items, function (item) {
+            if (_utils__WEBPACK_IMPORTED_MODULE_3__["containsMacro"](isTriggerItem ? item.url : item.name)) {
+                if (isTriggerItem) {
+                    item.url = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros, isTriggerItem);
+                }
+                else {
+                    item.name = _utils__WEBPACK_IMPORTED_MODULE_3__["replaceMacro"](item, globalMacros);
+                }
+            }
         });
+        return items;
     };
     Zabbix.prototype.getItems = function (groupFilter, hostFilter, appFilter, itemFilter, options) {
         if (options === void 0) { options = {}; }

@@ -1,3 +1,5 @@
+const FORCE_CACHE_UPDATE = 'forceCacheUpdate';
+
 /**
  * This module allows to deduplicate function calls with the same params and
  * cache result of function call.
@@ -41,10 +43,14 @@ export class CachingProxy {
     return this.cacheRequest(proxified, funcName, funcScope);
   }
 
-  _isExpired(cacheObject) {
+  /**
+   * Check for cache object expiration
+   * Normal expiration time is set to 10 minutes but some queries need short expiration of just 1 minute
+   */
+  _isExpired(cacheObject, hasShortExpiration) {
     if (cacheObject) {
       const object_age = Date.now() - cacheObject.timestamp;
-      return !(cacheObject.timestamp && object_age < this.ttl);
+      return !(cacheObject.timestamp && object_age < (hasShortExpiration ? 60 * 1000 : this.ttl));
     } else {
       return true;
     }
@@ -84,7 +90,10 @@ function cacheRequest(func, funcName, funcScope, self) {
 
     const cacheObject = self.cache[funcName];
     const hash = getRequestHash(arguments);
-    if (self.cacheEnabled && !self._isExpired(cacheObject[hash])) {
+    // Querying getGroupsWithHosts needs a short expiration time because it contains maintenance status
+    // Receiving FORCE_CACHE_UPDATE as an argument bypasses the cache 
+    const hasShortExpiration = funcName === 'getGroupsWithHosts';
+    if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== FORCE_CACHE_UPDATE) {
       return Promise.resolve(cacheObject[hash].value);
     } else {
       return func.apply(funcScope, arguments)
