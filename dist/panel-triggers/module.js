@@ -9932,7 +9932,7 @@ var AlertAcknowledgesButton = /** @class */ (function (_super) {
         var content = null;
         if (problem.acknowledges && problem.acknowledges.length) {
             content = (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", popperClassName: "ack-tooltip", content: this.renderTooltipContent },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { role: "button", onClick: this.handleClick },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-comments" }))));
         }
         else if (problem.showAckButton) {
