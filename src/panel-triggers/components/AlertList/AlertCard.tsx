@@ -276,7 +276,7 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
     if (problem.acknowledges && problem.acknowledges.length) {
       content = (
         <Tooltip placement="bottom" popperClassName="ack-tooltip" content={this.renderTooltipContent}>
-          <span><i className="fa fa-comments"></i></span>
+          <span role="button" onClick={this.handleClick}><i className="fa fa-comments"></i></span>
         </Tooltip>
       );
     } else if (problem.showAckButton) {
