@@ -9784,7 +9784,13 @@ var AlertCard = /** @class */ (function (_super) {
         };
         _this.onLinkIconClick = function (event, url) {
             event.stopPropagation();
-            window.top.location.href = url;
+            // Add 'foldTabRow' query param so that Grafana tab row panel keeps folded
+            var urlBase = url.substring(0, url.indexOf('?') > -1 ? url.indexOf('?') : url.length);
+            var urlQuery = url.substring(url.indexOf('?') > -1 ? url.indexOf('?') : url.length);
+            var queryObj = _this.parseParamsStringToObject(urlQuery);
+            queryObj['foldTabRow'] = 'true';
+            var newQuery = _this.parseParamsObjectToString(queryObj);
+            window.top.location.href = urlBase + newQuery;
         };
         _this.getLinkIconElement = function (problem) {
             var texts = _this.props.texts;
@@ -9822,6 +9828,16 @@ var AlertCard = /** @class */ (function (_super) {
         };
         return _this;
     }
+    AlertCard.prototype.parseParamsObjectToString = function (paramsObj) {
+        var paramsString = "?";
+        Object.keys(paramsObj).map(function (paramKey, index) {
+            paramsString += paramKey + "=" + paramsObj[paramKey];
+            if (index < Object.keys(paramsObj).length - 1) {
+                paramsString += "&";
+            }
+        });
+        return paramsString;
+    };
     AlertCard.prototype.render = function () {
         var _this = this;
         var _a = this.props, problem = _a.problem, panelOptions = _a.panelOptions, texts = _a.texts;

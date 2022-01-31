@@ -40,7 +40,13 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
 
   onLinkIconClick = (event: any, url: string) => {
     event.stopPropagation();
-    window.top.location.href = url;
+    // Add 'foldTabRow' query param so that Grafana tab row panel keeps folded
+    const urlBase = url.substring(0, url.indexOf('?') > -1 ? url.indexOf('?') : url.length);
+    const urlQuery = url.substring(url.indexOf('?') > -1 ? url.indexOf('?') : url.length);
+    const queryObj = this.parseParamsStringToObject(urlQuery);
+    queryObj['foldTabRow'] = 'true';
+    const newQuery = this.parseParamsObjectToString(queryObj);
+    window.top.location.href = urlBase + newQuery;
   }
 
   getLinkIconElement = (problem) => {
@@ -81,6 +87,17 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
         paramsObj[paramItemArr[0]] = paramItemArr[1];
     });
     return paramsObj;
+  }
+
+  parseParamsObjectToString(paramsObj: any) {
+    let paramsString = "?";
+    Object.keys(paramsObj).map((paramKey, index) => {
+        paramsString += paramKey + "=" + paramsObj[paramKey];
+        if (index < Object.keys(paramsObj).length - 1) {
+            paramsString += "&";
+        }
+    });
+    return paramsString;
   }
 
   render() {
