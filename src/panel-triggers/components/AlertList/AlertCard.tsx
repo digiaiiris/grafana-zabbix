@@ -43,6 +43,21 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     window.open(url, '_blank');
   }
 
+  getLinkIconElement = (problem) => {
+    const { texts } = this.props;
+    // Compare link url and current page url; no need to show icon if urls are the same
+    console.log(window.top.location.href);
+    console.log(window.top.location.origin);
+    if (problem.url) {
+      return (
+        <Tooltip placement="bottom" content={texts.urlInfo}>
+          <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
+        </Tooltip>
+      );
+    }
+    return null;
+  }
+
   render() {
     const { problem, panelOptions, texts } = this.props;
     const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
@@ -146,11 +161,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
             <div className="alert-rule-item__time zbx-trigger-lastchange">
               <span>{startTime || "last change unknown"}</span>
               <div className="trigger-info-block zbx-status-icons">
-                {problem.url && (
-                  <Tooltip placement="bottom" content={texts.urlInfo}>
-                    <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
-                  </Tooltip>
-                )}
+                {this.getLinkIconElement(problem)}
                 {problem.state === '1' && (
                   <Tooltip placement="bottom" content={problem.error}>
                     <span><i className="fa fa-question-circle"></i></span>
