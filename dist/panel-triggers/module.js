@@ -9786,6 +9786,18 @@ var AlertCard = /** @class */ (function (_super) {
             event.stopPropagation();
             window.open(url, '_blank');
         };
+        _this.getLinkIconElement = function (problem) {
+            var texts = _this.props.texts;
+            // Compare link url and current page url; no need to show icon if urls are the same
+            console.log(window.top.location.href);
+            console.log(window.top.location.origin);
+            if (problem.url) {
+                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: texts.urlInfo },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" }))));
+            }
+            return null;
+        };
         return _this;
     }
     AlertCard.prototype.render = function () {
@@ -9850,9 +9862,7 @@ var AlertCard = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, startTime || "last change unknown"),
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
-                        problem.url && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: texts.urlInfo },
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })))),
+                        _this.getLinkIconElement(problem),
                         problem.state === '1' && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: problem.error },
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-question-circle" })))),
