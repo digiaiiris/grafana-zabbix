@@ -9784,7 +9784,7 @@ var AlertCard = /** @class */ (function (_super) {
         };
         _this.onLinkIconClick = function (event, url) {
             event.stopPropagation();
-            window.top.open(url);
+            window.top.location.href = url;
         };
         _this.getLinkIconElement = function (problem) {
             var texts = _this.props.texts;

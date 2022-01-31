@@ -40,7 +40,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
 
   onLinkIconClick = (event: any, url: string) => {
     event.stopPropagation();
-    window.top.open(url);
+    window.top.location.href = url;
   }
 
   getLinkIconElement = (problem) => {
