@@ -29,6 +29,7 @@ export const texts = {
     duration: 'Kesto',
     acknowledgements: 'Kommentit',
     dashboard: 'Tilannekuvanäkymä',
+    urlInfo: 'Siirry määriteltyyn tilannekuvaan',
   },
   en: {
     critical: 'Critical',
@@ -60,5 +61,6 @@ export const texts = {
     duration: 'Duration',
     acknowledgements: 'Acknowledgements',
     dashboard: 'Dashboard',
+    urlInfo: 'Open defined dashboard',
   },
 };
