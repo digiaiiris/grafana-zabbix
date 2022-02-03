@@ -89,10 +89,13 @@ export function replaceMacro(item, macros, isTriggerItem?, parentHosts?) {
           // Check all trigger host ids against macro host id
           let hostIdFound = false;
           _.forEach(item.hosts, h => {
-            // Check if macro's hostid is same as hosts or parent templates hostid
+            // Check for parent templates hostid and macros
             const parentHost = parentHosts.find(pHost => pHost.hostid === h.hostid) || {};
-            const isTemplateMacro = parentHost.parentTemplates.findIndex(tmpl => tmpl.templateid === m.hostid) > -1;
-            if (h.hostid === m.hostid || isTemplateMacro) {
+            const isTemplateMacro = parentHost.parentTemplates.findIndex(tmpl => tmpl.templateid === m.hostid && m.value) > -1;
+            // Check if host already has that same macro, host is overruling
+            const hostHasMacro = macros.findIndex(aMacro => aMacro.hostid === h.hostid && aMacro.value && aMacro.macro === m.macro) > -1;
+            // Check if macro's hostid is same as hosts or parent templates hostid
+            if ((h.hostid === m.hostid && m.value) || (isTemplateMacro && !hostHasMacro)) {
               hostIdFound = true;
             }
           });
