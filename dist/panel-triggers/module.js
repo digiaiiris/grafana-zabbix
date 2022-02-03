@@ -9784,7 +9784,41 @@ var AlertCard = /** @class */ (function (_super) {
         };
         _this.onLinkIconClick = function (event, url) {
             event.stopPropagation();
-            window.open(url, '_blank');
+            window.top.location.href = url;
+        };
+        _this.getLinkIconElement = function (problem) {
+            var texts = _this.props.texts;
+            // Compare link url and current page url; no need to show icon if urls are the same
+            var url1 = problem.url;
+            var url1Base = url1.substring(0, url1.indexOf('?') > -1 ? url1.indexOf('?') : url1.length);
+            var url1Query = url1.substring(url1.indexOf('?') > -1 ? url1.indexOf('?') : url1.length);
+            var url1QueryObj = _this.parseParamsStringToObject(url1Query);
+            var url2 = window.top.location.href;
+            var url2Base = url2.substring(0, url2.indexOf('?') > -1 ? url2.indexOf('?') : url2.length);
+            var url2Query = url2.substring(url2.indexOf('?') > -1 ? url2.indexOf('?') : url2.length);
+            var url2QueryObj = _this.parseParamsStringToObject(url2Query);
+            if (url1 && (url1Base !== url2Base ||
+                !url1QueryObj.dashboard ||
+                !url1QueryObj.orgId ||
+                url1QueryObj.dashboard !== url2QueryObj.dashboard ||
+                url1QueryObj.orgId !== url2QueryObj.orgId)) {
+                return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: texts.urlInfo },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" }))));
+            }
+            return null;
+        };
+        _this.parseParamsStringToObject = function (params) {
+            var paramsObj = {};
+            if (params.charAt(0) === "?" || params.charAt(0) === "&") {
+                params = params.substr(1, params.length);
+            }
+            var paramsArray = params.split("&");
+            paramsArray.map(function (paramItem) {
+                var paramItemArr = paramItem.split("=");
+                paramsObj[paramItemArr[0]] = paramItemArr[1];
+            });
+            return paramsObj;
         };
         return _this;
     }
@@ -9850,9 +9884,7 @@ var AlertCard = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__time zbx-trigger-lastchange" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, startTime || "last change unknown"),
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "trigger-info-block zbx-status-icons" },
-                        problem.url && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: texts.urlInfo },
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", { onClick: function (event) { return _this.onLinkIconClick(event, problem.url); } },
-                                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-external-link" })))),
+                        _this.getLinkIconElement(problem),
                         problem.state === '1' && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components__WEBPACK_IMPORTED_MODULE_9__["Tooltip"], { placement: "bottom", content: problem.error },
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null,
                                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", { className: "fa fa-question-circle" })))),

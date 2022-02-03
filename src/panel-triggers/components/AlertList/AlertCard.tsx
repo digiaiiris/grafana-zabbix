@@ -40,7 +40,47 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
 
   onLinkIconClick = (event: any, url: string) => {
     event.stopPropagation();
-    window.open(url, '_blank');
+    window.top.location.href = url;
+  }
+
+  getLinkIconElement = (problem) => {
+    const { texts } = this.props;
+    // Compare link url and current page url; no need to show icon if urls are the same
+    const url1 = problem.url;
+    const url1Base = url1.substring(0, url1.indexOf('?') > -1 ? url1.indexOf('?') : url1.length);
+    const url1Query = url1.substring(url1.indexOf('?') > -1 ? url1.indexOf('?') : url1.length);
+    const url1QueryObj: any = this.parseParamsStringToObject(url1Query);
+    const url2 = window.top.location.href;
+    const url2Base = url2.substring(0, url2.indexOf('?') > -1 ? url2.indexOf('?') : url2.length);
+    const url2Query = url2.substring(url2.indexOf('?') > -1 ? url2.indexOf('?') : url2.length);
+    const url2QueryObj: any = this.parseParamsStringToObject(url2Query);
+    if (url1 && (
+      url1Base !== url2Base ||
+      !url1QueryObj.dashboard ||
+      !url1QueryObj.orgId ||
+      url1QueryObj.dashboard !== url2QueryObj.dashboard ||
+      url1QueryObj.orgId !== url2QueryObj.orgId
+    )) {
+      return (
+        <Tooltip placement="bottom" content={texts.urlInfo}>
+          <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
+        </Tooltip>
+      );
+    }
+    return null;
+  }
+
+  parseParamsStringToObject = (params: string) => {
+    const paramsObj = {};
+    if (params.charAt(0) === "?" || params.charAt(0) === "&") {
+        params = params.substr(1, params.length);
+    }
+    const paramsArray = params.split("&");
+    paramsArray.map((paramItem) => {
+        const paramItemArr = paramItem.split("=");
+        paramsObj[paramItemArr[0]] = paramItemArr[1];
+    });
+    return paramsObj;
   }
 
   render() {
@@ -146,11 +186,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
             <div className="alert-rule-item__time zbx-trigger-lastchange">
               <span>{startTime || "last change unknown"}</span>
               <div className="trigger-info-block zbx-status-icons">
-                {problem.url && (
-                  <Tooltip placement="bottom" content={texts.urlInfo}>
-                    <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
-                  </Tooltip>
-                )}
+                {this.getLinkIconElement(problem)}
                 {problem.state === '1' && (
                   <Tooltip placement="bottom" content={problem.error}>
                     <span><i className="fa fa-question-circle"></i></span>
