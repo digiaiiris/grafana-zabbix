@@ -6853,10 +6853,13 @@ function replaceMacro(item, macros, isTriggerItem, parentHosts) {
                     // Check all trigger host ids against macro host id
                     var hostIdFound_1 = false;
                     lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(item.hosts, function (h) {
-                        // Check if macro's hostid is same as hosts or parent templates hostid
+                        // Check for parent templates hostid and macros
                         var parentHost = parentHosts.find(function (pHost) { return pHost.hostid === h.hostid; }) || {};
-                        var isTemplateMacro = parentHost.parentTemplates.findIndex(function (tmpl) { return tmpl.templateid === m.hostid; }) > -1;
-                        if (h.hostid === m.hostid || isTemplateMacro) {
+                        var isTemplateMacro = parentHost.parentTemplates.findIndex(function (tmpl) { return tmpl.templateid === m.hostid && m.value; }) > -1;
+                        // Check if host already has that same macro, host is overruling
+                        var hostHasMacro = macros.findIndex(function (aMacro) { return aMacro.hostid === h.hostid && aMacro.value && aMacro.macro === m.macro; }) > -1;
+                        // Check if macro's hostid is same as hosts or parent templates hostid
+                        if ((h.hostid === m.hostid && m.value) || (isTemplateMacro && !hostHasMacro)) {
                             hostIdFound_1 = true;
                         }
                     });
