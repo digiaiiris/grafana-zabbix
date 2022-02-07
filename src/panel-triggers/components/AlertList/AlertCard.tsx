@@ -43,7 +43,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     event.stopPropagation();
     // Add 'foldTabRow' query param so that Grafana tab row panel keeps folded
     const urlObj = new Url(url, true);
-    urlObj.query['foldTabRow'] = 'true';
+    urlObj.query['foldTabRow'] = 'all';
     window.top.location.href = urlObj.toString();
   }
 
