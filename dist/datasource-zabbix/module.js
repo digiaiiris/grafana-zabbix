@@ -5046,6 +5046,7 @@ function joinTriggersWithProblems(problems, triggers) {
                 manual_close: t.manual_close,
                 state: t.state,
                 error: t.error,
+                opdata: t.opdata,
             };
             problemDTOList.push(problemDTO);
         }

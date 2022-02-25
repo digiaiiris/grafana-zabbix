@@ -8,6 +8,13 @@
   flex-direction: column;
   height: 100%;
 
+  .triggers-panel-filters {
+    margin-top: 2px;
+    margin-bottom: 10px;
+    input, select {
+      margin-right: 10px;
+    }
+  }
   .card-section {
     padding: 2px;
     margin-bottom: 0.4rem;

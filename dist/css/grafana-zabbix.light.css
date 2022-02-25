@@ -6,6 +6,11 @@
   display: flex;
   flex-direction: column;
   height: 100%; }
+  .triggers-panel-container .triggers-panel-filters {
+    margin-top: 2px;
+    margin-bottom: 10px; }
+    .triggers-panel-container .triggers-panel-filters input, .triggers-panel-container .triggers-panel-filters select {
+      margin-right: 10px; }
   .triggers-panel-container .card-section {
     padding: 2px;
     margin-bottom: 0.4rem;

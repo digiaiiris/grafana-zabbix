@@ -30,6 +30,9 @@ export const texts = {
     acknowledgements: 'Kommentit',
     dashboard: 'Tilannekuvanäkymä',
     urlInfo: 'Siirry määriteltyyn tilannekuvaan',
+    search: 'Haku',
+    selectCategory: 'Valitse kategoria',
+    selectPriority: 'Valitse prioriteetti'
   },
   en: {
     critical: 'Critical',
@@ -62,5 +65,8 @@ export const texts = {
     acknowledgements: 'Acknowledgements',
     dashboard: 'Dashboard',
     urlInfo: 'Open defined dashboard',
+    search: 'Search',
+    selectCategory: 'Select category',
+    selectPriority: 'Select priority',
   },
 };
