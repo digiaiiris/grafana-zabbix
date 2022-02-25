@@ -123,7 +123,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     severityOptions.unshift({ value: -1, label: texts.selectPriority });
     const categoryOptions = [{ value: 'all', label: texts.selectCategory }];
     problems.forEach((problem: ProblemDTO) => {
-      if (categoryOptions.findIndex((category: any) => category.value === problem.opdata) === -1) {
+      if (categoryOptions.findIndex((category: any) => category.value === problem.opdata) === -1 && problem.opdata) {
         categoryOptions.push({ value: problem.opdata, label: problem.opdata });
       }
     });
