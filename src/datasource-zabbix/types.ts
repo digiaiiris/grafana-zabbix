@@ -208,6 +208,7 @@ export interface ProblemDTO {
   error?: string;
 
   showAckButton?: boolean;
+  opdata?: string;
 }
 
 export interface ZBXProblem {
@@ -273,6 +274,7 @@ export interface ZBXTrigger {
   type?: string;
   url?: string;
   value?: string;
+  opdata?: string;
 }
 
 export interface ZBXGroup {

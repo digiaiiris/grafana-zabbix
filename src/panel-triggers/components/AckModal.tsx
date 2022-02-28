@@ -3,6 +3,7 @@ import { cx, css } from 'emotion';
 import { ZBX_ACK_ACTION_ADD_MESSAGE, ZBX_ACK_ACTION_ACK, ZBX_ACK_ACTION_CHANGE_SEVERITY, ZBX_ACK_ACTION_CLOSE } from '../../datasource-zabbix/constants';
 import { Button, VerticalGroup, Spinner, Modal, Input, Checkbox, RadioButtonGroup, stylesFactory, withTheme, Themeable, TextArea } from '@grafana/ui';
 import { FAIcon } from '../../components';
+import { getSeverityOptions } from '../triggers_panel_ctrl';
 import { GrafanaTheme } from '@grafana/data';
 
 const KEYBOARD_ENTER_KEY = 13;
@@ -45,17 +46,6 @@ const severityOptions = [
   {value: 4, label: 'High'},
   {value: 5, label: 'Disaster'}
 ];
-
-function getSeverityOptions(texts: any) {
-  return [
-    {value: 0, label: texts.unknown},
-    {value: 1, label: texts.info},
-    {value: 2, label: texts.minor},
-    {value: 3, label: texts.average},
-    {value: 4, label: texts.major},
-    {value: 5, label: texts.critical}
-  ]
-};
 
 export class AckModalUnthemed extends PureComponent<Props, State> {
   static defaultProps: Partial<Props> = {

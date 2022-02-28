@@ -10197,6 +10197,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _grafana_ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @grafana/ui */ "@grafana/ui");
 /* harmony import */ var _grafana_ui__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components */ "./components/index.ts");
+/* harmony import */ var _triggers_panel_ctrl__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../triggers_panel_ctrl */ "./panel-triggers/triggers_panel_ctrl.ts");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -10219,6 +10220,7 @@ var __makeTemplateObject = (undefined && undefined.__makeTemplateObject) || func
 
 
 
+
 var KEYBOARD_ENTER_KEY = 13;
 var KEYBOARD_ESCAPE_KEY = 27;
 var severityOptions = [
@@ -10229,17 +10231,6 @@ var severityOptions = [
     { value: 4, label: 'High' },
     { value: 5, label: 'Disaster' }
 ];
-function getSeverityOptions(texts) {
-    return [
-        { value: 0, label: texts.unknown },
-        { value: 1, label: texts.info },
-        { value: 2, label: texts.minor },
-        { value: 3, label: texts.average },
-        { value: 4, label: texts.major },
-        { value: 5, label: texts.critical }
-    ];
-}
-;
 var AckModalUnthemed = /** @class */ (function (_super) {
     __extends(AckModalUnthemed, _super);
     function AckModalUnthemed(props) {
@@ -10329,7 +10320,7 @@ var AckModalUnthemed = /** @class */ (function (_super) {
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "ack", label: texts.acknowledge, value: this.state.acknowledge, onChange: this.onAcknowledgeToggle }),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "change-severity", label: texts.changeSeverity, description: "", value: this.state.changeSeverity, onChange: this.onChangeSeverityToggle }),
             this.state.changeSeverity &&
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["RadioButtonGroup"], { key: "severity", size: "sm", options: getSeverityOptions(texts), value: this.state.selectedSeverity, onChange: this.onChangeSelectedSeverity }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["RadioButtonGroup"], { key: "severity", size: "sm", options: Object(_triggers_panel_ctrl__WEBPACK_IMPORTED_MODULE_5__["getSeverityOptions"])(texts), value: this.state.selectedSeverity, onChange: this.onChangeSelectedSeverity }),
             canClose &&
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_grafana_ui__WEBPACK_IMPORTED_MODULE_3__["Checkbox"], { key: "close", label: texts.closeProblem, disabled: !canClose, value: this.state.closeProblem, onChange: this.onCloseProblemToggle }),
         ];
@@ -10750,6 +10741,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! classnames */ "../node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _AlertCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AlertCard */ "./panel-triggers/components/AlertList/AlertCard.tsx");
+/* harmony import */ var _triggers_panel_ctrl__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../triggers_panel_ctrl */ "./panel-triggers/triggers_panel_ctrl.ts");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_4__);
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -10763,6 +10757,8 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
+
 
 
 
@@ -10785,27 +10781,81 @@ var AlertList = /** @class */ (function (_super) {
         _this.handleProblemAck = function (problem, data) {
             return _this.props.onProblemAck(problem, data);
         };
+        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter) {
+            var filteredProblems = _this.props.problems.filter(function (problem) {
+                return ((problem.comments.toLowerCase().indexOf(textFilter.toLowerCase()) > -1 ||
+                    problem.description.toLowerCase().indexOf(textFilter.toLowerCase()) > -1) &&
+                    (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
+                    (categoryFilter === 'all' || problem.opdata === categoryFilter));
+            });
+            return filteredProblems;
+        };
+        _this.filterByText = function (event) {
+            var textFilter = event.target.value;
+            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter);
+            _this.setState({ textFilter: textFilter, filteredProblems: filteredProblems, page: 0 });
+        };
+        _this.filterByPriority = function (event) {
+            var priorityFilter = parseInt(event.target.value, 10);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter);
+            _this.setState({ priorityFilter: priorityFilter, filteredProblems: filteredProblems, page: 0 });
+        };
+        _this.filterByCategory = function (event) {
+            var categoryFilter = event.target.value;
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter);
+            _this.setState({ categoryFilter: categoryFilter, filteredProblems: filteredProblems, page: 0 });
+        };
         _this.state = {
             page: 0,
-            currentProblems: _this.getCurrentProblems(0),
+            currentProblems: [],
+            filteredProblems: [],
+            textFilter: '',
+            priorityFilter: -1,
+            categoryFilter: 'all',
         };
         return _this;
     }
+    AlertList.prototype.componentDidMount = function () {
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter;
+        if (this.props.problems) {
+            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+        }
+    };
+    AlertList.prototype.componentDidUpdate = function (prevProps, prevState, snapshot) {
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter;
+        if (!lodash__WEBPACK_IMPORTED_MODULE_4___default.a.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
+            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+        }
+    };
     AlertList.prototype.getCurrentProblems = function (page) {
-        var _a = this.props, pageSize = _a.pageSize, problems = _a.problems;
+        var pageSize = this.props.pageSize;
+        var filteredProblems = this.state.filteredProblems;
         var start = pageSize * page;
-        var end = Math.min(pageSize * (page + 1), problems.length);
-        return this.props.problems.slice(start, end);
+        var end = Math.min(pageSize * (page + 1), filteredProblems.length);
+        return filteredProblems.slice(start, end);
     };
     AlertList.prototype.render = function () {
         var _a;
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
+        var filteredProblems = this.state.filteredProblems;
         var currentProblems = this.getCurrentProblems(this.state.page);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
         var alertListClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-list', (_a = {}, _a["font-size--" + fontSize] = fontSize, _a));
+        var severityOptions = Object(_triggers_panel_ctrl__WEBPACK_IMPORTED_MODULE_3__["getSeverityOptions"])(texts);
+        severityOptions.unshift({ value: -1, label: texts.selectPriority });
+        var categoryOptions = [{ value: 'all', label: texts.selectCategory }];
+        problems.forEach(function (problem) {
+            if (categoryOptions.findIndex(function (category) { return category.value === problem.opdata; }) === -1) {
+                categoryOptions.push({ value: problem.opdata, label: problem.opdata });
+            }
+        });
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); }))),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
                     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
@@ -10814,7 +10864,7 @@ var AlertList = /** @class */ (function (_super) {
                 ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "no-data-container" }, texts.noActiveAlerts)
                 : null),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-footer", key: "alertListFooter" },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PaginationControl, { itemsLength: problems.length, pageSize: this.props.pageSize, pageIndex: this.state.page, onPageChange: this.handlePageChange }))));
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(PaginationControl, { itemsLength: filteredProblems.length, pageSize: this.props.pageSize, pageIndex: this.state.page, onPageChange: this.handlePageChange }))));
     };
     return AlertList;
 }(react__WEBPACK_IMPORTED_MODULE_0__["PureComponent"]));
@@ -12533,6 +12583,9 @@ var texts = {
         acknowledgements: 'Kommentit',
         dashboard: 'Tilannekuvanäkymä',
         urlInfo: 'Siirry määriteltyyn tilannekuvaan',
+        search: 'Haku',
+        selectCategory: 'Valitse kategoria',
+        selectPriority: 'Valitse prioriteetti'
     },
     en: {
         critical: 'Critical',
@@ -12565,6 +12618,9 @@ var texts = {
         acknowledgements: 'Acknowledgements',
         dashboard: 'Dashboard',
         urlInfo: 'Open defined dashboard',
+        search: 'Search',
+        selectCategory: 'Select category',
+        selectPriority: 'Select priority',
     },
 };
 
@@ -12873,7 +12929,7 @@ function triggerPanelOptionsTab() {
 /*!***********************************************!*\
   !*** ./panel-triggers/triggers_panel_ctrl.ts ***!
   \***********************************************/
-/*! exports provided: DEFAULT_TARGET, DEFAULT_SEVERITY, getDefaultSeverity, PANEL_DEFAULTS, TriggerPanelCtrl */
+/*! exports provided: DEFAULT_TARGET, DEFAULT_SEVERITY, getDefaultSeverity, PANEL_DEFAULTS, getSeverityOptions, TriggerPanelCtrl */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12882,6 +12938,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_SEVERITY", function() { return DEFAULT_SEVERITY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDefaultSeverity", function() { return getDefaultSeverity; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PANEL_DEFAULTS", function() { return PANEL_DEFAULTS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSeverityOptions", function() { return getSeverityOptions; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TriggerPanelCtrl", function() { return TriggerPanelCtrl; });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
@@ -12987,6 +13044,17 @@ var triggerStatusMap = {
     '0': 'OK',
     '1': 'PROBLEM'
 };
+function getSeverityOptions(texts) {
+    return [
+        { value: 0, label: texts.unknown },
+        { value: 1, label: texts.info },
+        { value: 2, label: texts.minor },
+        { value: 3, label: texts.average },
+        { value: 4, label: texts.major },
+        { value: 5, label: texts.critical }
+    ];
+}
+;
 var TriggerPanelCtrl = /** @class */ (function (_super) {
     __extends(TriggerPanelCtrl, _super);
     /** @ngInject */

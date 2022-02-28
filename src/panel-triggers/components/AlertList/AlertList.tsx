@@ -4,6 +4,8 @@ import { ProblemsPanelOptions, GFTimeRange } from '../../types';
 import { AckProblemData } from '../AckModal';
 import AlertCard from './AlertCard';
 import { ProblemDTO, ZBXTag } from '../../../datasource-zabbix/types';
+import { getSeverityOptions } from '../../triggers_panel_ctrl';
+import _ from 'lodash';
 
 export interface AlertListProps {
   problems: ProblemDTO[];
@@ -20,6 +22,10 @@ export interface AlertListProps {
 interface AlertListState {
   page: number;
   currentProblems: ProblemDTO[];
+  filteredProblems: ProblemDTO[];
+  textFilter: string;
+  priorityFilter: number;
+  categoryFilter: string;
 }
 
 export default class AlertList extends PureComponent<AlertListProps, AlertListState> {
@@ -27,15 +33,34 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     super(props);
     this.state = {
       page: 0,
-      currentProblems: this.getCurrentProblems(0),
+      currentProblems: [],
+      filteredProblems: [],
+      textFilter: '',
+      priorityFilter: -1,
+      categoryFilter: 'all',
     };
   }
 
+  componentDidMount(): void {
+    const { textFilter, priorityFilter, categoryFilter } = this.state;
+    if (this.props.problems) {
+      this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<AlertListProps>, prevState: Readonly<AlertListState>, snapshot?: any): void {
+    const { textFilter, priorityFilter, categoryFilter } = this.state;
+    if (!_.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
+      this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+    }
+  }
+
   getCurrentProblems(page: number) {
-    const { pageSize, problems } = this.props;
+    const { pageSize } = this.props;
+    const { filteredProblems } = this.state;
     const start = pageSize * page;
-    const end = Math.min(pageSize * (page + 1), problems.length);
-    return this.props.problems.slice(start, end);
+    const end = Math.min(pageSize * (page + 1), filteredProblems.length);
+    return filteredProblems.slice(start, end);
   }
 
   handlePageChange = (newPage: number) => {
@@ -57,15 +82,63 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     return this.props.onProblemAck(problem, data);
   }
 
+  getFilteredProblems = (textFilter: string, priorityFilter: number, categoryFilter: string) => {
+    const filteredProblems = this.props.problems.filter((problem: ProblemDTO) => {
+      return (
+        (problem.comments.toLowerCase().indexOf(textFilter.toLowerCase()) > -1 || 
+        problem.description.toLowerCase().indexOf(textFilter.toLowerCase()) > -1) &&
+        (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
+        (categoryFilter === 'all' || problem.opdata === categoryFilter)
+      );
+    });
+    return filteredProblems;
+  }
+
+  filterByText = (event: any) => {
+    const textFilter = event.target.value;
+    const filteredProblems = this.getFilteredProblems(textFilter, this.state.priorityFilter, this.state.categoryFilter);
+    this.setState({ textFilter, filteredProblems, page: 0 });
+  }
+
+  filterByPriority = (event: any) => {
+    const priorityFilter = parseInt(event.target.value, 10);
+    const filteredProblems = this.getFilteredProblems(this.state.textFilter, priorityFilter, this.state.categoryFilter);
+    this.setState({ priorityFilter, filteredProblems, page: 0 });
+  }
+
+  filterByCategory = (event: any) => {
+    const categoryFilter = event.target.value;
+    const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter, categoryFilter);
+    this.setState({ categoryFilter, filteredProblems, page: 0 });
+  }
+
   render() {
     const { problems, panelOptions, texts } = this.props;
+    const { filteredProblems } = this.state;
     const currentProblems = this.getCurrentProblems(this.state.page);
     let fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
     fontSize = fontSize && fontSize !== 100 ? fontSize : null;
     const alertListClass = classNames('alert-rule-list', { [`font-size--${fontSize}`]: fontSize });
+    const severityOptions = getSeverityOptions(texts);
+    severityOptions.unshift({ value: -1, label: texts.selectPriority });
+    const categoryOptions = [{ value: 'all', label: texts.selectCategory }];
+    problems.forEach((problem: ProblemDTO) => {
+      if (categoryOptions.findIndex((category: any) => category.value === problem.opdata) === -1 && problem.opdata) {
+        categoryOptions.push({ value: problem.opdata, label: problem.opdata });
+      }
+    });
 
     return (
       <div className="triggers-panel-container" key="alertListContainer">
+        <div className="triggers-panel-filters">
+          <input type="text" onChange={(event) => this.filterByText(event)} placeholder={texts.search} />
+          <select onChange={(event) => this.filterByPriority(event)}>
+            {severityOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+          </select>
+          <select onChange={(event) => this.filterByCategory(event)}>
+            {categoryOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+          </select>
+        </div>
         <section className="card-section card-list-layout-list">
           <ol className={alertListClass}>
             {currentProblems.map(problem =>
@@ -86,7 +159,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         }
         <div className="triggers-panel-footer" key="alertListFooter">
           <PaginationControl
-            itemsLength={problems.length}
+            itemsLength={filteredProblems.length}
             pageSize={this.props.pageSize}
             pageIndex={this.state.page}
             onPageChange={this.handlePageChange}
