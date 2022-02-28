@@ -10847,7 +10847,7 @@ var AlertList = /** @class */ (function (_super) {
         severityOptions.unshift({ value: -1, label: texts.selectPriority });
         var categoryOptions = [{ value: 'all', label: texts.selectCategory }];
         problems.forEach(function (problem) {
-            if (categoryOptions.findIndex(function (category) { return category.value === problem.opdata; }) === -1) {
+            if (categoryOptions.findIndex(function (category) { return category.value === problem.opdata; }) === -1 && problem.opdata) {
                 categoryOptions.push({ value: problem.opdata, label: problem.opdata });
             }
         });
