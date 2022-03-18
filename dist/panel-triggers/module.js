@@ -10535,7 +10535,8 @@ var AlertCard = /** @class */ (function (_super) {
         var _this = this;
         var _a = this.props, problem = _a.problem, panelOptions = _a.panelOptions, texts = _a.texts;
         var showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
-        var cardClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground });
+        var isTestAlert = problem.tags.find(function (tagItem) { return tagItem.tag === 'test'; });
+        var cardClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert });
         var descriptionClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item__text', { 'zbx-description--newline': panelOptions.descriptionAtNewLine });
         var problemSeverity = Number(problem.severity);
         var severityDesc;
@@ -10581,7 +10582,7 @@ var AlertCard = /** @class */ (function (_super) {
                             })))),
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: descriptionClass },
                             panelOptions.statusField && react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertStatus, { problem: problem, blink: blink }),
-                            panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, highlightBackground: panelOptions.highlightBackground })),
+                            panelOptions.severityField && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(AlertSeverity, { severityDesc: severityDesc, blink: blink, testAlert: isTestAlert ? texts.testIncident : '', highlightBackground: panelOptions.highlightBackground })),
                             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "alert-rule-item__time" }, panelOptions.ageField && texts.lastedFor + ' ' + age),
                             panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: "zbx-description", dangerouslySetInnerHTML: { __html: problem.comments } }))),
                         panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__text zbx-description--newline" },
@@ -10649,13 +10650,13 @@ function AlertStatus(props) {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: className }, status));
 }
 function AlertSeverity(props) {
-    var severityDesc = props.severityDesc, highlightBackground = props.highlightBackground, blink = props.blink;
+    var severityDesc = props.severityDesc, highlightBackground = props.highlightBackground, blink = props.blink, testAlert = props.testAlert;
     var className = classnames__WEBPACK_IMPORTED_MODULE_1___default()('zbx-trigger-severity', { 'zabbix-trigger--blinked': blink });
     var style = {};
     if (!highlightBackground) {
         style.color = severityDesc.color;
     }
-    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: className, style: style }, severityDesc.severity));
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", { className: className, style: style }, severityDesc.severity + (testAlert ? ' ' + testAlert : '')));
 }
 var AlertAcknowledgesButton = /** @class */ (function (_super) {
     __extends(AlertAcknowledgesButton, _super);
@@ -12585,7 +12586,8 @@ var texts = {
         urlInfo: 'Siirry määriteltyyn tilannekuvaan',
         search: 'Haku',
         selectCategory: 'Valitse kategoria',
-        selectPriority: 'Valitse prioriteetti'
+        selectPriority: 'Valitse prioriteetti',
+        testIncident: 'Testihäiriö'
     },
     en: {
         critical: 'Critical',
@@ -12621,6 +12623,7 @@ var texts = {
         search: 'Search',
         selectCategory: 'Select category',
         selectPriority: 'Select priority',
+        testIncident: 'Test Incident'
     },
 };
 

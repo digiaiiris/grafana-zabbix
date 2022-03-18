@@ -32,7 +32,8 @@ export const texts = {
     urlInfo: 'Siirry määriteltyyn tilannekuvaan',
     search: 'Haku',
     selectCategory: 'Valitse kategoria',
-    selectPriority: 'Valitse prioriteetti'
+    selectPriority: 'Valitse prioriteetti',
+    testIncident: 'Testihäiriö'
   },
   en: {
     critical: 'Critical',
@@ -68,5 +69,6 @@ export const texts = {
     search: 'Search',
     selectCategory: 'Select category',
     selectPriority: 'Select priority',
+    testIncident: 'Test Incident'
   },
 };
