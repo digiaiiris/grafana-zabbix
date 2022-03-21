@@ -71,7 +71,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
   render() {
     const { problem, panelOptions, texts } = this.props;
     const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
-    const isTestAlert = problem.tags.find((tagItem: any) => tagItem.tag === 'test');
+    const isTestAlert = problem && problem.tags ? _.find(problem.tags, tagItem => tagItem.tag === 'test') : false;
     const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', 
       { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert }
     );
