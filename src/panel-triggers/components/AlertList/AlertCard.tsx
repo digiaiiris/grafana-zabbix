@@ -71,7 +71,10 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
   render() {
     const { problem, panelOptions, texts } = this.props;
     const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
-    const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground });
+    const isTestAlert = problem && problem.tags ? _.find(problem.tags, tagItem => tagItem.tag === 'test') : false;
+    const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', 
+      { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert }
+    );
     const descriptionClass = classNames('alert-rule-item__text', { 'zbx-description--newline': panelOptions.descriptionAtNewLine });
 
     const problemSeverity = Number(problem.severity);
@@ -137,7 +140,8 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 <div className={descriptionClass}>
                   {panelOptions.statusField && <AlertStatus problem={problem} blink={blink} />}
                   {panelOptions.severityField && (
-                    <AlertSeverity severityDesc={severityDesc} blink={blink} highlightBackground={panelOptions.highlightBackground} />
+                    <AlertSeverity severityDesc={severityDesc} blink={blink} testAlert={isTestAlert ? texts.testIncident : ''}
+                      highlightBackground={panelOptions.highlightBackground} />
                   )}
                   <span className="alert-rule-item__time">
                     {panelOptions.ageField && texts.lastedFor + ' ' + age}
@@ -267,7 +271,7 @@ function AlertStatus(props) {
 }
 
 function AlertSeverity(props) {
-  const { severityDesc, highlightBackground, blink } = props;
+  const { severityDesc, highlightBackground, blink, testAlert } = props;
   const className = classNames('zbx-trigger-severity', { 'zabbix-trigger--blinked': blink });
   const style: CSSProperties = {};
   if (!highlightBackground) {
@@ -275,7 +279,7 @@ function AlertSeverity(props) {
   }
   return (
     <span className={className} style={style}>
-      {severityDesc.severity}
+      {severityDesc.severity + (testAlert ? ' ' + testAlert : '')}
     </span>
   );
 }
