@@ -165,18 +165,21 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
 
     this.loading = false;
     problems = _.flatten(problems);
+    problems = this.getExpandHostMacros(problems);
     this.problems = problems;
     return this.renderProblems(problems);
   }
 
   getExpandHostMacros(problems) {
     const fields = ['url', 'name', 'description', 'comments'];
-    return problems.forEach(problem => {
+    return _.map(problems, problem => {
       const expandedProblem = _.cloneDeep(problem);
       if (problem.hosts && problem.hosts.length > 0) {
         fields.forEach(field => {
-          expandedProblem[field] = expandedProblem[field].replace(/\{HOST.HOST\}/g, problem.hosts[0].host);
-          expandedProblem[field] = expandedProblem[field].replace(/\{HOST.NAME\}/g, problem.hosts[0].name);
+          if (expandedProblem[field]) {
+            expandedProblem[field] = expandedProblem[field].replace(/\{HOST.HOST\}/g, problem.hosts[0].host);
+            expandedProblem[field] = expandedProblem[field].replace(/\{HOST.NAME\}/g, problem.hosts[0].name);
+          }
         });
       }
       return expandedProblem;
