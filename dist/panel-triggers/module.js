@@ -13120,6 +13120,19 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
         this.problems = problems;
         return this.renderProblems(problems);
     };
+    TriggerPanelCtrl.prototype.getExpandHostMacros = function (problems) {
+        var fields = ['url', 'name', 'description', 'comments'];
+        return problems.forEach(function (problem) {
+            var expandedProblem = lodash__WEBPACK_IMPORTED_MODULE_2___default.a.cloneDeep(problem);
+            if (problem.hosts && problem.hosts.length > 0) {
+                fields.forEach(function (field) {
+                    expandedProblem[field] = expandedProblem[field].replace(/\{HOST.HOST\}/g, problem.hosts[0].host);
+                    expandedProblem[field] = expandedProblem[field].replace(/\{HOST.NAME\}/g, problem.hosts[0].name);
+                });
+            }
+            return expandedProblem;
+        });
+    };
     TriggerPanelCtrl.prototype.onDataSnapshotLoad = function (snapshotData) {
         return this.onDataFramesReceived(snapshotData);
     };
