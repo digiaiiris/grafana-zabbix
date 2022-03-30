@@ -381,13 +381,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   margin-right: 10px; }
   .alert-maintenance-icon svg {
     fill: #fff;
-    width: 40px;
-    height: 40px; }
+    width: 36px;
+    height: 36px; }
 
 .trigger-panels-container .trigger-panel-filters {
   display: flex; }
