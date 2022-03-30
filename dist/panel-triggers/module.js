@@ -11036,7 +11036,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var MaintenanceIcon = function (_a) {
     var problem = _a.problem;
-    var ongoingMaintenance = problem.hosts && problem.hosts.length > 1 && problem.hosts[0].maintenance_status === '1';
+    var ongoingMaintenance = problem.hosts && problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1';
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, ongoingMaintenance ?
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-maintenance-icon" },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", xmlnsXlink: "http://www.w3.org/1999/xlink", viewBox: "0 0 120 120" },

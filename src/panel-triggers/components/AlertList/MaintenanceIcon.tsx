@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const MaintenanceIcon: FC<Props> = ({ problem }) => {
-  const ongoingMaintenance = problem.hosts && problem.hosts.length > 1 && problem.hosts[0].maintenance_status === '1';
+  const ongoingMaintenance = problem.hosts && problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1';
 
   return (
     <>
