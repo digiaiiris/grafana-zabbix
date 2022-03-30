@@ -33,7 +33,8 @@ export const texts = {
     search: 'Haku',
     selectCategory: 'Valitse kategoria',
     selectPriority: 'Valitse prioriteetti',
-    testIncident: 'Testihäiriö'
+    testIncident: 'Testihäiriö',
+    hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt'
   },
   en: {
     critical: 'Critical',
@@ -69,6 +70,7 @@ export const texts = {
     search: 'Search',
     selectCategory: 'Select category',
     selectPriority: 'Select priority',
-    testIncident: 'Test Incident'
+    testIncident: 'Test Incident',
+    hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance'
   },
 };

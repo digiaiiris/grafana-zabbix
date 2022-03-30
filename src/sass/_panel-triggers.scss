@@ -295,6 +295,12 @@
   align-items: center;
   width: 40px;
   height: 40px;
+  margin-right: 5px;
+  & svg {
+    fill: $zbx-text-highlighted;
+    width: 40px;
+    height: 40px;
+  }
 }
 
 // fix for phantomjs (it has troubles with flex blocks rendering)

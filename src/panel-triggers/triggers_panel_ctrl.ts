@@ -126,6 +126,8 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     this.events.on(PanelEvents.dataSnapshotLoad, this.onDataSnapshotLoad.bind(this));
     this.events.on(PanelEvents.editModeInitialized, this.onInitEditMode.bind(this));
 
+    document.addEventListener('iiris-maintenance-update', () => this.reRenderProblems(), false);
+
     // Check for Iiris language
     this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     PANEL_DEFAULTS.triggerSeverity[0].severity = texts[this.storedLanguage].unknown;
