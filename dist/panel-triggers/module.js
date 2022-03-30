@@ -10464,6 +10464,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AlertIcon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./AlertIcon */ "./panel-triggers/components/AlertList/AlertIcon.tsx");
 /* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components */ "./components/index.ts");
 /* harmony import */ var _AlertModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./AlertModal */ "./panel-triggers/components/AlertList/AlertModal.tsx");
+/* harmony import */ var _MaintenanceIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./MaintenanceIcon */ "./panel-triggers/components/AlertList/MaintenanceIcon.tsx");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -10477,6 +10478,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
 
 
 
@@ -10571,6 +10573,7 @@ var AlertCard = /** @class */ (function (_super) {
             var showModal = _a.showModal, hideModal = _a.hideModal;
             return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle, onClick: function () { return _this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age); } },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertIcon__WEBPACK_IMPORTED_MODULE_8__["default"], { problem: problem, color: problemColor, highlightBackground: panelOptions.highlightBackground, blink: blink }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MaintenanceIcon__WEBPACK_IMPORTED_MODULE_11__["default"], { problem: problem }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__body" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__header" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__name" },
@@ -11014,6 +11017,33 @@ var AlertModal = /** @class */ (function (_super) {
     return AlertModal;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));
 
+
+
+/***/ }),
+
+/***/ "./panel-triggers/components/AlertList/MaintenanceIcon.tsx":
+/*!*****************************************************************!*\
+  !*** ./panel-triggers/components/AlertList/MaintenanceIcon.tsx ***!
+  \*****************************************************************/
+/*! exports provided: MaintenanceIcon, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MaintenanceIcon", function() { return MaintenanceIcon; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+var MaintenanceIcon = function (_a) {
+    var problem = _a.problem;
+    var ongoingMaintenance = problem.hosts && problem.hosts.length > 1 && problem.hosts[0].maintenance_status === '1';
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, ongoingMaintenance ?
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-maintenance-icon" },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", xmlnsXlink: "http://www.w3.org/1999/xlink", viewBox: "0 0 120 120" },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("path", { d: "M60,4C29.1,4,4,29.1,4,60c0,30.9,25.1,56,56,56s56-25.1,56-56C116,29.1,90.9,4,60,4z M20,60c0-22.1,17.9-40,40-40\n              c8,0,15.4,2.3,21.6,6.4L26.4,81.6C22.3,75.4,20,68,20,60z M60,100c-7.7,0-14.9-2.2-21-6L94,39c3.8,6.1,6,13.3,6,21\n              C100,82.1,82.1,100,60,100z" })))
+        : null));
+};
+/* harmony default export */ __webpack_exports__["default"] = (MaintenanceIcon);
 
 
 /***/ }),

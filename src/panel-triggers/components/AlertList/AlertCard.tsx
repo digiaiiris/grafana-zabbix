@@ -11,6 +11,7 @@ import AlertIcon from './AlertIcon';
 import { ProblemDTO, ZBXTag } from '../../../datasource-zabbix/types';
 import { ModalController, Tooltip } from '../../../components';
 import { AlertModal } from './AlertModal';
+import MaintenanceIcon from './MaintenanceIcon';
 const Url = require("url-parse");
 
 interface AlertCardProps {
@@ -114,6 +115,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
         {({ showModal, hideModal }) => (
           <li className={cardClass} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
             <AlertIcon problem={problem} color={problemColor} highlightBackground={panelOptions.highlightBackground} blink={blink} />
+            <MaintenanceIcon problem={problem} />
             <div className="alert-rule-item__body">
               <div className="alert-rule-item__header">
                 <div className="alert-rule-item__name">
