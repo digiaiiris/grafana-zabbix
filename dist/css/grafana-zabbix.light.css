@@ -383,11 +383,27 @@
   align-items: center;
   width: 40px;
   height: 40px;
-  margin-right: 5px; }
+  margin-right: 10px; }
   .alert-maintenance-icon svg {
     fill: #000;
     width: 40px;
     height: 40px; }
+
+.trigger-panels-container .trigger-panel-filters {
+  display: flex; }
+  .trigger-panels-container .trigger-panel-filters .checkbox-filter {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+    .trigger-panels-container .trigger-panel-filters .checkbox-filter input {
+      min-width: 20px;
+      margin-right: 3px; }
+    .trigger-panels-container .trigger-panel-filters .checkbox-filter label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
 
 .body--phantomjs .triggers-panel-container .alert-rule-list {
   display: block; }

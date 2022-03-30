@@ -295,11 +295,33 @@
   align-items: center;
   width: 40px;
   height: 40px;
-  margin-right: 5px;
+  margin-right: 10px;
   & svg {
     fill: $zbx-text-highlighted;
     width: 40px;
     height: 40px;
+  }
+}
+
+.trigger-panels-container {
+  .trigger-panel-filters {
+    display: flex;
+    .checkbox-filter {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      input {
+        min-width: 20px;
+        margin-right: 3px;
+      }
+      label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 }
 
