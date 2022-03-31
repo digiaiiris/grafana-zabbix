@@ -85,10 +85,11 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   }
 
   getFilteredProblems = (textFilter: string, priorityFilter: number, categoryFilter: string, maintenanceFilter: boolean) => {
+    const textFilterLowerCase = textFilter.toLowerCase();
     const filteredProblems = this.props.problems.filter((problem: ProblemDTO) => {
       return (
-        (problem.comments.toLowerCase().indexOf(textFilter.toLowerCase()) > -1 || 
-        problem.description.toLowerCase().indexOf(textFilter.toLowerCase()) > -1) &&
+        (problem.comments.toLowerCase().indexOf(textFilterLowerCase) > -1 ||
+        problem.description.toLowerCase().indexOf(textFilterLowerCase) > -1) &&
         (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
         (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
         (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0'))

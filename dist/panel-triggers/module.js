@@ -10786,9 +10786,10 @@ var AlertList = /** @class */ (function (_super) {
             return _this.props.onProblemAck(problem, data);
         };
         _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter) {
+            var textFilterLowerCase = textFilter.toLowerCase();
             var filteredProblems = _this.props.problems.filter(function (problem) {
-                return ((problem.comments.toLowerCase().indexOf(textFilter.toLowerCase()) > -1 ||
-                    problem.description.toLowerCase().indexOf(textFilter.toLowerCase()) > -1) &&
+                return ((problem.comments.toLowerCase().indexOf(textFilterLowerCase) > -1 ||
+                    problem.description.toLowerCase().indexOf(textFilterLowerCase) > -1) &&
                     (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
                     (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
                     (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')));
