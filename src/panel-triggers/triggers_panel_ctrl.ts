@@ -127,10 +127,6 @@ export class TriggerPanelCtrl extends MetricsPanelCtrl {
     this.events.on(PanelEvents.editModeInitialized, this.onInitEditMode.bind(this));
 
     document.addEventListener('iiris-maintenance-update', this.reRenderProblems, false);
-    const getReRenderProblems = this.reRenderProblems;
-    $scope.$on('$destroy', function() {
-      document.removeEventListener('iiris-maintenance-update', getReRenderProblems, false);
-    });
 
     // Check for Iiris language
     this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
