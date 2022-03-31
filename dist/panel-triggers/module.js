@@ -13122,7 +13122,7 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
         _this.events.on('data-frames-received', _this.onDataFramesReceived.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].editModeInitialized, _this.onInitEditMode.bind(_this));
-        document.addEventListener('iiris-maintenance-update', _this.reRenderProblems, false);
+        document.addEventListener('iiris-maintenance-update', _this.reRenderProblems.bind(_this), false);
         // Check for Iiris language
         _this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
         PANEL_DEFAULTS.triggerSeverity[0].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].unknown;
