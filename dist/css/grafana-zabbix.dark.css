@@ -389,18 +389,18 @@
     width: 36px;
     height: 36px; }
 
-.trigger-panels-container .trigger-panel-filters {
+.triggers-panel-container .triggers-panel-filters {
   display: flex; }
-  .trigger-panels-container .trigger-panel-filters .checkbox-filter {
+  .triggers-panel-container .triggers-panel-filters .checkbox-filter {
     display: flex;
     align-items: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis; }
-    .trigger-panels-container .trigger-panel-filters .checkbox-filter input {
+    .triggers-panel-container .triggers-panel-filters .checkbox-filter input {
       min-width: 20px;
       margin-right: 3px; }
-    .trigger-panels-container .trigger-panel-filters .checkbox-filter label {
+    .triggers-panel-container .triggers-panel-filters .checkbox-filter label {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis; }
