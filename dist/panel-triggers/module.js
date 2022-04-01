@@ -10464,6 +10464,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AlertIcon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./AlertIcon */ "./panel-triggers/components/AlertList/AlertIcon.tsx");
 /* harmony import */ var _components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components */ "./components/index.ts");
 /* harmony import */ var _AlertModal__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./AlertModal */ "./panel-triggers/components/AlertList/AlertModal.tsx");
+/* harmony import */ var _MaintenanceIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./MaintenanceIcon */ "./panel-triggers/components/AlertList/MaintenanceIcon.tsx");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -10477,6 +10478,7 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+
 
 
 
@@ -10571,6 +10573,7 @@ var AlertCard = /** @class */ (function (_super) {
             var showModal = _a.showModal, hideModal = _a.hideModal;
             return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", { className: cardClass, style: cardStyle, onClick: function () { return _this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age); } },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertIcon__WEBPACK_IMPORTED_MODULE_8__["default"], { problem: problem, color: problemColor, highlightBackground: panelOptions.highlightBackground, blink: blink }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_MaintenanceIcon__WEBPACK_IMPORTED_MODULE_11__["default"], { problem: problem }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__body" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__header" },
                         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-rule-item__name" },
@@ -10782,29 +10785,36 @@ var AlertList = /** @class */ (function (_super) {
         _this.handleProblemAck = function (problem, data) {
             return _this.props.onProblemAck(problem, data);
         };
-        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter) {
+        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter) {
+            var textFilterLowerCase = textFilter.toLowerCase();
             var filteredProblems = _this.props.problems.filter(function (problem) {
-                return ((problem.comments.toLowerCase().indexOf(textFilter.toLowerCase()) > -1 ||
-                    problem.description.toLowerCase().indexOf(textFilter.toLowerCase()) > -1) &&
+                return ((problem.comments.toLowerCase().indexOf(textFilterLowerCase) > -1 ||
+                    problem.description.toLowerCase().indexOf(textFilterLowerCase) > -1) &&
                     (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
-                    (categoryFilter === 'all' || problem.opdata === categoryFilter));
+                    (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
+                    (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')));
             });
             return filteredProblems;
         };
         _this.filterByText = function (event) {
             var textFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter);
+            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
             _this.setState({ textFilter: textFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByPriority = function (event) {
             var priorityFilter = parseInt(event.target.value, 10);
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
             _this.setState({ priorityFilter: priorityFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByCategory = function (event) {
             var categoryFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter, _this.state.hideAlertsInMaintenance);
             _this.setState({ categoryFilter: categoryFilter, filteredProblems: filteredProblems, page: 0 });
+        };
+        _this.filterByMaintenance = function () {
+            var hideAlertsInMaintenance = !_this.state.hideAlertsInMaintenance;
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance);
+            _this.setState({ hideAlertsInMaintenance: hideAlertsInMaintenance, filteredProblems: filteredProblems, page: 0 });
         };
         _this.state = {
             page: 0,
@@ -10813,19 +10823,20 @@ var AlertList = /** @class */ (function (_super) {
             textFilter: '',
             priorityFilter: -1,
             categoryFilter: 'all',
+            hideAlertsInMaintenance: false,
         };
         return _this;
     }
     AlertList.prototype.componentDidMount = function () {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
         if (this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
         }
     };
     AlertList.prototype.componentDidUpdate = function (prevProps, prevState, snapshot) {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
         if (!lodash__WEBPACK_IMPORTED_MODULE_4___default.a.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter) });
+            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
         }
     };
     AlertList.prototype.getCurrentProblems = function (page) {
@@ -10839,7 +10850,7 @@ var AlertList = /** @class */ (function (_super) {
         var _a;
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
-        var filteredProblems = this.state.filteredProblems;
+        var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance;
         var currentProblems = this.getCurrentProblems(this.state.page);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -10856,7 +10867,10 @@ var AlertList = /** @class */ (function (_super) {
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); }))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "checkbox-filter" },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); } }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance))),
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
                     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
@@ -11014,6 +11028,35 @@ var AlertModal = /** @class */ (function (_super) {
     return AlertModal;
 }(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component));
 
+
+
+/***/ }),
+
+/***/ "./panel-triggers/components/AlertList/MaintenanceIcon.tsx":
+/*!*****************************************************************!*\
+  !*** ./panel-triggers/components/AlertList/MaintenanceIcon.tsx ***!
+  \*****************************************************************/
+/*! exports provided: MaintenanceIcon, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MaintenanceIcon", function() { return MaintenanceIcon; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+var MaintenanceIcon = function (_a) {
+    var problem = _a.problem;
+    var ongoingMaintenance = problem.hosts && problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1';
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react__WEBPACK_IMPORTED_MODULE_0___default.a.Fragment, null, ongoingMaintenance ?
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "alert-maintenance-icon" },
+            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", xmlnsXlink: "http://www.w3.org/1999/xlink", viewBox: "0 0 120 120" },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("g", null,
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("path", { d: "M60.5,59.7c-5.9-5.3-9.5-9.4-10.8-10.9L6.6,92.4c-6.7,6.7-8,15-1.3,21.7c6.7,6.7,16.3,4.1,23-2.6l43-43\n                C69.2,67,65.3,64.1,60.5,59.7z M17.4,108c-3.4,0-6.1-2.6-6.1-6.1s2.6-6.1,6.1-6.1s6.1,2.6,6.1,6.1S20.9,108,17.4,108z" }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("path", { d: "M116.1,27.6L95.5,48.2l-18.6-5.7l-4.2-17.4L92.8,4.9c-11.1-4-23.1-2-32.4,7.1c-9.1,9.1-10,22.2-6.4,32.5\n                c0,0,4.6,5.9,10.3,11c4.6,4.2,11.2,8.7,11.2,8.7c11.5,5.5,24.2,6,33.9-3.5C118.7,51.4,120.5,38.9,116.1,27.6z" }))))
+        : null));
+};
+/* harmony default export */ __webpack_exports__["default"] = (MaintenanceIcon);
 
 
 /***/ }),
@@ -12587,7 +12630,8 @@ var texts = {
         search: 'Haku',
         selectCategory: 'Valitse kategoria',
         selectPriority: 'Valitse prioriteetti',
-        testIncident: 'Testihäiriö'
+        testIncident: 'Testihäiriö',
+        hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt'
     },
     en: {
         critical: 'Critical',
@@ -12623,7 +12667,8 @@ var texts = {
         search: 'Search',
         selectCategory: 'Select category',
         selectPriority: 'Select priority',
-        testIncident: 'Test Incident'
+        testIncident: 'Test Incident',
+        hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance'
     },
 };
 
@@ -13078,6 +13123,7 @@ var TriggerPanelCtrl = /** @class */ (function (_super) {
         _this.events.on('data-frames-received', _this.onDataFramesReceived.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].dataSnapshotLoad, _this.onDataSnapshotLoad.bind(_this));
         _this.events.on(_grafana_data__WEBPACK_IMPORTED_MODULE_4__["PanelEvents"].editModeInitialized, _this.onInitEditMode.bind(_this));
+        document.addEventListener('iiris-maintenance-update', _this.reRenderProblems.bind(_this), false);
         // Check for Iiris language
         _this.storedLanguage = localStorage.getItem('iiris_language') || 'fi';
         PANEL_DEFAULTS.triggerSeverity[0].severity = _localization__WEBPACK_IMPORTED_MODULE_11__["texts"][_this.storedLanguage].unknown;

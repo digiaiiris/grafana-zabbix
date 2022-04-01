@@ -289,6 +289,42 @@
   }
 }
 
+.alert-maintenance-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 10px;
+  & svg {
+    fill: $zbx-text-highlighted;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.triggers-panel-container {
+  .triggers-panel-filters {
+    display: flex;
+    .checkbox-filter {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      input {
+        min-width: 20px;
+        margin-right: 3px;
+      }
+      label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
 // fix for phantomjs (it has troubles with flex blocks rendering)
 .body--phantomjs {
   .triggers-panel-container {

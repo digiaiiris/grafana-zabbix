@@ -377,6 +377,34 @@
 .triggers-severity-config .icon-gf {
   font-size: 200%; }
 
+.alert-maintenance-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 10px; }
+  .alert-maintenance-icon svg {
+    fill: #000;
+    width: 36px;
+    height: 36px; }
+
+.triggers-panel-container .triggers-panel-filters {
+  display: flex; }
+  .triggers-panel-container .triggers-panel-filters .checkbox-filter {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+    .triggers-panel-container .triggers-panel-filters .checkbox-filter input {
+      min-width: 20px;
+      margin-right: 3px; }
+    .triggers-panel-container .triggers-panel-filters .checkbox-filter label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; }
+
 .body--phantomjs .triggers-panel-container .alert-rule-list {
   display: block; }
 
