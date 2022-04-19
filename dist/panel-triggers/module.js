@@ -10823,7 +10823,7 @@ var AlertList = /** @class */ (function (_super) {
             textFilter: '',
             priorityFilter: -1,
             categoryFilter: 'all',
-            hideAlertsInMaintenance: false,
+            hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
         };
         return _this;
     }
@@ -13087,6 +13087,7 @@ var PANEL_DEFAULTS = {
     okEventColor: 'rgb(56, 189, 113)',
     ackEventColor: 'rgb(56, 219, 156)',
     markAckEvents: false,
+    hideAlertsInMaintenanceByDefault: false,
 };
 var triggerStatusMap = {
     '0': 'OK',
