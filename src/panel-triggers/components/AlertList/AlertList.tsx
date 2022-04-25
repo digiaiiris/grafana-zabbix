@@ -39,7 +39,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       textFilter: '',
       priorityFilter: -1,
       categoryFilter: 'all',
-      hideAlertsInMaintenance: false,
+      hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
     };
   }
 
