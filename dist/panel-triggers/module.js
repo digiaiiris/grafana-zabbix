@@ -10536,7 +10536,8 @@ var AlertCard = /** @class */ (function (_super) {
     AlertCard.prototype.render = function () {
         var _this = this;
         var _a = this.props, problem = _a.problem, panelOptions = _a.panelOptions, texts = _a.texts;
-        var showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
+        // Hide datasource name always 
+        var showDatasourceName = false; // panelOptions.targets && panelOptions.targets.length > 1;
         var isTestAlert = problem && problem.tags ? lodash__WEBPACK_IMPORTED_MODULE_2___default.a.find(problem.tags, function (tagItem) { return tagItem.tag === 'test'; }) : false;
         var cardClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item', 'zbx-trigger-card', { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert });
         var descriptionClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-item__text', { 'zbx-description--newline': panelOptions.descriptionAtNewLine });
