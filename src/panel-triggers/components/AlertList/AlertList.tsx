@@ -144,7 +144,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
 
     return (
       <div className="triggers-panel-container" key="alertListContainer">
-        <div className="triggers-panel-filters">
+        {!panelOptions.hideAlertFilters ? <div className="triggers-panel-filters">
           <input type="text" onChange={(event) => this.filterByText(event)} placeholder={texts.search} />
           <select onChange={(event) => this.filterByPriority(event)}>
             {severityOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
@@ -156,7 +156,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
             <input type="checkbox" id="showMaintenance" defaultChecked={hideAlertsInMaintenance} onChange={() => this.filterByMaintenance()} />
             <label htmlFor="showMaintenance">{texts.hideAlertsInMaintenance}</label>
           </div>
-        </div>
+        </div> : null }
         <section className="card-section card-list-layout-list">
           <ol className={alertListClass}>
             {currentProblems.map(problem =>
