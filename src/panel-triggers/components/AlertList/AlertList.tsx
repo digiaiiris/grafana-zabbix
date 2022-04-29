@@ -138,7 +138,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   }
 
   onChangeSortOption = (event: any) => {
-    this.setState({ sortOption: event.target.value });
+    this.setState({ sortOption: event.target.value, page: 0 });
   }
 
   render() {
@@ -165,7 +165,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       <div className="triggers-panel-container" key="alertListContainer">
         <div className="triggers-panel-filters">
           <input type="text" onChange={(event) => this.filterByText(event)} placeholder={texts.search} />
-          <select onChange={(event) => this.onChangeSortOption(event)}>
+          <select onChange={(event) => this.onChangeSortOption(event)} defaultValue={this.state.sortOption}>
             {sortOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
           </select>
           <select onChange={(event) => this.filterByPriority(event)}>
