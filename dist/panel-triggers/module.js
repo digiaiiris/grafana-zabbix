@@ -10774,7 +10774,7 @@ var AlertList = /** @class */ (function (_super) {
     function AlertList(props) {
         var _this = _super.call(this, props) || this;
         _this.handlePageChange = function (newPage) {
-            var items = _this.getCurrentProblems(newPage);
+            var items = _this.getCurrentProblems(newPage, _this.state.sortOption);
             _this.setState({
                 page: newPage,
                 currentProblems: items,
@@ -10846,9 +10846,9 @@ var AlertList = /** @class */ (function (_super) {
             this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
         }
     };
-    AlertList.prototype.getCurrentProblems = function (page) {
+    AlertList.prototype.getCurrentProblems = function (page, sortOption) {
         var pageSize = this.props.pageSize;
-        var _a = this.state, filteredProblems = _a.filteredProblems, sortOption = _a.sortOption;
+        var filteredProblems = this.state.filteredProblems;
         var start = pageSize * page;
         var end = Math.min(pageSize * (page + 1), filteredProblems.length);
         var sortedProblems;
@@ -10865,7 +10865,7 @@ var AlertList = /** @class */ (function (_super) {
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
         var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance;
-        var currentProblems = this.getCurrentProblems(this.state.page);
+        var currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
         var alertListClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-list', (_a = {}, _a["font-size--" + fontSize] = fontSize, _a));

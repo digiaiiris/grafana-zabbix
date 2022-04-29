@@ -62,9 +62,9 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     }
   }
 
-  getCurrentProblems(page: number) {
+  getCurrentProblems(page: number, sortOption: string) {
     const { pageSize } = this.props;
-    const { filteredProblems, sortOption } = this.state;
+    const { filteredProblems } = this.state;
     const start = pageSize * page;
     const end = Math.min(pageSize * (page + 1), filteredProblems.length);
     let sortedProblems: ProblemDTO[];
@@ -77,7 +77,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   }
 
   handlePageChange = (newPage: number) => {
-    const items = this.getCurrentProblems(newPage);
+    const items = this.getCurrentProblems(newPage, this.state.sortOption);
     this.setState({
       page: newPage,
       currentProblems: items,
@@ -144,7 +144,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   render() {
     const { problems, panelOptions, texts } = this.props;
     const { filteredProblems, hideAlertsInMaintenance } = this.state;
-    const currentProblems = this.getCurrentProblems(this.state.page);
+    const currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
     let fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
     fontSize = fontSize && fontSize !== 100 ? fontSize : null;
     const alertListClass = classNames('alert-rule-list', { [`font-size--${fontSize}`]: fontSize });
