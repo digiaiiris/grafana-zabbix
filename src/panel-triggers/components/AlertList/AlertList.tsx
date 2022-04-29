@@ -7,6 +7,9 @@ import { ProblemDTO, ZBXTag } from '../../../datasource-zabbix/types';
 import { getSeverityOptions } from '../../triggers_panel_ctrl';
 import _ from 'lodash';
 
+const SORT_BY_PRIORITY = 'priority';
+const SORT_BY_TIMESTAMP = 'lastchange';
+
 export interface AlertListProps {
   problems: ProblemDTO[];
   panelOptions: ProblemsPanelOptions;
@@ -27,6 +30,7 @@ interface AlertListState {
   priorityFilter: number;
   categoryFilter: string;
   hideAlertsInMaintenance: boolean;
+  sortOption: string;
 }
 
 export default class AlertList extends PureComponent<AlertListProps, AlertListState> {
@@ -40,6 +44,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       priorityFilter: -1,
       categoryFilter: 'all',
       hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
+      sortOption: props.panelOptions.sortProblems || SORT_BY_TIMESTAMP,
     };
   }
 
@@ -59,10 +64,16 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
 
   getCurrentProblems(page: number) {
     const { pageSize } = this.props;
-    const { filteredProblems } = this.state;
+    const { filteredProblems, sortOption } = this.state;
     const start = pageSize * page;
     const end = Math.min(pageSize * (page + 1), filteredProblems.length);
-    return filteredProblems.slice(start, end);
+    let sortedProblems: ProblemDTO[];
+    if (sortOption === SORT_BY_PRIORITY) {
+      sortedProblems = _.orderBy(filteredProblems, ['severity'], ['desc']);
+    } else {
+      sortedProblems = _.orderBy(filteredProblems, ['timestamp'], ['desc']);
+    }
+    return sortedProblems.slice(start, end);
   }
 
   handlePageChange = (newPage: number) => {
@@ -126,6 +137,10 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     this.setState({ hideAlertsInMaintenance, filteredProblems, page: 0 });
   }
 
+  onChangeSortOption = (event: any) => {
+    this.setState({ sortOption: event.target.value });
+  }
+
   render() {
     const { problems, panelOptions, texts } = this.props;
     const { filteredProblems, hideAlertsInMaintenance } = this.state;
@@ -141,11 +156,18 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         categoryOptions.push({ value: problem.opdata, label: problem.opdata });
       }
     });
+    const sortOptions = [
+      { value: SORT_BY_PRIORITY, label: `${texts.sortBy}: ${texts.priority}` },
+      { value: SORT_BY_TIMESTAMP, label: `${texts.sortBy}: ${texts.startTime}` }
+    ]
 
     return (
       <div className="triggers-panel-container" key="alertListContainer">
         <div className="triggers-panel-filters">
           <input type="text" onChange={(event) => this.filterByText(event)} placeholder={texts.search} />
+          <select onChange={(event) => this.onChangeSortOption(event)}>
+            {sortOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+          </select>
           <select onChange={(event) => this.filterByPriority(event)}>
             {severityOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
           </select>

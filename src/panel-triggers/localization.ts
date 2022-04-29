@@ -24,8 +24,8 @@ export const texts = {
     description: 'Kuvaus',
     priority: 'Prioriteetti',
     eventId: 'Häiriön ID',
-    startTime: 'Aloitusaika',
-    endTime: 'Päätösaika',
+    startTime: 'Alkamisaika',
+    endTime: 'Päättymisaika',
     duration: 'Kesto',
     acknowledgements: 'Kommentit',
     dashboard: 'Tilannekuvanäkymä',
@@ -34,7 +34,8 @@ export const texts = {
     selectCategory: 'Valitse kategoria',
     selectPriority: 'Valitse prioriteetti',
     testIncident: 'Testihäiriö',
-    hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt'
+    hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt',
+    sortBy: 'Lajitteluperuste'
   },
   en: {
     critical: 'Critical',
@@ -71,6 +72,7 @@ export const texts = {
     selectCategory: 'Select category',
     selectPriority: 'Select priority',
     testIncident: 'Test Incident',
-    hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance'
+    hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance',
+    sortBy: 'Sort by',
   },
 };
