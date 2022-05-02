@@ -74,6 +74,7 @@ export const PANEL_DEFAULTS = {
   ackEventColor: 'rgb(56, 219, 156)',
   markAckEvents: false,
   hideAlertsInMaintenanceByDefault: false,
+  hideAlertFilters: false,
 };
 
 const triggerStatusMap = {

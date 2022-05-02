@@ -10865,13 +10865,13 @@ var AlertList = /** @class */ (function (_super) {
             }
         });
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
+            !panelOptions.hideAlertFilters ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "checkbox-filter" },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); } }),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance))),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance))) : null,
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
                     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
@@ -13089,6 +13089,7 @@ var PANEL_DEFAULTS = {
     ackEventColor: 'rgb(56, 219, 156)',
     markAckEvents: false,
     hideAlertsInMaintenanceByDefault: false,
+    hideAlertFilters: false,
 };
 var triggerStatusMap = {
     '0': 'OK',
