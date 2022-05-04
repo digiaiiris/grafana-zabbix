@@ -35,7 +35,8 @@ export const texts = {
     selectPriority: 'Valitse prioriteetti',
     testIncident: 'Testihäiriö',
     hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt',
-    sortBy: 'Lajitteluperuste'
+    sortBy: 'Lajitteluperuste',
+    pieces: 'kpl',
   },
   en: {
     critical: 'Critical',
@@ -74,5 +75,6 @@ export const texts = {
     testIncident: 'Test Incident',
     hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance',
     sortBy: 'Sort by',
+    pieces: 'pcs',
   },
 };

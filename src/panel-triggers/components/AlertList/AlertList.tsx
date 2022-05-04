@@ -141,6 +141,16 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     this.setState({ sortOption: event.target.value, page: 0 });
   }
 
+  getAmountOfAlertsInMaintenance = () => {
+    let amount = 0;
+    this.state.filteredProblems.forEach((problem: any) => {
+      if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0') {
+        amount++;
+      }
+    });
+    return amount;
+  }
+
   render() {
     const { problems, panelOptions, texts } = this.props;
     const { filteredProblems, hideAlertsInMaintenance } = this.state;
@@ -159,7 +169,8 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     const sortOptions = [
       { value: SORT_BY_PRIORITY, label: `${texts.sortBy}: ${texts.priority}` },
       { value: SORT_BY_TIMESTAMP, label: `${texts.sortBy}: ${texts.startTime}` }
-    ]
+    ];
+    const amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance();
 
     return (
       <div className="triggers-panel-container" key="alertListContainer">
@@ -174,9 +185,17 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
           <select onChange={(event) => this.filterByCategory(event)}>
             {categoryOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
           </select>
-          <div className="checkbox-filter">
-            <input type="checkbox" id="showMaintenance" defaultChecked={hideAlertsInMaintenance} onChange={() => this.filterByMaintenance()} />
-            <label htmlFor="showMaintenance">{texts.hideAlertsInMaintenance}</label>
+          <div className={'checkbox-filter ' + (amountOfAlertsInMaintenance === 0 ? 'disabled' : '')}>
+            <input
+              type="checkbox"
+              id="showMaintenance"
+              defaultChecked={hideAlertsInMaintenance}
+              onChange={() => this.filterByMaintenance()}
+              disabled={amountOfAlertsInMaintenance === 0}
+            />
+            <label htmlFor="showMaintenance">
+              {`${texts.hideAlertsInMaintenance} ${amountOfAlertsInMaintenance}${texts.pieces}`}
+            </label>
           </div>
         </div> : null }
         <section className="card-section card-list-layout-list">

@@ -10822,6 +10822,15 @@ var AlertList = /** @class */ (function (_super) {
         _this.onChangeSortOption = function (event) {
             _this.setState({ sortOption: event.target.value, page: 0 });
         };
+        _this.getAmountOfAlertsInMaintenance = function () {
+            var amount = 0;
+            _this.state.filteredProblems.forEach(function (problem) {
+                if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0') {
+                    amount++;
+                }
+            });
+            return amount;
+        };
         _this.state = {
             page: 0,
             currentProblems: [],
@@ -10881,15 +10890,16 @@ var AlertList = /** @class */ (function (_super) {
             { value: SORT_BY_PRIORITY, label: texts.sortBy + ": " + texts.priority },
             { value: SORT_BY_TIMESTAMP, label: texts.sortBy + ": " + texts.startTime }
         ];
+        var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance();
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
             !panelOptions.hideAlertFilters ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.onChangeSortOption(event); }, defaultValue: this.state.sortOption }, sortOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "checkbox-filter" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); } }),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance))) : null,
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'checkbox-filter ' + (amountOfAlertsInMaintenance === 0 ? 'disabled' : '') },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); }, disabled: amountOfAlertsInMaintenance === 0 }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance + " " + amountOfAlertsInMaintenance + texts.pieces))) : null,
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
                     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
@@ -12651,7 +12661,8 @@ var texts = {
         selectPriority: 'Valitse prioriteetti',
         testIncident: 'Testihäiriö',
         hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt',
-        sortBy: 'Lajitteluperuste'
+        sortBy: 'Lajitteluperuste',
+        pieces: 'kpl',
     },
     en: {
         critical: 'Critical',
@@ -12690,6 +12701,7 @@ var texts = {
         testIncident: 'Test Incident',
         hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance',
         sortBy: 'Sort by',
+        pieces: 'pcs',
     },
 };
 
