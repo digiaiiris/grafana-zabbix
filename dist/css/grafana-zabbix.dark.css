@@ -8,9 +8,9 @@
   height: 100%; }
   .triggers-panel-container .triggers-panel-filters {
     margin-top: 2px;
-    margin-bottom: 10px; }
+    margin-bottom: 5px; }
     .triggers-panel-container .triggers-panel-filters input, .triggers-panel-container .triggers-panel-filters select {
-      margin-right: 10px; }
+      margin-right: 5px; }
   .triggers-panel-container .card-section {
     padding: 2px;
     margin-bottom: 0.4rem;
@@ -399,11 +399,13 @@
     text-overflow: ellipsis; }
     .triggers-panel-container .triggers-panel-filters .checkbox-filter input {
       min-width: 20px;
-      margin-right: 3px; }
+      margin-right: 3px;
+      margin-bottom: 5px; }
     .triggers-panel-container .triggers-panel-filters .checkbox-filter label {
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis; }
+      text-overflow: ellipsis;
+      margin-bottom: 5px; }
 
 .body--phantomjs .triggers-panel-container .alert-rule-list {
   display: block; }

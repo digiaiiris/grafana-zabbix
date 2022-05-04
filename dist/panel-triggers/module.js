@@ -10767,12 +10767,14 @@ var __extends = (undefined && undefined.__extends) || (function () {
 
 
 
+var SORT_BY_PRIORITY = 'priority';
+var SORT_BY_TIMESTAMP = 'lastchange';
 var AlertList = /** @class */ (function (_super) {
     __extends(AlertList, _super);
     function AlertList(props) {
         var _this = _super.call(this, props) || this;
         _this.handlePageChange = function (newPage) {
-            var items = _this.getCurrentProblems(newPage);
+            var items = _this.getCurrentProblems(newPage, _this.state.sortOption);
             _this.setState({
                 page: newPage,
                 currentProblems: items,
@@ -10817,6 +10819,9 @@ var AlertList = /** @class */ (function (_super) {
             var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance);
             _this.setState({ hideAlertsInMaintenance: hideAlertsInMaintenance, filteredProblems: filteredProblems, page: 0 });
         };
+        _this.onChangeSortOption = function (event) {
+            _this.setState({ sortOption: event.target.value, page: 0 });
+        };
         _this.state = {
             page: 0,
             currentProblems: [],
@@ -10825,6 +10830,7 @@ var AlertList = /** @class */ (function (_super) {
             priorityFilter: -1,
             categoryFilter: 'all',
             hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
+            sortOption: props.panelOptions.sortProblems || SORT_BY_TIMESTAMP,
         };
         return _this;
     }
@@ -10840,19 +10846,26 @@ var AlertList = /** @class */ (function (_super) {
             this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
         }
     };
-    AlertList.prototype.getCurrentProblems = function (page) {
+    AlertList.prototype.getCurrentProblems = function (page, sortOption) {
         var pageSize = this.props.pageSize;
         var filteredProblems = this.state.filteredProblems;
         var start = pageSize * page;
         var end = Math.min(pageSize * (page + 1), filteredProblems.length);
-        return filteredProblems.slice(start, end);
+        var sortedProblems;
+        if (sortOption === SORT_BY_PRIORITY) {
+            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['severity'], ['desc']);
+        }
+        else {
+            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['timestamp'], ['desc']);
+        }
+        return sortedProblems.slice(start, end);
     };
     AlertList.prototype.render = function () {
         var _a;
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
         var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance;
-        var currentProblems = this.getCurrentProblems(this.state.page);
+        var currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
         var alertListClass = classnames__WEBPACK_IMPORTED_MODULE_1___default()('alert-rule-list', (_a = {}, _a["font-size--" + fontSize] = fontSize, _a));
@@ -10864,9 +10877,14 @@ var AlertList = /** @class */ (function (_super) {
                 categoryOptions.push({ value: problem.opdata, label: problem.opdata });
             }
         });
+        var sortOptions = [
+            { value: SORT_BY_PRIORITY, label: texts.sortBy + ": " + texts.priority },
+            { value: SORT_BY_TIMESTAMP, label: texts.sortBy + ": " + texts.startTime }
+        ];
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
             !panelOptions.hideAlertFilters ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.onChangeSortOption(event); }, defaultValue: this.state.sortOption }, sortOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "checkbox-filter" },
@@ -12622,8 +12640,8 @@ var texts = {
         description: 'Kuvaus',
         priority: 'Prioriteetti',
         eventId: 'Häiriön ID',
-        startTime: 'Aloitusaika',
-        endTime: 'Päätösaika',
+        startTime: 'Alkamisaika',
+        endTime: 'Päättymisaika',
         duration: 'Kesto',
         acknowledgements: 'Kommentit',
         dashboard: 'Tilannekuvanäkymä',
@@ -12632,7 +12650,8 @@ var texts = {
         selectCategory: 'Valitse kategoria',
         selectPriority: 'Valitse prioriteetti',
         testIncident: 'Testihäiriö',
-        hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt'
+        hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt',
+        sortBy: 'Lajitteluperuste'
     },
     en: {
         critical: 'Critical',
@@ -12669,7 +12688,8 @@ var texts = {
         selectCategory: 'Select category',
         selectPriority: 'Select priority',
         testIncident: 'Test Incident',
-        hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance'
+        hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance',
+        sortBy: 'Sort by',
     },
 };
 

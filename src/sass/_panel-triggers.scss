@@ -10,9 +10,9 @@
 
   .triggers-panel-filters {
     margin-top: 2px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     input, select {
-      margin-right: 10px;
+      margin-right: 5px;
     }
   }
   .card-section {
@@ -315,11 +315,13 @@
       input {
         min-width: 20px;
         margin-right: 3px;
+        margin-bottom: 5px;
       }
       label {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        margin-bottom: 5px;
       }
     }
   }
