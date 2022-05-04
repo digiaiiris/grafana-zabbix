@@ -144,7 +144,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   getAmountOfAlertsInMaintenance = () => {
     let amount = 0;
     this.state.filteredProblems.forEach((problem: any) => {
-      if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0') {
+      if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1') {
         amount++;
       }
     });

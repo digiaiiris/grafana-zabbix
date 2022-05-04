@@ -10825,7 +10825,7 @@ var AlertList = /** @class */ (function (_super) {
         _this.getAmountOfAlertsInMaintenance = function () {
             var amount = 0;
             _this.state.filteredProblems.forEach(function (problem) {
-                if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0') {
+                if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1') {
                     amount++;
                 }
             });
