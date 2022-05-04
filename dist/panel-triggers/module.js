@@ -10788,7 +10788,7 @@ var AlertList = /** @class */ (function (_super) {
         _this.handleProblemAck = function (problem, data) {
             return _this.props.onProblemAck(problem, data);
         };
-        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter) {
+        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter, sortOption) {
             var textFilterLowerCase = textFilter.toLowerCase();
             var filteredProblems = _this.props.problems.filter(function (problem) {
                 return ((problem.comments.toLowerCase().indexOf(textFilterLowerCase) > -1 ||
@@ -10797,34 +10797,40 @@ var AlertList = /** @class */ (function (_super) {
                     (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
                     (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')));
             });
+            if (sortOption === SORT_BY_PRIORITY) {
+                filteredProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['severity'], ['desc']);
+            }
+            else {
+                filteredProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['timestamp'], ['desc']);
+            }
             return filteredProblems;
         };
         _this.filterByText = function (event) {
             var textFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ textFilter: textFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByPriority = function (event) {
             var priorityFilter = parseInt(event.target.value, 10);
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ priorityFilter: priorityFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByCategory = function (event) {
             var categoryFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ categoryFilter: categoryFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByMaintenance = function () {
             var hideAlertsInMaintenance = !_this.state.hideAlertsInMaintenance;
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ hideAlertsInMaintenance: hideAlertsInMaintenance, filteredProblems: filteredProblems, page: 0 });
         };
         _this.onChangeSortOption = function (event) {
             _this.setState({ sortOption: event.target.value, page: 0 });
         };
-        _this.getAmountOfAlertsInMaintenance = function () {
+        _this.getAmountOfAlertsInMaintenance = function (problems) {
             var amount = 0;
-            _this.state.filteredProblems.forEach(function (problem) {
+            problems.forEach(function (problem) {
                 if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1') {
                     amount++;
                 }
@@ -10840,19 +10846,24 @@ var AlertList = /** @class */ (function (_super) {
             categoryFilter: 'all',
             hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
             sortOption: props.panelOptions.sortProblems || SORT_BY_TIMESTAMP,
+            amountOfAlertsInMaintenance: 0,
         };
         return _this;
     }
     AlertList.prototype.componentDidMount = function () {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance, sortOption = _a.sortOption;
         if (this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
+            var filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+            var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
+            this.setState({ filteredProblems: filteredProblems, amountOfAlertsInMaintenance: amountOfAlertsInMaintenance });
         }
     };
     AlertList.prototype.componentDidUpdate = function (prevProps, prevState, snapshot) {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance, sortOption = _a.sortOption;
         if (!lodash__WEBPACK_IMPORTED_MODULE_4___default.a.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
+            var filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+            var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
+            this.setState({ filteredProblems: filteredProblems, amountOfAlertsInMaintenance: amountOfAlertsInMaintenance });
         }
     };
     AlertList.prototype.getCurrentProblems = function (page, sortOption) {
@@ -10860,20 +10871,13 @@ var AlertList = /** @class */ (function (_super) {
         var filteredProblems = this.state.filteredProblems;
         var start = pageSize * page;
         var end = Math.min(pageSize * (page + 1), filteredProblems.length);
-        var sortedProblems;
-        if (sortOption === SORT_BY_PRIORITY) {
-            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['severity'], ['desc']);
-        }
-        else {
-            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['timestamp'], ['desc']);
-        }
-        return sortedProblems.slice(start, end);
+        return filteredProblems.slice(start, end);
     };
     AlertList.prototype.render = function () {
         var _a;
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
-        var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance;
+        var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance, amountOfAlertsInMaintenance = _c.amountOfAlertsInMaintenance;
         var currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -10890,7 +10894,6 @@ var AlertList = /** @class */ (function (_super) {
             { value: SORT_BY_PRIORITY, label: texts.sortBy + ": " + texts.priority },
             { value: SORT_BY_TIMESTAMP, label: texts.sortBy + ": " + texts.startTime }
         ];
-        var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance();
         return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-container", key: "alertListContainer" },
             !panelOptions.hideAlertFilters ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "triggers-panel-filters" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "text", onChange: function (event) { return _this.filterByText(event); }, placeholder: texts.search }),
