@@ -10826,7 +10826,9 @@ var AlertList = /** @class */ (function (_super) {
             _this.setState({ hideAlertsInMaintenance: hideAlertsInMaintenance, filteredProblems: filteredProblems, page: 0 });
         };
         _this.onChangeSortOption = function (event) {
-            _this.setState({ sortOption: event.target.value, page: 0 });
+            var sortOption = event.target.value;
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, sortOption);
+            _this.setState({ sortOption: sortOption, filteredProblems: filteredProblems, page: 0 });
         };
         _this.getAmountOfAlertsInMaintenance = function (problems) {
             var amount = 0;

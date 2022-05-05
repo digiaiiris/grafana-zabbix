@@ -143,7 +143,10 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   }
 
   onChangeSortOption = (event: any) => {
-    this.setState({ sortOption: event.target.value, page: 0 });
+    const sortOption = event.target.value;
+    const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter,
+      this.state.categoryFilter, this.state.hideAlertsInMaintenance, sortOption);
+    this.setState({ sortOption, filteredProblems, page: 0 });
   }
 
   getAmountOfAlertsInMaintenance = (problems: any[]) => {
