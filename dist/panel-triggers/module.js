@@ -10788,7 +10788,7 @@ var AlertList = /** @class */ (function (_super) {
         _this.handleProblemAck = function (problem, data) {
             return _this.props.onProblemAck(problem, data);
         };
-        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter) {
+        _this.getFilteredProblems = function (textFilter, priorityFilter, categoryFilter, maintenanceFilter, sortOption) {
             var textFilterLowerCase = textFilter.toLowerCase();
             var filteredProblems = _this.props.problems.filter(function (problem) {
                 return ((problem.comments.toLowerCase().indexOf(textFilterLowerCase) > -1 ||
@@ -10797,30 +10797,47 @@ var AlertList = /** @class */ (function (_super) {
                     (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
                     (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')));
             });
+            if (sortOption === SORT_BY_PRIORITY) {
+                filteredProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['severity'], ['desc']);
+            }
+            else {
+                filteredProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['timestamp'], ['desc']);
+            }
             return filteredProblems;
         };
         _this.filterByText = function (event) {
             var textFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ textFilter: textFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByPriority = function (event) {
             var priorityFilter = parseInt(event.target.value, 10);
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ priorityFilter: priorityFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByCategory = function (event) {
             var categoryFilter = event.target.value;
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter, _this.state.hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, categoryFilter, _this.state.hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ categoryFilter: categoryFilter, filteredProblems: filteredProblems, page: 0 });
         };
         _this.filterByMaintenance = function () {
             var hideAlertsInMaintenance = !_this.state.hideAlertsInMaintenance;
-            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance);
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, hideAlertsInMaintenance, _this.state.sortOption);
             _this.setState({ hideAlertsInMaintenance: hideAlertsInMaintenance, filteredProblems: filteredProblems, page: 0 });
         };
         _this.onChangeSortOption = function (event) {
-            _this.setState({ sortOption: event.target.value, page: 0 });
+            var sortOption = event.target.value;
+            var filteredProblems = _this.getFilteredProblems(_this.state.textFilter, _this.state.priorityFilter, _this.state.categoryFilter, _this.state.hideAlertsInMaintenance, sortOption);
+            _this.setState({ sortOption: sortOption, filteredProblems: filteredProblems, page: 0 });
+        };
+        _this.getAmountOfAlertsInMaintenance = function (problems) {
+            var amount = 0;
+            problems.forEach(function (problem) {
+                if (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '1') {
+                    amount++;
+                }
+            });
+            return amount;
         };
         _this.state = {
             page: 0,
@@ -10831,19 +10848,24 @@ var AlertList = /** @class */ (function (_super) {
             categoryFilter: 'all',
             hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
             sortOption: props.panelOptions.sortProblems || SORT_BY_TIMESTAMP,
+            amountOfAlertsInMaintenance: 0,
         };
         return _this;
     }
     AlertList.prototype.componentDidMount = function () {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance, sortOption = _a.sortOption;
         if (this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
+            var filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+            var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
+            this.setState({ filteredProblems: filteredProblems, amountOfAlertsInMaintenance: amountOfAlertsInMaintenance });
         }
     };
     AlertList.prototype.componentDidUpdate = function (prevProps, prevState, snapshot) {
-        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance;
+        var _a = this.state, textFilter = _a.textFilter, priorityFilter = _a.priorityFilter, categoryFilter = _a.categoryFilter, hideAlertsInMaintenance = _a.hideAlertsInMaintenance, sortOption = _a.sortOption;
         if (!lodash__WEBPACK_IMPORTED_MODULE_4___default.a.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
-            this.setState({ filteredProblems: this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance) });
+            var filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+            var amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
+            this.setState({ filteredProblems: filteredProblems, amountOfAlertsInMaintenance: amountOfAlertsInMaintenance });
         }
     };
     AlertList.prototype.getCurrentProblems = function (page, sortOption) {
@@ -10851,20 +10873,13 @@ var AlertList = /** @class */ (function (_super) {
         var filteredProblems = this.state.filteredProblems;
         var start = pageSize * page;
         var end = Math.min(pageSize * (page + 1), filteredProblems.length);
-        var sortedProblems;
-        if (sortOption === SORT_BY_PRIORITY) {
-            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['severity'], ['desc']);
-        }
-        else {
-            sortedProblems = lodash__WEBPACK_IMPORTED_MODULE_4___default.a.orderBy(filteredProblems, ['timestamp'], ['desc']);
-        }
-        return sortedProblems.slice(start, end);
+        return filteredProblems.slice(start, end);
     };
     AlertList.prototype.render = function () {
         var _a;
         var _this = this;
         var _b = this.props, problems = _b.problems, panelOptions = _b.panelOptions, texts = _b.texts;
-        var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance;
+        var _c = this.state, filteredProblems = _c.filteredProblems, hideAlertsInMaintenance = _c.hideAlertsInMaintenance, amountOfAlertsInMaintenance = _c.amountOfAlertsInMaintenance;
         var currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
         var fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
         fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -10887,9 +10902,9 @@ var AlertList = /** @class */ (function (_super) {
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.onChangeSortOption(event); }, defaultValue: this.state.sortOption }, sortOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByPriority(event); } }, severityOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", { onChange: function (event) { return _this.filterByCategory(event); } }, categoryOptions.map(function (option) { return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", { value: option.value }, option.label); })),
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: "checkbox-filter" },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); } }),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance))) : null,
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: 'checkbox-filter ' + (amountOfAlertsInMaintenance === 0 ? 'disabled' : '') },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", { type: "checkbox", id: "showMaintenance", defaultChecked: hideAlertsInMaintenance, onChange: function () { return _this.filterByMaintenance(); }, disabled: amountOfAlertsInMaintenance === 0 }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", { htmlFor: "showMaintenance" }, texts.hideAlertsInMaintenance + " " + amountOfAlertsInMaintenance + texts.pieces))) : null,
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", { className: "card-section card-list-layout-list" },
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ol", { className: alertListClass }, currentProblems.map(function (problem) {
                     return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_AlertCard__WEBPACK_IMPORTED_MODULE_2__["default"], { key: problem.triggerid + "-" + problem.eventid + "-" + problem.datasource, problem: problem, panelOptions: panelOptions, onTagClick: _this.handleTagClick, onProblemAck: _this.handleProblemAck, texts: texts });
@@ -12651,7 +12666,8 @@ var texts = {
         selectPriority: 'Valitse prioriteetti',
         testIncident: 'Testihäiriö',
         hideAlertsInMaintenance: 'Piilota huollossa olevien palvelimien häiriöt',
-        sortBy: 'Lajitteluperuste'
+        sortBy: 'Lajitteluperuste',
+        pieces: 'kpl',
     },
     en: {
         critical: 'Critical',
@@ -12690,6 +12706,7 @@ var texts = {
         testIncident: 'Test Incident',
         hideAlertsInMaintenance: 'Hide alerts from hosts under maintenance',
         sortBy: 'Sort by',
+        pieces: 'pcs',
     },
 };
 

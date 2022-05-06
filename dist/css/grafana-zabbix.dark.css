@@ -406,6 +406,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       margin-bottom: 5px; }
+    .triggers-panel-container .triggers-panel-filters .checkbox-filter.disabled label {
+      opacity: 0.5; }
 
 .body--phantomjs .triggers-panel-container .alert-rule-list {
   display: block; }
