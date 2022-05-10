@@ -4084,9 +4084,9 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(parts, function (p) {
             if (target[p] && target[p].filter) {
                 target[p].filter = _this.replaceTemplateVars(target[p].filter, options.scopedVars);
-                // Set empty RegExp-filters to ''
+                // Set empty RegExp-filters to '/.*/'
                 if (target[p].filter === '/^$/') {
-                    target[p].filter = '';
+                    target[p].filter = '/.*/';
                 }
             }
         });
