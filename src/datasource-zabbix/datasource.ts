@@ -732,6 +732,10 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
     _.forEach(parts, p => {
       if (target[p] && target[p].filter) {
         target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
+        // Set empty RegExp-filters to ''
+        if (target[p].filter === '/^$/') {
+          target[p].filter = '';
+        }
       }
     });
 
