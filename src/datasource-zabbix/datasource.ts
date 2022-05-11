@@ -760,9 +760,9 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
     });
   }
 
-  checkForTemplateVariables(fieldText: string, scopedVars: any) {
-    return Object.keys(scopedVars).some((variableName: string) => (
-      fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1
+  checkForTemplateVariables(fieldText: string, scopedVars: any[]) {
+    return scopedVars.some((variable: any) => (
+      fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1
     ));
   }
 

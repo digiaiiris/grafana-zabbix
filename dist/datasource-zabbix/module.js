@@ -4111,7 +4111,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         });
     };
     ZabbixDatasource.prototype.checkForTemplateVariables = function (fieldText, scopedVars) {
-        return Object.keys(scopedVars).some(function (variableName) { return (fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1); });
+        return scopedVars.some(function (variable) { return (fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1); });
     };
     ZabbixDatasource.prototype.isUseTrends = function (timeRange) {
         var timeFrom = timeRange[0], timeTo = timeRange[1];
