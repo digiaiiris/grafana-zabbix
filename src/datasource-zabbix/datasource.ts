@@ -731,13 +731,15 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
     const parts = ['group', 'host', 'application', 'item'];
     _.forEach(parts, p => {
       if (target[p] && target[p].filter) {
-        const hasVars = this.checkForTemplateVariables(target[p].filter, options.scopedVars);
-        const origValue = target[p].filter;
-        target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
-        if (hasVars && origValue !== target[p].filter) {
-          // Set empty RegExp-filters to '/.*/'
-          if (target[p].filter === '/^$/') {
-            target[p].filter = '/.*/';
+        const hasVars = this.checkForTemplateVariables(target[p].filter, this.templateSrv.getVariables());
+        if (hasVars) {
+          const origValue = target[p].filter;
+          target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
+          if (origValue !== target[p].filter) {
+            // Set empty RegExp-filters to '/.*/'
+            if (target[p].filter === '/^$/') {
+              target[p].filter = '/.*/';
+            }
           }
         }
       }
@@ -759,13 +761,9 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
   }
 
   checkForTemplateVariables(fieldText: string, scopedVars: any) {
-    let variablesFound = false;
-    Object.keys(scopedVars).map((variableName: string) => {
-      if (fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1) {
-        variablesFound = true;
-      }
-    });
-    return variablesFound;
+    return Object.keys(scopedVars).some((variableName: string) => (
+      fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1
+    ));
   }
 
   isUseTrends(timeRange) {

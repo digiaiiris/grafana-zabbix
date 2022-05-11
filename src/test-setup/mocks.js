@@ -1,5 +1,6 @@
 export let templateSrvMock = {
-  replace: jest.fn().mockImplementation(query => query)
+  replace: jest.fn().mockImplementation(query => query),
+  getVariables: jest.fn().mockImplementation(() => ({}))
 };
 
 export let backendSrvMock = {

@@ -4083,13 +4083,15 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         var parts = ['group', 'host', 'application', 'item'];
         lodash__WEBPACK_IMPORTED_MODULE_0___default.a.forEach(parts, function (p) {
             if (target[p] && target[p].filter) {
-                var hasVars = _this.checkForTemplateVariables(target[p].filter, options.scopedVars);
-                var origValue = target[p].filter;
-                target[p].filter = _this.replaceTemplateVars(target[p].filter, options.scopedVars);
-                if (hasVars && origValue !== target[p].filter) {
-                    // Set empty RegExp-filters to '/.*/'
-                    if (target[p].filter === '/^$/') {
-                        target[p].filter = '/.*/';
+                var hasVars = _this.checkForTemplateVariables(target[p].filter, _this.templateSrv.getVariables());
+                if (hasVars) {
+                    var origValue = target[p].filter;
+                    target[p].filter = _this.replaceTemplateVars(target[p].filter, options.scopedVars);
+                    if (origValue !== target[p].filter) {
+                        // Set empty RegExp-filters to '/.*/'
+                        if (target[p].filter === '/^$/') {
+                            target[p].filter = '/.*/';
+                        }
                     }
                 }
             }
@@ -4109,13 +4111,7 @@ var ZabbixDatasource = /** @class */ (function (_super) {
         });
     };
     ZabbixDatasource.prototype.checkForTemplateVariables = function (fieldText, scopedVars) {
-        var variablesFound = false;
-        Object.keys(scopedVars).map(function (variableName) {
-            if (fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1) {
-                variablesFound = true;
-            }
-        });
-        return variablesFound;
+        return Object.keys(scopedVars).some(function (variableName) { return (fieldText.indexOf('$' + variableName) > -1 || fieldText.indexOf('${' + variableName + '}') > -1); });
     };
     ZabbixDatasource.prototype.isUseTrends = function (timeRange) {
         var timeFrom = timeRange[0], timeTo = timeRange[1];
