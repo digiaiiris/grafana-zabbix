@@ -15,9 +15,9 @@ build: build-frontend build-backend
 build-frontend:
 	yarn dev-build
 build-backend:
-	env GOOS=linux go build -o ./dist/zabbix-plugin_linux_amd64 ./pkg
+	env GOOS=linux go build -o ./dist/iiris-zabbix-plugin_linux_amd64 ./pkg
 build-debug:
-	env GOOS=linux go build -gcflags="all=-N -l" -o ./dist/zabbix-plugin_linux_amd64 ./pkg
+	env GOOS=linux go build -gcflags="all=-N -l" -o ./dist/iiris-zabbix-plugin_linux_amd64 ./pkg
 
 # Build for specific platform
 build-backend-windows: extension = .exe
