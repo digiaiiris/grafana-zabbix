@@ -11,7 +11,7 @@ install:
 deps-go:
 	go install -v ./pkg/
 
-build: build-frontend build-backend
+build: build-frontend build-backend build-backend-windows build-backend-darwin
 build-frontend:
 	yarn dev-build
 build-backend:
