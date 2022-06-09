@@ -31,7 +31,6 @@ export interface ProblemListProps {
   onTagClick?: (tag: ZBXTag, datasource: string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onPageSizeChange?: (pageSize: number, pageIndex: number) => void;
   onColumnResize?: (newResized: RTResized) => void;
-  texts: any;
 }
 
 interface ProblemListState {
