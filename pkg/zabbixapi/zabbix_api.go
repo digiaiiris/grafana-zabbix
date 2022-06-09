@@ -9,11 +9,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"time"
 
-	"github.com/alexanderzobnin/grafana-zabbix/pkg/httpclient"
+	"github.com/alexanderzobnin/grafana-zabbix/pkg/metrics"
 	"github.com/bitly/go-simplejson"
-	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"golang.org/x/net/context/ctxhttp"
 )
@@ -22,6 +20,7 @@ var (
 	ErrNotAuthenticated = errors.New("zabbix api: not authenticated")
 )
 
+// ZabbixAPI is a simple client responsible for making request to Zabbix API
 type ZabbixAPI struct {
 	url        *url.URL
 	httpClient *http.Client
@@ -32,14 +31,9 @@ type ZabbixAPI struct {
 type ZabbixAPIParams = map[string]interface{}
 
 // New returns new ZabbixAPI instance initialized with given URL or error.
-func New(dsInfo *backend.DataSourceInstanceSettings, timeout time.Duration) (*ZabbixAPI, error) {
+func New(apiURL string, client *http.Client) (*ZabbixAPI, error) {
 	apiLogger := log.New()
-	zabbixURL, err := url.Parse(dsInfo.URL)
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := httpclient.GetHttpClient(dsInfo, timeout)
+	zabbixURL, err := url.Parse(apiURL)
 	if err != nil {
 		return nil, err
 	}
@@ -113,6 +107,8 @@ func (api *ZabbixAPI) request(ctx context.Context, method string, params ZabbixA
 		return nil, err
 	}
 
+	metrics.ZabbixAPIQueryTotal.WithLabelValues(method).Inc()
+
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "Grafana/grafana-zabbix")
 
@@ -164,6 +160,9 @@ func handleAPIResult(response []byte) (*simplejson.Json, error) {
 }
 
 func makeHTTPRequest(ctx context.Context, httpClient *http.Client, req *http.Request) ([]byte, error) {
+	// Set to true to prevents re-use of TCP connections (this may cause random EOF error in some request)
+	req.Close = true
+
 	res, err := ctxhttp.Do(ctx, httpClient, req)
 	if err != nil {
 		return nil, err

@@ -2,31 +2,58 @@
   "type": "app",
   "name": "Iiris Zabbix",
   "id": "iiris-zabbix-triggers-panel",
-
   "info": {
     "description": "Iiris Zabbix plugin for Grafana",
     "author": {
       "name": "Digia Finland Oy",
       "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
-    "keywords": ["zabbix"],
+    "keywords": [
+      "zabbix"
+    ],
     "logos": {
       "small": "img/icn-zabbix-app.svg",
       "large": "img/icn-zabbix-app.svg"
     },
     "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/alexanderzobnin/grafana-zabbix"
+      },
+      {
+        "name": "Docs",
+        "url": "https://alexanderzobnin.github.io/grafana-zabbix"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/alexanderzobnin/grafana-zabbix/blob/master/LICENSE"
+      }
     ],
     "screenshots": [
-      {"name": "Showcase", "path": "img/screenshot-showcase.png"},
-      {"name": "Dashboard", "path": "img/screenshot-dashboard01.png"},
-      {"name": "Annotations", "path": "img/screenshot-annotations.png"},
-      {"name": "Metric Editor", "path": "img/screenshot-metric_editor.png"},
-      {"name": "Triggers", "path": "img/screenshot-triggers.png"}
+      {
+        "name": "Showcase",
+        "path": "img/screenshot-showcase.png"
+      },
+      {
+        "name": "Dashboard",
+        "path": "img/screenshot-dashboard01.png"
+      },
+      {
+        "name": "Annotations",
+        "path": "img/screenshot-annotations.png"
+      },
+      {
+        "name": "Metric Editor",
+        "path": "img/screenshot-metric_editor.png"
+      },
+      {
+        "name": "Triggers",
+        "path": "img/screenshot-triggers.png"
+      }
     ],
-    "version": "4.1.5",
-    "updated": "2021-05-18"
+    "version": "4.2.8",
+    "updated": "2022-05-06"
   },
-
   "includes": [
     {
       "type": "datasource",
@@ -37,10 +64,9 @@
       "name": "Iiris Zabbix Problems"
     }
   ],
-
   "dependencies": {
-    "grafanaDependency": ">=7.3.0",
-    "grafanaVersion": "7.3",
+    "grafanaDependency": ">=8.3.0",
+    "grafanaVersion": "8.3",
     "plugins": []
   }
 }

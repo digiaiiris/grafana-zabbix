@@ -1,4 +1,4 @@
-import { SelectableValue, DataQuery, DataSourceJsonData } from "@grafana/data";
+import { DataQuery, DataSourceJsonData, DataSourceRef, SelectableValue } from "@grafana/data";
 
 export interface ZabbixDSOptions extends DataSourceJsonData {
   username: string;
@@ -7,7 +7,7 @@ export interface ZabbixDSOptions extends DataSourceJsonData {
   trendsFrom: string;
   trendsRange: string;
   cacheTTL: string;
-  timeout?: string;
+  timeout?: number;
   dbConnectionEnable: boolean;
   dbConnectionDatasourceId?: number;
   dbConnectionDatasourceName?: string;
@@ -40,6 +40,7 @@ export interface ZabbixMetricsQuery extends DataQuery {
   group: { filter: string; name?: string; };
   host: { filter: string; name?: string; };
   application: { filter: string; name?: string; };
+  itemTag: { filter: string; name?: string; };
   item: { filter: string; name?: string; };
   textFilter: string;
   mode: number;
@@ -87,7 +88,9 @@ export interface TemplateSrv {
   variables: {
     name: string;
   };
+
   highlightVariablesAsHtml(str: any): any;
+
   replace(target: any, scopedVars?: any, format?: any): any;
 }
 
@@ -147,6 +150,7 @@ export interface VariableQuery {
   group?: string;
   host?: string;
   application?: string;
+  itemTag?: string;
   item?: string;
 }
 
@@ -156,6 +160,7 @@ export enum VariableQueryTypes {
   Group = 'group',
   Host = 'host',
   Application = 'application',
+  ItemTag = 'itemTag',
   Item = 'item',
   ItemValues = 'itemValues',
 }
@@ -180,7 +185,7 @@ export interface ProblemDTO {
   /** Whether the trigger is in OK or problem state. */
   value?: string;
 
-  datasource?: string;
+  datasource?: DataSourceRef | string;
   comments?: string;
   host?: string;
   hostTechName?: string;
@@ -295,6 +300,12 @@ export interface ZBXItem {
   name: string;
   key_: string;
   lastvalue?: string;
+  tags?: ZBXItemTag[];
+}
+
+export interface ZBXItemTag {
+  tag: string;
+  value?: string;
 }
 
 export interface ZBXEvent {

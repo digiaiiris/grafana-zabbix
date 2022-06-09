@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment';
 import * as c from './constants';
-import { VariableQuery, VariableQueryTypes } from './types';
-import { MappingType, ValueMapping, getValueFormats, DataFrame, FieldType, rangeUtil } from '@grafana/data';
+import { VariableQuery, VariableQueryTypes, ZBXItemTag } from './types';
+import { DataFrame, FieldType, getValueFormats, MappingType, rangeUtil, ValueMapping } from '@grafana/data';
 
 /*
  * This regex matches 3 types of variable reference with an optional format specifier
@@ -57,7 +57,7 @@ function splitKeyParams(paramStr) {
     } else if (symbol === '"' && !quoted) {
       quoted = true;
     } else if (symbol === '[' && !quoted) {
-      in_array  = true;
+      in_array = true;
     } else if (symbol === ']' && !quoted) {
       in_array = false;
     } else if (symbol === split_symbol && !quoted && !in_array) {
@@ -224,7 +224,7 @@ export function getRangeScopedVars(range) {
     __range_ms: { text: msRange, value: msRange },
     __range_s: { text: sRange, value: sRange },
     __range: { text: regularRange, value: regularRange },
-    __range_series: {text: c.RANGE_VARIABLE_VALUE, value: c.RANGE_VARIABLE_VALUE},
+    __range_series: { text: c.RANGE_VARIABLE_VALUE, value: c.RANGE_VARIABLE_VALUE },
   };
 }
 
@@ -242,7 +242,7 @@ export function escapeRegex(value) {
 }
 
 /**
- * Parses Zabbix item update interval. Returns 0 in case of custom intervals.
+ * Parses Zabbix item update interval (returns milliseconds). Returns 0 in case of custom intervals.
  */
 export function parseItemInterval(interval: string): number {
   const normalizedInterval = normalizeZabbixInterval(interval);
@@ -261,6 +261,7 @@ export function normalizeZabbixInterval(interval: string): string {
   return parsedInterval[1] + (parsedInterval.length > 2 ? parsedInterval[2] : 's');
 }
 
+// Returns interval in milliseconds
 export function parseInterval(interval: string): number {
   const intervalPattern = /(^[\d]+)(y|M|w|d|h|m|s)/g;
   const momentInterval: any[] = intervalPattern.exec(interval);
@@ -321,7 +322,7 @@ export function convertToZabbixAPIUrl(url) {
  * when waiting for result.
  */
 export function callOnce(func, promiseKeeper) {
-  return function() {
+  return function () {
     if (!promiseKeeper) {
       promiseKeeper = Promise.resolve(
         func.apply(this, arguments)
@@ -343,7 +344,7 @@ export function callOnce(func, promiseKeeper) {
  * @param {*} funcsArray functions to apply
  */
 export function sequence(funcsArray) {
-  return function(result) {
+  return function (result) {
     for (let i = 0; i < funcsArray.length; i++) {
       result = funcsArray[i].call(this, result);
     }
@@ -405,9 +406,24 @@ export function parseTags(tagStr: string): any[] {
   let tags: any[] = _.map(tagStr.split(','), (tag) => tag.trim());
   tags = _.map(tags, (tag) => {
     const tagParts = tag.split(':');
-    return {tag: tagParts[0].trim(), value: tagParts[1].trim()};
+    return { tag: tagParts[0]?.trim(), value: tagParts[1]?.trim() };
   });
   return tags;
+}
+
+// Parses string representation of tag into the object
+export function parseItemTag(tagStr: string): ZBXItemTag {
+  const itemTag: ZBXItemTag = { tag: '', value: '' };
+  const tagParts = tagStr.split(': ');
+  itemTag.tag = tagParts[0];
+  if (tagParts[1]) {
+    itemTag.value = tagParts[1];
+  }
+  return itemTag;
+}
+
+export function itemTagToString(t: ZBXItemTag): string {
+  return t.value ? `${t.tag}: ${t.value}` : t.tag;
 }
 
 export function mustArray(result: any): any[] {
@@ -463,10 +479,12 @@ export function getValueMapping(item, valueMappings: any[]): ValueMapping[] | nu
 
   return (mapping.mappings as any[]).map((m, i) => {
     const valueMapping: ValueMapping = {
-      id: i,
+      // id: i,
       type: MappingType.ValueToText,
-      value: m.value,
-      text: m.newvalue,
+      options: {
+        value: m.value,
+        text: m.newvalue,
+      }
     };
     return valueMapping;
   });

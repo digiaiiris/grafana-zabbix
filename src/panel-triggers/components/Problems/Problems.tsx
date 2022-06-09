@@ -7,17 +7,19 @@ import { isNewProblem } from '../../utils';
 import EventTag from '../EventTag';
 import { ProblemDetails } from './ProblemDetails';
 import { AckProblemData } from '../AckModal';
-import { GFHeartIcon, FAIcon } from '../../../components';
-import { ProblemsPanelOptions, GFTimeRange, RTCell, TriggerSeverity, RTResized } from '../../types';
-import { ProblemDTO, ZBXEvent, ZBXTag, ZBXAlert } from '../../../datasource-zabbix/types';
-import { ZBXScript, APIExecuteScriptResponse } from '../../../datasource-zabbix/zabbix/connectors/zabbix_api/types';
+import { FAIcon, GFHeartIcon } from '../../../components';
+import { GFTimeRange, ProblemsPanelOptions, RTCell, RTResized, TriggerSeverity } from '../../types';
+import { ProblemDTO, ZBXAlert, ZBXEvent, ZBXTag } from '../../../datasource-zabbix/types';
+import { APIExecuteScriptResponse, ZBXScript } from '../../../datasource-zabbix/zabbix/connectors/zabbix_api/types';
 import { AckCell } from './AckCell';
+import { DataSourceRef, TimeRange } from "@grafana/data";
 
 export interface ProblemListProps {
   problems: ProblemDTO[];
   panelOptions: ProblemsPanelOptions;
   loading?: boolean;
   timeRange?: GFTimeRange;
+  range?: TimeRange;
   pageSize?: number;
   fontSize?: number;
   panelId?: number;
@@ -53,26 +55,26 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
 
   setRootRef = ref => {
     this.rootRef = ref;
-  }
+  };
 
   handleProblemAck = (problem: ProblemDTO, data: AckProblemData) => {
     return this.props.onProblemAck(problem, data);
-  }
+  };
 
   onExecuteScript = (problem: ProblemDTO, data: AckProblemData) => {
-  }
+  };
 
   handlePageSizeChange = (pageSize, pageIndex) => {
     if (this.props.onPageSizeChange) {
       this.props.onPageSizeChange(pageSize, pageIndex);
     }
-  }
+  };
 
   handleResizedChange = (newResized, event) => {
     if (this.props.onColumnResize) {
       this.props.onColumnResize(newResized);
     }
-  }
+  };
 
   handleExpandedChange = (expanded: any, event: any) => {
     const { problems, pageSize } = this.props;
@@ -100,13 +102,13 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
       expanded: nextExpanded,
       expandedProblems: nextExpandedProblems,
     });
-  }
+  };
 
   handleTagClick = (tag: ZBXTag, datasource: string, ctrlKey?: boolean, shiftKey?: boolean) => {
     if (this.props.onTagClick) {
       this.props.onTagClick(tag, datasource, ctrlKey, shiftKey);
     }
-  }
+  };
 
   getExpandedPage = (page: number) => {
     const { problems, pageSize } = this.props;
@@ -125,7 +127,7 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
     }
 
     return expandedPage;
-  }
+  };
 
   buildColumns() {
     const result = [];
@@ -133,8 +135,8 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
     const highlightNewerThan = options.highlightNewEvents && options.highlightNewerThan;
     const statusCell = props => StatusCell(props, highlightNewerThan);
     const statusIconCell = props => StatusIconCell(props, highlightNewerThan);
-    const hostNameCell = props => <HostCell name={props.original.host} maintenance={props.original.maintenance} />;
-    const hostTechNameCell = props => <HostCell name={props.original.hostTechName} maintenance={props.original.maintenance} />;
+    const hostNameCell = props => <HostCell name={props.original.host} maintenance={props.original.maintenance}/>;
+    const hostTechNameCell = props => <HostCell name={props.original.hostTechName} maintenance={props.original.maintenance}/>;
 
     const columns = [
       { Header: 'Host', id: 'host', show: options.hostField, Cell: hostNameCell },
@@ -153,14 +155,14 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
         Cell: statusIconCell,
       },
       { Header: 'Status', accessor: 'value', show: options.statusField, width: 100, Cell: statusCell },
-      { Header: 'Problem', accessor: 'description', minWidth: 200, Cell: ProblemCell},
+      { Header: 'Problem', accessor: 'description', minWidth: 200, Cell: ProblemCell },
       {
         Header: 'Ack', id: 'ack', show: options.ackField, width: 70,
         Cell: props => <AckCell {...props} />
       },
       {
         Header: 'Tags', accessor: 'tags', show: options.showTags, className: 'problem-tags',
-        Cell: props => <TagCell {...props} onTagClick={this.handleTagClick} />
+        Cell: props => <TagCell {...props} onTagClick={this.handleTagClick}/>
       },
       {
         Header: 'Age', className: 'problem-age', width: 100, show: options.ageField, accessor: 'timestamp',
@@ -208,17 +210,18 @@ export default class ProblemList extends PureComponent<ProblemListProps, Problem
           noDataText="No problems found"
           SubComponent={props =>
             <ProblemDetails {...props}
-              rootWidth={this.rootWidth}
-              timeRange={this.props.timeRange}
-              showTimeline={panelOptions.problemTimeline}
-              panelId={this.props.panelId}
-              getProblemEvents={this.props.getProblemEvents}
-              getProblemAlerts={this.props.getProblemAlerts}
-              getScripts={this.props.getScripts}
-              onProblemAck={this.handleProblemAck}
-              onExecuteScript={this.props.onExecuteScript}
-              onTagClick={this.handleTagClick}
-              subRows={false}
+                            rootWidth={this.rootWidth}
+                            timeRange={this.props.timeRange}
+                            range={this.props.range}
+                            showTimeline={panelOptions.problemTimeline}
+                            panelId={this.props.panelId}
+                            getProblemEvents={this.props.getProblemEvents}
+                            getProblemAlerts={this.props.getProblemAlerts}
+                            getScripts={this.props.getScripts}
+                            onProblemAck={this.handleProblemAck}
+                            onExecuteScript={this.props.onExecuteScript}
+                            onTagClick={this.handleTagClick}
+                            subRows={false}
             />
           }
           expanded={this.getExpandedPage(this.state.page)}
@@ -241,7 +244,7 @@ const HostCell: React.FC<HostCellProps> = ({ name, maintenance }) => {
   return (
     <div>
       <span style={{ paddingRight: '0.4rem' }}>{name}</span>
-      {maintenance && <FAIcon customClass="fired" icon="wrench" />}
+      {maintenance && <FAIcon customClass="fired" icon="wrench"/>}
     </div>
   );
 };
@@ -252,7 +255,7 @@ function SeverityCell(
   markAckEvents?: boolean,
   ackEventColor?: string,
   okColor = DEFAULT_OK_COLOR
-  ) {
+) {
   const problem = props.original;
   let color: string;
 
@@ -271,7 +274,7 @@ function SeverityCell(
   }
 
   return (
-    <div className='severity-cell' style={{ background: color }}>
+    <div className="severity-cell" style={{ background: color }}>
       {severityDesc.severity}
     </div>
   );
@@ -303,7 +306,7 @@ function StatusIconCell(props: RTCell<ProblemDTO>, highlightNewerThan?: string) 
     { 'zbx-problem': props.value === '1' },
     { 'zbx-ok': props.value === '0' },
   );
-  return <GFHeartIcon status={status} className={className} />;
+  return <GFHeartIcon status={status} className={className}/>;
 }
 
 function GroupCell(props: RTCell<ProblemDTO>) {
@@ -343,20 +346,20 @@ function LastChangeCell(props: RTCell<ProblemDTO>, customFormat?: string) {
 }
 
 interface TagCellProps extends RTCell<ProblemDTO> {
-  onTagClick: (tag: ZBXTag, datasource: string, ctrlKey?: boolean, shiftKey?: boolean) => void;
+  onTagClick: (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => void;
 }
 
 class TagCell extends PureComponent<TagCellProps> {
-  handleTagClick = (tag: ZBXTag, ctrlKey?: boolean, shiftKey?: boolean) => {
+  handleTagClick = (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => {
     if (this.props.onTagClick) {
-      this.props.onTagClick(tag, this.props.original.datasource, ctrlKey, shiftKey);
+      this.props.onTagClick(tag, datasource, ctrlKey, shiftKey);
     }
-  }
+  };
 
   render() {
     const tags = this.props.value || [];
     return [
-      tags.map(tag => <EventTag key={tag.tag + tag.value} tag={tag} onClick={this.handleTagClick} /> )
+      tags.map(tag => <EventTag key={tag.tag + tag.value} tag={tag} datasource={this.props.original.datasource} onClick={this.handleTagClick}/>)
     ];
   }
 }

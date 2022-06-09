@@ -11,7 +11,7 @@ export function isGrafana2target(target) {
   if (!target.mode || target.mode === 0 || target.mode === 2) {
     if ((target.hostFilter || target.itemFilter || target.downsampleFunction ||
         (target.host && target.host.host)) &&
-        (target.item.filter === undefined && target.host.filter === undefined)) {
+      (target.item.filter === undefined && target.host.filter === undefined)) {
       return true;
     } else {
       return false;
@@ -49,6 +49,11 @@ function migrateQueryType(target) {
       delete target.mode;
     }
   }
+
+  // queryType is a string in query model
+  if (typeof target.queryType === 'number') {
+    target.queryType = (target.queryType as number)?.toString();
+  }
 }
 
 function migrateSLA(target) {
@@ -63,6 +68,15 @@ function migrateProblemSort(target) {
   }
 }
 
+function migrateApplications(target) {
+  if (!target.itemTag) {
+    target.itemTag = { filter: '' };
+    if (target.application?.filter) {
+      target.itemTag.filter = `Application: ${target.application?.filter}`;
+    }
+  }
+}
+
 export function migrate(target) {
   target.resultFormat = target.resultFormat || 'time_series';
   target = fixTargetGroup(target);
@@ -73,6 +87,7 @@ export function migrate(target) {
   migrateQueryType(target);
   migrateSLA(target);
   migrateProblemSort(target);
+  migrateApplications(target);
   return target;
 }
 
@@ -91,7 +106,8 @@ function convertToRegex(str) {
   }
 }
 
-export const DS_CONFIG_SCHEMA = 2;
+export const DS_CONFIG_SCHEMA = 3;
+
 export function migrateDSConfig(jsonData) {
   if (!jsonData) {
     jsonData = {};
@@ -111,6 +127,10 @@ export function migrateDSConfig(jsonData) {
     delete jsonData.dbConnection;
   }
 
+  if (oldVersion < 3) {
+    jsonData.timeout = (jsonData.timeout as string) === "" ? null : Number(jsonData.timeout as string);
+  }
+
   return jsonData;
 }
 
@@ -118,7 +138,7 @@ function shouldMigrateDSConfig(jsonData): boolean {
   if (jsonData.dbConnection && !_.isEmpty(jsonData.dbConnection)) {
     return true;
   }
-  if (jsonData.schema && jsonData.schema !== DS_CONFIG_SCHEMA) {
+  if (jsonData.schema && jsonData.schema < DS_CONFIG_SCHEMA) {
     return true;
   }
   return false;

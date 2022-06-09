@@ -4,11 +4,13 @@ import { ProblemsPanelOptions, GFTimeRange } from '../../types';
 import { AckProblemData } from '../AckModal';
 import AlertCard from './AlertCard';
 import { ProblemDTO, ZBXTag } from '../../../datasource-zabbix/types';
+import { DataSourceRef } from '@grafana/data';
 import { getSeverityOptions } from '../../triggers_panel_ctrl';
 import _ from 'lodash';
 
 const SORT_BY_PRIORITY = 'priority';
 const SORT_BY_TIMESTAMP = 'lastchange';
+
 
 export interface AlertListProps {
   problems: ProblemDTO[];
@@ -207,9 +209,9 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         </div> : null }
         <section className="card-section card-list-layout-list">
           <ol className={alertListClass}>
-            {currentProblems.map(problem =>
+            {currentProblems.map((problem, index) =>
               <AlertCard
-                key={`${problem.triggerid}-${problem.eventid}-${problem.datasource}`}
+                key={`${problem.triggerid}-${problem.eventid}-${(problem.datasource as DataSourceRef)?.uid || problem.datasource}-${index}`}
                 problem={problem}
                 panelOptions={panelOptions}
                 onTagClick={this.handleTagClick}

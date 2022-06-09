@@ -9,26 +9,28 @@ import EventTag from '../EventTag';
 import AlertAcknowledges from './AlertAcknowledges';
 import AlertIcon from './AlertIcon';
 import { ProblemDTO, ZBXTag } from '../../../datasource-zabbix/types';
-import { ModalController, Tooltip } from '../../../components';
+import { ModalController } from '../../../components';
 import { AlertModal } from './AlertModal';
+import { DataSourceRef } from '@grafana/data';
+import { Tooltip } from '@grafana/ui';
+import { getDataSourceSrv } from '@grafana/runtime';
 import MaintenanceIcon from './MaintenanceIcon';
 const Url = require("url-parse");
 
 interface AlertCardProps {
   problem: ProblemDTO;
   panelOptions: ProblemsPanelOptions;
-  onTagClick?: (tag: ZBXTag, datasource: string, ctrlKey?: boolean, shiftKey?: boolean) => void;
+  onTagClick?: (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => Promise<any> | any;
   texts: any;
 }
 
 export default class AlertCard extends PureComponent<AlertCardProps> {
-
-  handleTagClick = (tag: ZBXTag, ctrlKey?: boolean, shiftKey?: boolean) => {
+  handleTagClick = (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => {
     if (this.props.onTagClick) {
-      this.props.onTagClick(tag, this.props.problem.datasource, ctrlKey, shiftKey);
+      this.props.onTagClick(tag, datasource, ctrlKey, shiftKey);
     }
-  }
+  };
 
   ackProblem = (data: AckProblemData) => {
     const problem = this.props.problem;
@@ -90,6 +92,12 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
     const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm:ss');
+
+    let dsName: string = (problem.datasource as string);
+    if ((problem.datasource as DataSourceRef)?.uid) {
+      const dsInstance = getDataSourceSrv().getInstanceSettings((problem.datasource as DataSourceRef).uid);
+      dsName = dsInstance.name;
+    }
 
     let newProblem = false;
     if (panelOptions.highlightNewerThan) {
@@ -170,11 +178,10 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
               <div className="alert-rule-item__time zabbix-trigger-source">
                 <span>
                   <i className="fa fa-database"></i>
-                  {problem.datasource}
+                  {dsName}
                 </span>
               </div>
             )}
-
             <div className="alert-rule-item__time zbx-trigger-lastchange">
               <span>{startTime || "last change unknown"}</span>
               <div className="trigger-info-block zbx-status-icons">
@@ -307,7 +314,7 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
     let content = null;
     if (problem.acknowledges && problem.acknowledges.length) {
       content = (
-        <Tooltip placement="bottom" popperClassName="ack-tooltip" content={this.renderTooltipContent}>
+        <Tooltip placement="bottom" content={this.renderTooltipContent}>
           <span role="button" onClick={this.handleClick}><i className="fa fa-comments"></i></span>
         </Tooltip>
       );

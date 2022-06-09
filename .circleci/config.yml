@@ -194,11 +194,8 @@ jobs:
       - attach_workspace:
           at: ~/alexanderzobnin
       - run:
-          name: Prepare assets
-          command: mv ci/packages/* ./
-      - run:
           name: Publish release
-          command: 'node ./.circleci/github/publishRelease.js'
+          command: 'node ./scripts/github/publishRelease.js'
           no_output_timeout: 15m
 
   make-release-commit:
@@ -239,15 +236,9 @@ jobs:
     docker:
       - image: circleci/python:2.7
     steps:
-      - run:
-          name: install git lfs
-          command: 'curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash'
-      - run: sudo apt-get install git-lfs
-      - run: git lfs install
       - run: sudo pip install --upgrade pip
       - run: sudo pip install mkdocs
       - checkout
-      - run: git lfs fetch --all
       - run: cd docs && mkdocs build --clean
       - persist_to_workspace:
           root: .

@@ -2,9 +2,10 @@ import { QueryCtrl } from 'grafana/app/plugins/sdk';
 import _ from 'lodash';
 import * as c from './constants';
 import * as utils from './utils';
+import { itemTagToString } from './utils';
 import * as metricFunctions from './metricFunctions';
 import * as migrations from './migrations';
-import { ShowProblemTypes, ZabbixMetricsQuery } from './types';
+import { ShowProblemTypes, ZBXItem, ZBXItemTag } from './types';
 import { CURRENT_SCHEMA_VERSION } from '../panel-triggers/migrations';
 import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 
@@ -14,6 +15,7 @@ function getTargetDefaults() {
     group: { 'filter': "" },
     host: { 'filter': "" },
     application: { 'filter': "" },
+    itemTag: { 'filter': "" },
     item: { 'filter': "" },
     functions: [],
     triggers: {
@@ -21,9 +23,9 @@ function getTargetDefaults() {
       'minSeverity': 3,
       'acknowledged': 2
     },
-    trigger: {filter: ""},
-    tags: {filter: ""},
-    proxy: {filter: ""},
+    trigger: { filter: "" },
+    tags: { filter: "" },
+    proxy: { filter: "" },
     options: {
       showDisabledItems: false,
       skipEmptyValues: false,
@@ -81,7 +83,7 @@ export class ZabbixQueryController extends QueryCtrl {
   zabbix: any;
   replaceTemplateVars: any;
   templateSrv: TemplateSrv;
-  editorModes: Array<{ value: string; text: string; queryType: number; }>;
+  editorModes: Array<{ value: string; text: string; queryType: string; }>;
   slaPropertyList: Array<{ name: string; property: string; }>;
   slaIntervals: Array<{ text: string; value: string; }>;
   ackFilters: Array<{ text: string; value: number; }>;
@@ -114,12 +116,12 @@ export class ZabbixQueryController extends QueryCtrl {
     this.templateSrv = getTemplateSrv();
 
     this.editorModes = [
-      {value: 'num',       text: 'Metrics',     queryType: c.MODE_METRICS},
-      {value: 'text',      text: 'Text',        queryType: c.MODE_TEXT},
-      {value: 'itservice', text: 'IT Services', queryType: c.MODE_ITSERVICE},
-      {value: 'itemid',    text: 'Item ID',     queryType: c.MODE_ITEMID},
-      {value: 'triggers',  text: 'Triggers',    queryType: c.MODE_TRIGGERS},
-      {value: 'problems',  text: 'Problems',    queryType: c.MODE_PROBLEMS},
+      { value: 'num', text: 'Metrics', queryType: c.MODE_METRICS },
+      { value: 'text', text: 'Text', queryType: c.MODE_TEXT },
+      { value: 'itservice', text: 'IT Services', queryType: c.MODE_ITSERVICE },
+      { value: 'itemid', text: 'Item ID', queryType: c.MODE_ITEMID },
+      { value: 'triggers', text: 'Triggers', queryType: c.MODE_TRIGGERS },
+      { value: 'problems', text: 'Problems', queryType: c.MODE_PROBLEMS },
     ];
 
     this.$scope.editorMode = {
@@ -132,11 +134,11 @@ export class ZabbixQueryController extends QueryCtrl {
     };
 
     this.slaPropertyList = [
-      {name: "Status", property: "status"},
-      {name: "SLA", property: "sla"},
-      {name: "OK time", property: "okTime"},
-      {name: "Problem time", property: "problemTime"},
-      {name: "Down time", property: "downtimeTime"}
+      { name: "Status", property: "status" },
+      { name: "SLA", property: "sla" },
+      { name: "OK time", property: "okTime" },
+      { name: "Problem time", property: "problemTime" },
+      { name: "Down time", property: "downtimeTime" }
     ];
 
     this.slaIntervals = [
@@ -150,9 +152,9 @@ export class ZabbixQueryController extends QueryCtrl {
     ];
 
     this.ackFilters = [
-      {text: 'all triggers', value: 2},
-      {text: 'unacknowledged', value: 0},
-      {text: 'acknowledged', value: 1},
+      { text: 'all triggers', value: 2 },
+      { text: 'unacknowledged', value: 0 },
+      { text: 'acknowledged', value: 1 },
     ];
 
     this.problemAckFilters = [
@@ -164,12 +166,12 @@ export class ZabbixQueryController extends QueryCtrl {
     this.sortByFields = [
       { text: 'Default', value: 'default' },
       { text: 'Last change', value: 'lastchange' },
-      { text: 'Severity',    value: 'severity' },
+      { text: 'Severity', value: 'severity' },
     ];
 
     this.showEventsFields = [
-      { text: 'All',      value: [0,1] },
-      { text: 'OK',       value: [0] },
+      { text: 'All', value: [0, 1] },
+      { text: 'OK', value: [0] },
       { text: 'Problems', value: 1 }
     ];
 
@@ -200,11 +202,12 @@ export class ZabbixQueryController extends QueryCtrl {
       this.onTargetBlur();
     });
 
-    this.init = function() {
+    this.init = () => {
       let target = this.target;
 
       // Migrate old targets
       target = migrations.migrate(target);
+      this.refresh();
 
       const scopeDefaults = {
         metric: {},
@@ -216,6 +219,7 @@ export class ZabbixQueryController extends QueryCtrl {
       // Load default values
       const targetDefaults = getTargetDefaults();
       _.defaultsDeep(target, targetDefaults);
+      this.initDefaultQueryMode(target);
 
       if (this.panel.type === c.ZABBIX_PROBLEMS_PANEL_ID) {
         target.queryType = c.MODE_PROBLEMS;
@@ -236,9 +240,9 @@ export class ZabbixQueryController extends QueryCtrl {
       }
 
       if (target.queryType === c.MODE_METRICS ||
-          target.queryType === c.MODE_TEXT ||
-          target.queryType === c.MODE_TRIGGERS ||
-          target.queryType === c.MODE_PROBLEMS) {
+        target.queryType === c.MODE_TEXT ||
+        target.queryType === c.MODE_TRIGGERS ||
+        target.queryType === c.MODE_PROBLEMS) {
         this.initFilters();
       } else if (target.queryType === c.MODE_ITSERVICE) {
         this.suggestITServices();
@@ -255,7 +259,7 @@ export class ZabbixQueryController extends QueryCtrl {
   }
 
   initFilters() {
-    const mode = _.find(this.editorModes, {'queryType': this.target.queryType});
+    const mode = _.find(this.editorModes, { 'queryType': this.target.queryType });
     const itemtype = mode ? mode.value : null;
     const promises = [
       this.suggestGroups(),
@@ -271,7 +275,23 @@ export class ZabbixQueryController extends QueryCtrl {
       promises.push(this.suggestProxies());
     }
 
-    return Promise.all(promises);
+    return Promise.all(promises).then(() => {
+      if (this.zabbix.isZabbix54OrHigher()) {
+        this.suggestItemTags()
+        .then(() => this.$scope.$apply());
+      }
+    });
+  }
+
+  initDefaultQueryMode(target) {
+    if (!(target.queryType === c.MODE_METRICS ||
+      target.queryType === c.MODE_TEXT ||
+      target.queryType === c.MODE_ITSERVICE ||
+      target.queryType === c.MODE_ITEMID ||
+      target.queryType === c.MODE_TRIGGERS ||
+      target.queryType === c.MODE_PROBLEMS)) {
+      target.queryType = c.MODE_METRICS;
+    }
   }
 
   // Get list of metric names for bs-typeahead directive
@@ -290,10 +310,28 @@ export class ZabbixQueryController extends QueryCtrl {
     return metrics;
   }
 
+  getItemTags = () => {
+    if (!this.metric?.tagList) {
+      return [];
+    }
+    const tags = this.metric.tagList.map(t => itemTagToString(t));
+
+    // Add template variables
+    _.forEach(this.templateSrv.getVariables(), variable => {
+      tags.unshift('$' + variable.name);
+    });
+
+    return tags;
+  };
+
   getTemplateVariables() {
     return _.map(this.templateSrv.getVariables(), variable => {
       return '$' + variable.name;
     });
+  }
+
+  isZabbix54OrHigher() {
+    return this.zabbix.isZabbix54OrHigher();
   }
 
   suggestGroups() {
@@ -327,17 +365,32 @@ export class ZabbixQueryController extends QueryCtrl {
     const groupFilter = this.replaceTemplateVars(this.target.group.filter);
     const hostFilter = this.replaceTemplateVars(this.target.host.filter);
     const appFilter = this.replaceTemplateVars(this.target.application.filter);
+    const itemTagFilter = this.replaceTemplateVars(this.target.itemTag.filter);
     const options = {
       itemtype: itemtype,
       showDisabledItems: this.target.options.showDisabledItems
     };
 
     return this.zabbix
-    .getAllItems(groupFilter, hostFilter, appFilter, options)
+    .getAllItems(groupFilter, hostFilter, appFilter, itemTagFilter, options)
     .then(items => {
       this.metric.itemList = items;
       return items;
     });
+  }
+
+  async suggestItemTags() {
+    const groupFilter = this.replaceTemplateVars(this.target.group.filter);
+    const hostFilter = this.replaceTemplateVars(this.target.host.filter);
+    const items = await this.zabbix.getAllItems(groupFilter, hostFilter, null, null, {});
+    const tags: ZBXItemTag[] = _.flatten(items.map((item: ZBXItem) => {
+      if (item.tags) {
+        return item.tags;
+      } else {
+        return [];
+      }
+    }));
+    this.metric.tagList = _.uniqBy(tags, t => t.tag + t.value || '');
   }
 
   suggestITServices() {
@@ -415,7 +468,7 @@ export class ZabbixQueryController extends QueryCtrl {
     this.moveAliasFuncLast();
 
     if (newFunc.params.length && newFunc.added ||
-        newFunc.def.params.length === 0) {
+      newFunc.def.params.length === 0) {
       this.targetChanged();
     }
   }

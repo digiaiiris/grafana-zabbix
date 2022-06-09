@@ -2,19 +2,17 @@ package datasource
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"strconv"
-	"time"
 
-	"github.com/alexanderzobnin/grafana-zabbix/pkg/gtime"
+	"github.com/alexanderzobnin/grafana-zabbix/pkg/httpclient"
+	"github.com/alexanderzobnin/grafana-zabbix/pkg/metrics"
+	"github.com/alexanderzobnin/grafana-zabbix/pkg/settings"
+	"github.com/alexanderzobnin/grafana-zabbix/pkg/zabbix"
 	"github.com/alexanderzobnin/grafana-zabbix/pkg/zabbixapi"
-
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
-	"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 var (
@@ -30,11 +28,10 @@ type ZabbixDatasource struct {
 // ZabbixDatasourceInstance stores state about a specific datasource
 // and provides methods to make requests to the Zabbix API
 type ZabbixDatasourceInstance struct {
-	zabbixAPI  *zabbixapi.ZabbixAPI
-	dsInfo     *backend.DataSourceInstanceSettings
-	Settings   *ZabbixDatasourceSettings
-	queryCache *DatasourceCache
-	logger     log.Logger
+	zabbix   *zabbix.Zabbix
+	dsInfo   *backend.DataSourceInstanceSettings
+	Settings *settings.ZabbixDatasourceSettings
+	logger   log.Logger
 }
 
 func NewZabbixDatasource() *ZabbixDatasource {
@@ -46,28 +43,39 @@ func NewZabbixDatasource() *ZabbixDatasource {
 }
 
 // newZabbixDatasourceInstance returns an initialized zabbix datasource instance
-func newZabbixDatasourceInstance(settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+func newZabbixDatasourceInstance(dsSettings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 	logger := log.New()
 	logger.Debug("Initializing new data source instance")
 
-	zabbixSettings, err := readZabbixSettings(&settings)
+	zabbixSettings, err := settings.ReadZabbixSettings(&dsSettings)
 	if err != nil {
 		logger.Error("Error parsing Zabbix settings", "error", err)
 		return nil, err
 	}
 
-	zabbixAPI, err := zabbixapi.New(&settings, zabbixSettings.Timeout)
+	client, err := httpclient.New(&dsSettings, zabbixSettings.Timeout)
+	if err != nil {
+		logger.Error("Error initializing HTTP client", "error", err)
+		return nil, err
+	}
+
+	zabbixAPI, err := zabbixapi.New(dsSettings.URL, client)
 	if err != nil {
 		logger.Error("Error initializing Zabbix API", "error", err)
 		return nil, err
 	}
 
+	zabbixClient, err := zabbix.New(&dsSettings, zabbixSettings, zabbixAPI)
+	if err != nil {
+		logger.Error("Error initializing Zabbix client", "error", err)
+		return nil, err
+	}
+
 	return &ZabbixDatasourceInstance{
-		dsInfo:     &settings,
-		zabbixAPI:  zabbixAPI,
-		Settings:   zabbixSettings,
-		queryCache: NewDatasourceCache(zabbixSettings.CacheTTL, 10*time.Minute),
-		logger:     logger,
+		dsInfo:   &dsSettings,
+		zabbix:   zabbixClient,
+		Settings: zabbixSettings,
+		logger:   logger,
 	}, nil
 }
 
@@ -97,6 +105,7 @@ func (ds *ZabbixDatasource) CheckHealth(ctx context.Context, req *backend.CheckH
 }
 
 func (ds *ZabbixDatasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
+	metrics.DataSourceQueryTotal.WithLabelValues("metrics").Inc()
 	qdr := backend.NewQueryDataResponse()
 
 	zabbixDS, err := ds.getDSInstance(req.PluginContext)
@@ -110,17 +119,22 @@ func (ds *ZabbixDatasource) QueryData(ctx context.Context, req *backend.QueryDat
 		ds.logger.Debug("DS query", "query", q)
 		if err != nil {
 			res.Error = err
-		} else if len(query.Functions) > 0 {
-			res.Error = ErrFunctionsNotSupported
-		} else if query.Mode != 0 {
-			res.Error = ErrNonMetricQueryNotSupported
-		} else {
-			frame, err := zabbixDS.queryNumericItems(ctx, &query)
+		} else if query.QueryType == MODE_METRICS {
+			frames, err := zabbixDS.queryNumericItems(ctx, &query)
 			if err != nil {
 				res.Error = err
 			} else {
-				res.Frames = []*data.Frame{frame}
+				res.Frames = append(res.Frames, frames...)
 			}
+		} else if query.QueryType == MODE_ITEMID {
+			frames, err := zabbixDS.queryItemIdData(ctx, &query)
+			if err != nil {
+				res.Error = err
+			} else {
+				res.Frames = append(res.Frames, frames...)
+			}
+		} else {
+			res.Error = ErrNonMetricQueryNotSupported
 		}
 		qdr.Responses[q.RefID] = res
 	}
@@ -135,57 +149,4 @@ func (ds *ZabbixDatasource) getDSInstance(pluginContext backend.PluginContext) (
 		return nil, err
 	}
 	return instance.(*ZabbixDatasourceInstance), nil
-}
-
-func readZabbixSettings(dsInstanceSettings *backend.DataSourceInstanceSettings) (*ZabbixDatasourceSettings, error) {
-	zabbixSettingsDTO := &ZabbixDatasourceSettingsDTO{}
-
-	err := json.Unmarshal(dsInstanceSettings.JSONData, &zabbixSettingsDTO)
-	if err != nil {
-		return nil, err
-	}
-
-	if zabbixSettingsDTO.TrendsFrom == "" {
-		zabbixSettingsDTO.TrendsFrom = "7d"
-	}
-	if zabbixSettingsDTO.TrendsRange == "" {
-		zabbixSettingsDTO.TrendsRange = "4d"
-	}
-	if zabbixSettingsDTO.CacheTTL == "" {
-		zabbixSettingsDTO.CacheTTL = "1h"
-	}
-
-	if zabbixSettingsDTO.Timeout == "" {
-		zabbixSettingsDTO.Timeout = "30"
-	}
-
-	trendsFrom, err := gtime.ParseInterval(zabbixSettingsDTO.TrendsFrom)
-	if err != nil {
-		return nil, err
-	}
-
-	trendsRange, err := gtime.ParseInterval(zabbixSettingsDTO.TrendsRange)
-	if err != nil {
-		return nil, err
-	}
-
-	cacheTTL, err := gtime.ParseInterval(zabbixSettingsDTO.CacheTTL)
-	if err != nil {
-		return nil, err
-	}
-
-	timeout, err := strconv.Atoi(zabbixSettingsDTO.Timeout)
-	if err != nil {
-		return nil, errors.New("failed to parse timeout: " + err.Error())
-	}
-
-	zabbixSettings := &ZabbixDatasourceSettings{
-		Trends:      zabbixSettingsDTO.Trends,
-		TrendsFrom:  trendsFrom,
-		TrendsRange: trendsRange,
-		CacheTTL:    cacheTTL,
-		Timeout:     time.Duration(timeout) * time.Second,
-	}
-
-	return zabbixSettings, nil
 }

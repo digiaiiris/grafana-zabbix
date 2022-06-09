@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
-import { cx, css } from 'emotion';
+import { cx, css } from '@emotion/css';
 import { ZBX_ACK_ACTION_ADD_MESSAGE, ZBX_ACK_ACTION_ACK, ZBX_ACK_ACTION_CHANGE_SEVERITY, ZBX_ACK_ACTION_CLOSE } from '../../datasource-zabbix/constants';
-import { Button, VerticalGroup, Spinner, Modal, Input, Checkbox, RadioButtonGroup, stylesFactory, withTheme, Themeable, TextArea } from '@grafana/ui';
+import { Button, VerticalGroup, Spinner, Modal, Checkbox, RadioButtonGroup, stylesFactory, withTheme, Themeable, TextArea } from '@grafana/ui';
 import { FAIcon } from '../../components';
 import { getSeverityOptions } from '../triggers_panel_ctrl';
 import { GrafanaTheme } from '@grafana/data';
@@ -149,8 +149,15 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
     const { canClose, texts } = this.props;
 
     const actions = [
-      <Checkbox key="ack" label={texts.acknowledge} value={this.state.acknowledge} onChange={this.onAcknowledgeToggle} />,
       <Checkbox
+        translate=""
+        key="ack"
+        label={texts.acknowledge}
+        value={this.state.acknowledge}
+        onChange={this.onAcknowledgeToggle}
+      />,
+      <Checkbox
+        translate=""
         key="change-severity"
         label={texts.changeSeverity}
         description=""
@@ -166,7 +173,14 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
           onChange={this.onChangeSelectedSeverity}
         />,
       canClose &&
-        <Checkbox key="close" label={texts.closeProblem} disabled={!canClose} value={this.state.closeProblem} onChange={this.onCloseProblemToggle} />,
+        <Checkbox
+          translate=""
+          key="close"
+          label={texts.closeProblem}
+          disabled={!canClose}
+          value={this.state.closeProblem}
+          onChange={this.onCloseProblemToggle}
+        />,
     ];
 
     // <VerticalGroup /> doesn't handle empty elements properly, so don't return it
@@ -199,6 +213,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         <div className={inputGroupClass}>
           <label className="gf-form-hint">
             <TextArea className={inputClass}
+              translate=""
               type="text"
               name="message"
               placeholder={texts.message}
