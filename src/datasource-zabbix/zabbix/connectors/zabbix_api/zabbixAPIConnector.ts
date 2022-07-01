@@ -775,7 +775,9 @@ export class ZabbixAPIConnector {
       selectTimeperiods: ['start_time', 'period', 'timeperiod_type', 'start_date', 'every', 'dayofweek', 'month', 'day'],
       limit: randomLimit
     };
-
+    if (groupids) {
+      params['groupids'] = groupids;
+    }
     return this.request('maintenance.get', params);
   }
 }
