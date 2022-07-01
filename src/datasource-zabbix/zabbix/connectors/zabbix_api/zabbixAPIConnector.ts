@@ -253,6 +253,16 @@ export class ZabbixAPIConnector {
     .then(items => utils.expandItems(items));
   }
 
+  getHostsByIDs(hostids) {
+    const params: any = {
+      hostids: hostids,
+      selectParentTemplates: ['name', 'templateid'],
+      output: ['name', 'hostid']
+    };
+
+    return this.request('host.get', params);
+  }
+
   getMacros(hostids) {
     const params = {
       output: 'extend',

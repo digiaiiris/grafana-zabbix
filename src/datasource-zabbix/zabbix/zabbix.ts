@@ -21,18 +21,18 @@ const REQUESTS_TO_PROXYFY = [
   'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
   'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
   'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getMaintenances'
+  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getHostsByIDs', 'getMaintenances'
 ];
 
 const REQUESTS_TO_CACHE = [
   'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getMaintenances'
+  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getHostsByIDs', 'getMaintenances'
 ];
 
 const REQUESTS_TO_BIND = [
   'getHistory', 'getTrend', 'getMacros', 'getItemsByIDs', 'getEvents', 'getAlerts', 'getHostAlerts',
   'getAcknowledges', 'getITService', 'acknowledgeEvent', 'getProxies', 'getEventAlerts',
-  'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros', 'getValueMappings'
+  'getExtendedEventData', 'getScripts', 'executeScript', 'getGlobalMacros', 'getValueMappings', 'getHostsByIDs'
 ];
 
 export class Zabbix implements ZabbixConnector {
@@ -59,6 +59,7 @@ export class Zabbix implements ZabbixConnector {
   getMacros: (hostids: any[]) => Promise<any>;
   getGlobalMacros: () => Promise<any>;
   getValueMappings: () => Promise<any>;
+  getHostsByIDs: (hostids) => Promise<any>;
 
   constructor(options) {
     const {
@@ -330,12 +331,8 @@ export class Zabbix implements ZabbixConnector {
     const hostids = getHostIds(items);
     // Don't try to fetch host macros if no hostids are given
     if (hostids && hostids.length > 0) {
-      return this.zabbixAPI
-        .request('host.get', {
-          hostids,
-          selectParentTemplates: ['name', 'templateid'],
-          output: ['name', 'hostid'],
-        })
+      // Fetch also parent template host ids
+      return this.zabbixAPI.getHostsByIDs(hostids)
         .then((parentHosts: any) => {
           parentHosts.map((host: any) => {
             if (host.parentTemplates) {
