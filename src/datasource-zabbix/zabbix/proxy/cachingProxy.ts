@@ -90,9 +90,9 @@ function cacheRequest(func, funcName, funcScope, self) {
 
     const cacheObject = self.cache[funcName];
     const hash = getRequestHash(arguments);
-    // Querying getGroupsWithHosts needs a short expiration time because it contains maintenance status
+    // Querying getGroupsWithHosts and getMaintenances need a short expiration time
     // Receiving FORCE_CACHE_UPDATE as an argument bypasses the cache 
-    const hasShortExpiration = funcName === 'getGroupsWithHosts';
+    const hasShortExpiration = funcName === 'getGroupsWithHosts' || funcName === 'getMaintenances';
     if (self.cacheEnabled && !self._isExpired(cacheObject[hash], hasShortExpiration) && arguments[0] !== FORCE_CACHE_UPDATE) {
       return Promise.resolve(cacheObject[hash].value);
     } else {

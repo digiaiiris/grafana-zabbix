@@ -773,6 +773,20 @@ export class ZabbixAPIConnector {
 
     return this.request('valuemap.get', params);
   }
+
+  getMaintenances(hostids: string[], groupids?: string[]) {
+    const params = {
+      hostids: hostids,
+      output: ['active_since', 'active_till', 'name', 'maintenanceid'],
+      selectGroups: ['groupid', 'name'],
+      selectHosts: ['hostid', 'name'],
+      selectTimeperiods: ['start_time', 'period', 'timeperiod_type', 'start_date', 'every', 'dayofweek', 'month', 'day']
+    };
+    if (groupids) {
+      params['groupids'] = groupids;
+    }
+    return this.request('maintenance.get', params);
+  }
 }
 
 function filterTriggersByAcknowledge(triggers, acknowledged) {
