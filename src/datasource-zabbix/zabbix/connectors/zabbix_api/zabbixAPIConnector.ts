@@ -763,6 +763,21 @@ export class ZabbixAPIConnector {
 
     return this.request('valuemap.get', params);
   }
+
+  getMaintenances(hostids: string[], groupids?: string[]) {
+    // Adding random limit to get past Zabbix server cache, this query is cached in datasource instead
+    const randomLimit = Math.floor(Math.random() * 1000) + 1000;
+    const params = {
+      hostids: hostids,
+      output: ['active_since', 'active_till', 'name', 'maintenanceid'],
+      selectGroups: ['groupid', 'name'],
+      selectHosts: ['hostid', 'name'],
+      selectTimeperiods: ['start_time', 'period', 'timeperiod_type', 'start_date', 'every', 'dayofweek', 'month', 'day'],
+      limit: randomLimit
+    };
+
+    return this.request('maintenance.get', params);
+  }
 }
 
 function filterTriggersByAcknowledge(triggers, acknowledged) {
