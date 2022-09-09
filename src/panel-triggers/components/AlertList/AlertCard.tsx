@@ -155,7 +155,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                       highlightBackground={panelOptions.highlightBackground} />
                   )}
                   <span className="alert-rule-item__time">
-                    {panelOptions.ageField && texts.lastedFor + ' ' + age}
+                    {panelOptions.ageField && texts.duration + ': ' + age}
                   </span>
                   {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                     <span className="zbx-description" dangerouslySetInnerHTML={{ __html: problem.comments }} />
