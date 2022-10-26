@@ -151,13 +151,6 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
     const actions = [
       <Checkbox
         translate=""
-        key="ack"
-        label={texts.acknowledge}
-        value={this.state.acknowledge}
-        onChange={this.onAcknowledgeToggle}
-      />,
-      <Checkbox
-        translate=""
         key="change-severity"
         label={texts.changeSeverity}
         description=""
