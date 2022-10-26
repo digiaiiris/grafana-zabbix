@@ -30,7 +30,7 @@ If iiris-grafana-zabbix panel is updated, you need to re-create the MANIFEST.txt
 Go to the iiris-grafana-zabbix folder and run:
 ```
 make dist
-export GRAFANA_API_KEY=eyJrIjoiNDAzMTY3Y2I2YjNjYWVkZjIyY2VmNWVlYmQxOTVhYTA4YWYxZWI5ZiIsIm4iOiJ0aW15bGx5bV9hcGlfa2V5IiwiaWQiOjMxNDQ5fQ==
+export GRAFANA_API_KEY=<API_KEY>
 npx @grafana/toolkit plugin:sign --rootUrls https://develop.digiaiiris.com/grafana/,https://digiaiiris.com/grafana/,https://sok.digiaiiris.com/grafana/,https://vayla.digiaiiris.com/grafana/,https://support.digiaiiris.com/grafana/,https://demo.digiaiiris.com/grafana/
 ```
 The newly created MANIFEST.txt can be found from dist-folder. Copy it to this same folder with Dockerfile at the same as you change the new GRAFANA_ZABBIX_BRANCH address in Dockerfile. Create a new commit to Iiris-repo Develop-branch with description, e.g.: 'grafana-zabbix updated to iiris-release-4.2.8-2'.
