@@ -51,22 +51,24 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
   }
 
   getLinkIconElement = (problem) => {
-    const { texts } = this.props;
-    // Compare link url and current page url; no need to show icon if urls are the same
-    const url1 = new Url(problem.url, true);
-    const url2 = new Url(window.top.location.href, true);
-    if (problem.url && (
-      url1.origin + url1.pathname !== url2.origin + url2.pathname ||
-      !url1.query.dashboard ||
-      !url1.query.orgId ||
-      url1.query.dashboard !== url2.query.dashboard ||
-      url1.query.orgId !== url2.query.orgId
-    )) {
-      return (
-        <Tooltip placement="bottom" content={texts.urlInfo}>
-          <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
-        </Tooltip>
-      );
+    if (window.location.href.indexOf('http://localhost') === -1) {
+      const { texts } = this.props;
+      // Compare link url and current page url; no need to show icon if urls are the same
+      const url1 = new Url(problem.url, true);
+      const url2 = new Url(window.top.location.href, true);
+      if (problem.url && (
+        url1.origin + url1.pathname !== url2.origin + url2.pathname ||
+        !url1.query.dashboard ||
+        !url1.query.orgId ||
+        url1.query.dashboard !== url2.query.dashboard ||
+        url1.query.orgId !== url2.query.orgId
+      )) {
+        return (
+          <Tooltip placement="bottom" content={texts.urlInfo}>
+            <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
+          </Tooltip>
+        );
+      }
     }
     return null;
   }
