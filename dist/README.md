@@ -31,6 +31,6 @@ Go to the iiris-grafana-zabbix folder and run:
 ```
 make dist
 export GRAFANA_API_KEY=<API_KEY>
-npx @grafana/toolkit plugin:sign --rootUrls https://develop.digiaiiris.com/grafana/,https://digiaiiris.com/grafana/,https://sok.digiaiiris.com/grafana/,https://vayla.digiaiiris.com/grafana/,https://support.digiaiiris.com/grafana/,https://demo.digiaiiris.com/grafana/
+npx @grafana/toolkit plugin:sign --rootUrls <URL1> <URL2> <URL3>
 ```
 The newly created MANIFEST.txt can be found from dist-folder. Copy it to this same folder with Dockerfile at the same as you change the new GRAFANA_ZABBIX_BRANCH address in Dockerfile. Create a new commit to Iiris-repo Develop-branch with description, e.g.: 'grafana-zabbix updated to iiris-release-4.2.8-2'.
