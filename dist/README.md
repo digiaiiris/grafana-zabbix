@@ -29,7 +29,6 @@ If iiris-grafana-zabbix panel is updated, you need to re-create the MANIFEST.txt
 ## Signing grafana-zabbix plugin
 Go to the iiris-grafana-zabbix folder and run:
 ```
-make dist
 export GRAFANA_API_KEY=<GRAFANA_API_KEY>
 npx @grafana/toolkit plugin:sign --rootUrls <URL1> <URL2> <URL3>
 ```
