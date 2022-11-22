@@ -41,7 +41,7 @@ dist: dist-frontend dist-backend
 dist-frontend:
 	yarn build
 
-dist-backend: dist-backend-linux dist-backend-darwin dist-backend-windows dist-arm
+dist-backend: dist-backend-linux
 dist-backend-windows: extension = .exe
 dist-backend-%:
 	$(eval filename = iiris-zabbix-plugin_$*_amd64$(extension))
