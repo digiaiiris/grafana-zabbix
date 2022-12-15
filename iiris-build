@@ -12,13 +12,13 @@ fi
 eval set -- "$OPTS"
 
 TARFILE=
+GRAFANA_API_KEY=$(gcloud secrets versions access latest --secret=ci-grafana-api-key --project=digia-iiris-dev)
 GRAFANA_ROOT_URLS="https://develop.digiaiiris.com/grafana/ https://digiaiiris.com/grafana/ https://sok.digiaiiris.com/grafana/ https://vayla.digiaiiris.com/grafana/ https://support.digiaiiris.com/grafana/ https://demo.digiaiiris.com/grafana/"
 
 while true; do
   case "$1" in
     -r | --release ) TARFILE="iiris-zabbix-plugin.tar.gz"; shift;;
     -t | --tar ) TARFILE="$2"; shift 2;;
-    --grafana-api-key ) GRAFANA_API_KEY="$2"; shift 2;;
     -- ) shift; break ;;
     * ) break ;;
   esac
