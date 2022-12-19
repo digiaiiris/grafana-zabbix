@@ -39,7 +39,7 @@ export interface AckProblemData {
 }
 
 const severityOptions = [
-  {value: 0, label: 'Not classified'},
+  //{value: 0, label: 'Not classified'},
   {value: 1, label: 'Information'},
   {value: 2, label: 'Warning'},
   {value: 3, label: 'Average'},
@@ -65,6 +65,16 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
       selectedSeverity: props.severity || 0,
       loading: false,
     };
+  }
+  
+  getSeverityOptions(texts: any) {
+    return [
+      {value: 1, label: texts.info},
+      {value: 2, label: texts.minor},
+      {value: 3, label: texts.average},
+      {value: 4, label: texts.major},
+      {value: 5, label: texts.critical}
+    ]
   }
 
   handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -161,7 +171,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         <RadioButtonGroup
           key="severity"
           size="sm"
-          options={getSeverityOptions(texts)}
+          options={this.getSeverityOptions(texts)}
           value={this.state.selectedSeverity}
           onChange={this.onChangeSelectedSeverity}
         />,
