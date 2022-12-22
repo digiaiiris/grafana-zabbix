@@ -13,7 +13,7 @@ eval set -- "$OPTS"
 
 TARFILE=
 GRAFANA_API_KEY=$(gcloud secrets versions access latest --secret=ci-grafana-api-key --project=digia-iiris-dev)
-GRAFANA_ROOT_URLS="https://develop.digiaiiris.com/grafana/ https://digiaiiris.com/grafana/ https://sok.digiaiiris.com/grafana/ https://vayla.digiaiiris.com/grafana/ https://support.digiaiiris.com/grafana/ https://demo.digiaiiris.com/grafana/"
+GRAFANA_ROOT_URLS="https://develop.digiaiiris.com/grafana/ https://digiaiiris.com/grafana/ https://sok.digiaiiris.com/grafana/ https://vayla.digiaiiris.com/grafana/ https://support.digiaiiris.com/grafana/ https://demo.digiaiiris.com/grafana/ https://test.digiaiiris.com/grafana/"
 
 while true; do
   case "$1" in
