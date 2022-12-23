@@ -2,7 +2,7 @@
 set -e
 
 # Parse options
-OPTS=`getopt -o rt: --long grafana-root-urls,release,tar:,grafana-api-key:,unsigned -n 'parse-options' -- "$@"`
+OPTS=`getopt -o rt: --long grafana-root-urls:,release,tar:,grafana-api-key:,unsigned -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ] ; then
   echo "Failed parsing options." >&2
@@ -21,7 +21,7 @@ fi
 while true; do
   case "$1" in
     -g | --grafana-root-urls ) GRAFANA_ROOT_URLS="$2"; shift 2;;
-    -r | --rooturls ) TARFILE="iiris-zabbix-plugin.tar.gz"; shift;;
+    -r | --release ) TARFILE="iiris-zabbix-plugin.tar.gz"; shift;;
     -t | --tar ) TARFILE="$2"; shift 2;;
     -- ) shift; break ;;
     * ) break ;;
