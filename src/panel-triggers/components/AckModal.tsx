@@ -69,7 +69,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   
   getSeverityOptions(texts: any) {
     return [
-      //value 0 omitted on purpose
+      //value 0 omitted on purpose, because changing severity to 'not classified' is not desirable functionality
       {value: 1, label: texts.info},
       {value: 2, label: texts.minor},
       {value: 3, label: texts.average},
