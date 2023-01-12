@@ -39,7 +39,7 @@ export interface AckProblemData {
 }
 
 const severityOptions = [
-  //{value: 0, label: 'Not classified'},
+  {value: 0, label: 'Not classified'},
   {value: 1, label: 'Information'},
   {value: 2, label: 'Warning'},
   {value: 3, label: 'Average'},
@@ -69,6 +69,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   
   getSeverityOptions(texts: any) {
     return [
+      //value 0 omitted on purpose
       {value: 1, label: texts.info},
       {value: 2, label: texts.minor},
       {value: 3, label: texts.average},
