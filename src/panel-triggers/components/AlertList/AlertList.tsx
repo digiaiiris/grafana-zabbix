@@ -186,13 +186,13 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         {!panelOptions.hideAlertFilters ? <div className="triggers-panel-filters">
           <input type="text" onChange={(event) => this.filterByText(event)} placeholder={texts.search} />
           <select onChange={(event) => this.onChangeSortOption(event)} defaultValue={this.state.sortOption}>
-            {sortOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+            {sortOptions.map((option: any, index: number) => <option key={index} value={option.value}>{option.label}</option>)}
           </select>
           <select onChange={(event) => this.filterByPriority(event)}>
-            {severityOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+            {severityOptions.map((option: any, index: number) => <option key={index} value={option.value}>{option.label}</option>)}
           </select>
           <select onChange={(event) => this.filterByCategory(event)}>
-            {categoryOptions.map((option: any) => <option value={option.value}>{option.label}</option>)}
+            {categoryOptions.map((option: any, index: number) => <option key={index} value={option.value}>{option.label}</option>)}
           </select>
           <div className={'checkbox-filter ' + (amountOfAlertsInMaintenance === 0 ? 'disabled' : '')}>
             <input
@@ -217,6 +217,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
                 onTagClick={this.handleTagClick}
                 onProblemAck={this.handleProblemAck}
                 texts={texts}
+                idx={index}
               />
             )}
           </ol>
