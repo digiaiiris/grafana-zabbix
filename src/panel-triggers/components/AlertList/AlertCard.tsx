@@ -74,7 +74,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
   }
 
   render() {
-    const { problem, panelOptions, texts } = this.props;
+    const { idx, problem, panelOptions, texts } = this.props;
     // Hide datasource name always 
     const showDatasourceName = false; // panelOptions.targets && panelOptions.targets.length > 1;
     const isTestAlert = problem && problem.tags ? _.find(problem.tags, tagItem => tagItem.tag === 'test') : false;
@@ -124,7 +124,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     return (
       <ModalController>
         {({ showModal, hideModal }) => (
-          <li className={cardClass} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
+          <li className={cardClass} key={idx} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
             <AlertIcon problem={problem} color={problemColor} highlightBackground={panelOptions.highlightBackground} blink={blink} />
             <MaintenanceIcon problem={problem} />
             <div className="alert-rule-item__body">
