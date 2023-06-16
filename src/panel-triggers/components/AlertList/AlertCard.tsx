@@ -316,13 +316,13 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
     let content = null;
     if (problem.acknowledges && problem.acknowledges.length) {
       content = (
-        <Tooltip placement="bottom" content={this.renderTooltipContent}>
+        <Tooltip placement="bottom" content={this.renderTooltipContent} interactive={true}>
           <span role="button" onClick={this.handleClick}><i className="fa fa-comments"></i></span>
         </Tooltip>
       );
     } else if (problem.showAckButton) {
       content = (
-        <Tooltip placement="bottom" content={texts.acknowledgeProblem}>
+        <Tooltip placement="bottom" content={texts.acknowledgeProblem} interactive={true}>
           <span role="button" onClick={this.handleClick}><i className="fa fa-comments-o"></i></span>
         </Tooltip>
       );
