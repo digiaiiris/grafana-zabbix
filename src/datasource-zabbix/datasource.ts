@@ -793,8 +793,8 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
           const origValue = target[p].filter;
           target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
           if (origValue !== target[p].filter) {
-            // Set empty RegExp-filters to '/.*/'
-            if (target[p].filter === '/^$/') {
+            // Set RegExp-filters to '/.*/' when filter uses magic keyword '<MATCH_ALL>'
+            if (target[p].filter === '/^<MATCH_ALL>$/') {
               target[p].filter = '/.*/';
             }
           }
