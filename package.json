@@ -32,7 +32,7 @@
     "@emotion/react": "11.1.5",
     "@grafana/data": "^8.3.6",
     "@grafana/runtime": "^8.3.6",
-    "@grafana/toolkit": "^8.3.6",
+    "@grafana/toolkit": "8.3.6",
     "@grafana/ui": "^8.3.6",
     "@popperjs/core": "2.4.0",
     "@types/classnames": "2.2.9",
