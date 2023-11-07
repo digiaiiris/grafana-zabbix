@@ -785,7 +785,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
 
   // Replace template variables
   replaceTargetVariables(target, options) {
-    const parts = ['group', 'host', 'application', 'itemTag', 'item'];
+    const parts = ['group', 'host', 'application', 'itemTag', 'item', 'trigger'];
     _.forEach(parts, p => {
       if (target[p] && target[p].filter) {
         const hasVars = this.checkForTemplateVariables(target[p].filter, this.templateSrv.getVariables());
@@ -794,10 +794,15 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
           target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
           if (origValue !== target[p].filter) {
             // Set RegExp-filters to '/.*/' when filter uses magic keyword '<MATCH_ALL>'
-            if (target[p].filter === '/^<MATCH_ALL>$/') {
+            // NOTE: replaceTemplateVars method call changes filters to '/^...$/' syntax
+            if (target[p].filter !== 'group' && target[p].filter === '/^<MATCH_ALL>$/') {
               target[p].filter = '/.*/';
             }
           }
+        }
+        // Set normal text filters to '/.*/' when filter uses magic keyword '<MATCH_ALL>'
+        else if (target[p].filter !== 'group' && target[p].filter === '<MATCH_ALL>') {
+          target[p].filter = '/.*/';
         }
       }
     });
