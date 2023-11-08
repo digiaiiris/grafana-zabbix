@@ -762,7 +762,7 @@ export class ZabbixAPIConnector {
     return this.request('valuemap.get', params);
   }
 
-  getMaintenances(hostids: string[], groupids?: string[]) {
+  getMaintenances(hostids: string[], groupids?: number[]) {
     const params = {
       hostids: hostids,
       output: ['active_since', 'active_till', 'name', 'maintenanceid'],
