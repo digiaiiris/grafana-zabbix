@@ -245,7 +245,7 @@ export class Zabbix implements ZabbixConnector {
     .then(hosts => findByFilter(hosts, hostFilter));
   }
 
-  getMaintenances(hostids: string[], groupids?: string[]) {
+  getMaintenances(hostids: string[], groupids?: number[]) {
     return this.zabbixAPI.getMaintenances(hostids, groupids);
   }
 
