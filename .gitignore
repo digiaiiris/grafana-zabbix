@@ -38,3 +38,6 @@ dist/
 
 # locally required config files
 public/css/*.min.css
+
+# production build for iiris plugin
+iiris-zabbix-plugin.tar.gz
