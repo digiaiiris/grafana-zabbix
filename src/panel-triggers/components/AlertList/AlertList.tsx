@@ -62,7 +62,6 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption);
       const amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
       const amountOfAlertsWithTestTag = this.getAmountOfAlertsWithTestTag(this.props.problems);
-      console.log('componentDidMount:', amountOfAlertsWithTestTag);
       this.setState({ filteredProblems, amountOfAlertsInMaintenance, amountOfAlertsWithTestTag });
     }
   }
@@ -73,7 +72,6 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption);
       const amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
       const amountOfAlertsWithTestTag = this.getAmountOfAlertsWithTestTag(this.props.problems);
-      console.log('componentDidUpdate:', amountOfAlertsWithTestTag);
       this.setState({ filteredProblems, amountOfAlertsInMaintenance, amountOfAlertsWithTestTag });
     }
   }
