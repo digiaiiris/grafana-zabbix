@@ -111,7 +111,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         problem.description.toLowerCase().indexOf(textFilterLowerCase) > -1) &&
         (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
         (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
-        (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')) &&
+        (!maintenanceFilter || problem.hosts.length === 0 || !problem.hosts.some((h) => h.maintenance_status === '0')) &&
         (!testTagFilter || problem.tags.length === 0 || !problem.tags.some((e) => e.tag === 'test'))
       );
     });
