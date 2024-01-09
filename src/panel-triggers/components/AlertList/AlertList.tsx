@@ -112,7 +112,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
         (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
         (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0')) &&
-        (!testTagFilter || (problem.tags.length > 0 && problem.tags[0].tag !== 'test'))
+        (!testTagFilter || problem.tags.length === 0 || problem.tags.some((e) => e.tag !== 'test'))
       );
     });
     if (sortOption === SORT_BY_PRIORITY) {
@@ -179,11 +179,12 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     let amount = 0;
     problems.forEach((problem: any) => {
       if (problem.tags) {
-        problem.tags.forEach((tag: any) => {
+        for (let tag of problem.tags) {
           if (tag.tag === 'test') {
             amount++;
+            break;
           }
-        });
+        };
       }
     });
   return amount;
