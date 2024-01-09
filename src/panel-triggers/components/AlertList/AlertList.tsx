@@ -237,12 +237,12 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
           <div className={'checkbox-filter ' + (amountOfAlertsWithTestTag === 0 ? 'disabled' : '')}>
             <input
               type="checkbox"
-              id="showTestTags"
+              id="hideTestTags"
               defaultChecked={hideAlertsWithTestTag}
               onChange={() => this.filterByTestTag()}
               disabled={amountOfAlertsWithTestTag === 0}
             />
-            <label htmlFor="showTestTags">
+            <label htmlFor="hideTestTags">
               {`${texts.hideAlertsWithTestTag} ${amountOfAlertsWithTestTag}${texts.pieces}`}
             </label>
           </div>
