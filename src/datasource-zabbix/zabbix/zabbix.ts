@@ -21,12 +21,12 @@ const REQUESTS_TO_PROXYFY = [
   'getHistory', 'getTrend', 'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs',
   'getEvents', 'getAlerts', 'getHostAlerts', 'getAcknowledges', 'getITService', 'getSLA', 'getVersion', 'getProxies',
   'getEventAlerts', 'getExtendedEventData', 'getProblems', 'getEventsHistory', 'getTriggersByIds', 'getScripts',
-  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getHostsByIDs', 'getMaintenances'
+  'getGlobalMacros', 'getValueMappings', 'getHostsByIDs', 'getMaintenances'
 ];
 
 const REQUESTS_TO_CACHE = [
   'getGroups', 'getHosts', 'getApps', 'getItems', 'getMacros', 'getItemsByIDs', 'getITService', 'getProxies',
-  'getGlobalMacros', 'getValueMappings', 'getGroupsWithHosts', 'getHostsByIDs', 'getMaintenances'
+  'getGlobalMacros', 'getValueMappings', 'getHostsByIDs', 'getMaintenances'
 ];
 
 const REQUESTS_TO_BIND = [
@@ -220,10 +220,6 @@ export class Zabbix implements ZabbixConnector {
     });
   }
 
-  getGroupsWithHosts() {
-    return this.zabbixAPI.getGroupsWithHosts();
-  }
-
   getAllGroups() {
     return this.zabbixAPI.getGroups();
   }
@@ -249,7 +245,7 @@ export class Zabbix implements ZabbixConnector {
     .then(hosts => findByFilter(hosts, hostFilter));
   }
 
-  getMaintenances(hostids: string[], groupids?: string[]) {
+  getMaintenances(hostids: string[], groupids?: number[]) {
     return this.zabbixAPI.getMaintenances(hostids, groupids);
   }
 

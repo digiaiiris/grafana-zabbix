@@ -32,8 +32,10 @@ interface AlertListState {
   priorityFilter: number;
   categoryFilter: string;
   hideAlertsInMaintenance: boolean;
+  hideAlertsWithTestTag: boolean;
   sortOption: string;
   amountOfAlertsInMaintenance: number;
+  amountOfAlertsWithTestTag: number;
 }
 
 export default class AlertList extends PureComponent<AlertListProps, AlertListState> {
@@ -47,26 +49,30 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
       priorityFilter: -1,
       categoryFilter: 'all',
       hideAlertsInMaintenance: props.panelOptions.hideAlertsInMaintenanceByDefault,
+      hideAlertsWithTestTag: props.panelOptions.hideAlertsWithTestTagByDefault,
       sortOption: props.panelOptions.sortProblems || SORT_BY_TIMESTAMP,
       amountOfAlertsInMaintenance: 0,
+      amountOfAlertsWithTestTag: 0,
     };
   }
 
   componentDidMount(): void {
-    const { textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption } = this.state;
+    const { textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption } = this.state;
     if (this.props.problems) {
-      const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+      const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption);
       const amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
-      this.setState({ filteredProblems, amountOfAlertsInMaintenance });
+      const amountOfAlertsWithTestTag = this.getAmountOfAlertsWithTestTag(this.props.problems);
+      this.setState({ filteredProblems, amountOfAlertsInMaintenance, amountOfAlertsWithTestTag });
     }
   }
 
   componentDidUpdate(prevProps: Readonly<AlertListProps>, prevState: Readonly<AlertListState>, snapshot?: any): void {
-    const { textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption } = this.state;
+    const { textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption } = this.state;
     if (!_.isEqual(this.props.problems, prevProps.problems) && this.props.problems) {
-      const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, sortOption);
+      const filteredProblems = this.getFilteredProblems(textFilter, priorityFilter, categoryFilter, hideAlertsInMaintenance, hideAlertsWithTestTag, sortOption);
       const amountOfAlertsInMaintenance = this.getAmountOfAlertsInMaintenance(this.props.problems);
-      this.setState({ filteredProblems, amountOfAlertsInMaintenance });
+      const amountOfAlertsWithTestTag = this.getAmountOfAlertsWithTestTag(this.props.problems);
+      this.setState({ filteredProblems, amountOfAlertsInMaintenance, amountOfAlertsWithTestTag });
     }
   }
 
@@ -97,7 +103,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     return this.props.onProblemAck(problem, data);
   }
 
-  getFilteredProblems = (textFilter: string, priorityFilter: number, categoryFilter: string, maintenanceFilter: boolean, sortOption: string) => {
+  getFilteredProblems = (textFilter: string, priorityFilter: number, categoryFilter: string, maintenanceFilter: boolean, testTagFilter: boolean, sortOption: string) => {
     const textFilterLowerCase = textFilter.toLowerCase();
     let filteredProblems = this.props.problems.filter((problem: ProblemDTO) => {
       return (
@@ -105,7 +111,8 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         problem.description.toLowerCase().indexOf(textFilterLowerCase) > -1) &&
         (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
         (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
-        (!maintenanceFilter || (problem.hosts.length > 0 && problem.hosts[0].maintenance_status === '0'))
+        (!maintenanceFilter || problem.hosts.length === 0 || !problem.hosts.some((h) => h.maintenance_status === '1')) &&
+        (!testTagFilter || problem.tags.length === 0 || !problem.tags.some((e) => e.tag === 'test'))
       );
     });
     if (sortOption === SORT_BY_PRIORITY) {
@@ -119,35 +126,42 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
   filterByText = (event: any) => {
     const textFilter = event.target.value;
     const filteredProblems = this.getFilteredProblems(textFilter, this.state.priorityFilter, this.state.categoryFilter,
-      this.state.hideAlertsInMaintenance, this.state.sortOption);
+      this.state.hideAlertsInMaintenance, this.state.hideAlertsWithTestTag, this.state.sortOption);
     this.setState({ textFilter, filteredProblems, page: 0 });
   }
 
   filterByPriority = (event: any) => {
     const priorityFilter = parseInt(event.target.value, 10);
     const filteredProblems = this.getFilteredProblems(this.state.textFilter, priorityFilter, this.state.categoryFilter,
-      this.state.hideAlertsInMaintenance, this.state.sortOption);
+      this.state.hideAlertsInMaintenance, this.state.hideAlertsWithTestTag, this.state.sortOption);
     this.setState({ priorityFilter, filteredProblems, page: 0 });
   }
 
   filterByCategory = (event: any) => {
     const categoryFilter = event.target.value;
     const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter, categoryFilter,
-      this.state.hideAlertsInMaintenance, this.state.sortOption);
+      this.state.hideAlertsInMaintenance, this.state.hideAlertsWithTestTag, this.state.sortOption);
     this.setState({ categoryFilter, filteredProblems, page: 0 });
   }
 
   filterByMaintenance = () => {
     const hideAlertsInMaintenance = !this.state.hideAlertsInMaintenance;
     const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter,
-      this.state.categoryFilter, hideAlertsInMaintenance, this.state.sortOption);
+      this.state.categoryFilter, hideAlertsInMaintenance, this.state.hideAlertsWithTestTag, this.state.sortOption);
     this.setState({ hideAlertsInMaintenance, filteredProblems, page: 0 });
+  }
+
+  filterByTestTag = () => {
+    const hideAlertsWithTestTag = !this.state.hideAlertsWithTestTag;
+    const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter,
+      this.state.categoryFilter, this.state.hideAlertsInMaintenance, hideAlertsWithTestTag, this.state.sortOption);
+    this.setState({ hideAlertsWithTestTag, filteredProblems, page: 0 });
   }
 
   onChangeSortOption = (event: any) => {
     const sortOption = event.target.value;
     const filteredProblems = this.getFilteredProblems(this.state.textFilter, this.state.priorityFilter,
-      this.state.categoryFilter, this.state.hideAlertsInMaintenance, sortOption);
+      this.state.categoryFilter, this.state.hideAlertsInMaintenance, this.state.hideAlertsWithTestTag, sortOption);
     this.setState({ sortOption, filteredProblems, page: 0 });
   }
 
@@ -161,9 +175,24 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
     return amount;
   }
 
+  getAmountOfAlertsWithTestTag = (problems: any[]) => {
+    let amount = 0;
+    problems.forEach((problem: any) => {
+      if (problem.tags) {
+        for (let tag of problem.tags) {
+          if (tag.tag === 'test') {
+            amount++;
+            break;
+          }
+        };
+      }
+    });
+  return amount;
+  }
+
   render() {
     const { problems, panelOptions, texts } = this.props;
-    const { filteredProblems, hideAlertsInMaintenance, amountOfAlertsInMaintenance } = this.state;
+    const { filteredProblems, hideAlertsInMaintenance, hideAlertsWithTestTag, amountOfAlertsInMaintenance, amountOfAlertsWithTestTag } = this.state;
     const currentProblems = this.getCurrentProblems(this.state.page, this.state.sortOption);
     let fontSize = parseInt(panelOptions.fontSize.slice(0, panelOptions.fontSize.length - 1), 10);
     fontSize = fontSize && fontSize !== 100 ? fontSize : null;
@@ -204,6 +233,18 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
             />
             <label htmlFor="showMaintenance">
               {`${texts.hideAlertsInMaintenance} ${amountOfAlertsInMaintenance}${texts.pieces}`}
+            </label>
+          </div>
+          <div className={'checkbox-filter ' + (amountOfAlertsWithTestTag === 0 ? 'disabled' : '')}>
+            <input
+              type="checkbox"
+              id="hideTestTags"
+              defaultChecked={hideAlertsWithTestTag}
+              onChange={() => this.filterByTestTag()}
+              disabled={amountOfAlertsWithTestTag === 0}
+            />
+            <label htmlFor="hideTestTags">
+              {`${texts.hideAlertsWithTestTag} ${amountOfAlertsWithTestTag}${texts.pieces}`}
             </label>
           </div>
         </div> : null }
