@@ -1,7 +1,7 @@
 # Dockerfile for building grafana-zabbix artifacts
 
 # Backend (golang) build
-FROM golang:1.17.8 AS go-builder
+FROM golang:1.18.10 AS go-builder
 
 COPY / /build
 
@@ -28,6 +28,10 @@ RUN yarn install --pure-lockfile && \
 
 COPY --from=go-builder /build/dist/ /build/dist
 
-RUN npx @grafana/toolkit@8.3.6 plugin:sign --rootUrls $GRAFANA_ROOT_URLS && \
-    cd dist && \
+# Commented out because signing did not work ...
+# Unsigned plugins are now allowed so signing is not necessary
+#
+#RUN npx @grafana/toolkit@8.3.6 plugin:sign --rootUrls $GRAFANA_ROOT_URLS
+
+RUN cd dist && \
     tar czvf ../iiris-zabbix-plugin.tar.gz *
