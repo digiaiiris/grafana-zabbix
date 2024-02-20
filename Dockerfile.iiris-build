@@ -14,7 +14,7 @@ RUN go install -v ./pkg/ && \
 # Frontend (node) build and packaging
 FROM node:16-alpine3.15 as js-builder
 
-ARG GRAFANA_API_KEY
+ARG GRAFANA_ACCESS_POLICY_TOKEN
 ARG GRAFANA_ROOT_URLS
 
 COPY / /build
@@ -28,10 +28,7 @@ RUN yarn install --pure-lockfile && \
 
 COPY --from=go-builder /build/dist/ /build/dist
 
-# Commented out because signing did not work ...
-# Unsigned plugins are now allowed so signing is not necessary
-#
-#RUN npx @grafana/toolkit@8.3.6 plugin:sign --rootUrls $GRAFANA_ROOT_URLS
+RUN npx @grafana/sign-plugin@3.0.1 --rootUrls $GRAFANA_ROOT_URLS
 
 RUN cd dist && \
     tar czvf ../iiris-zabbix-plugin.tar.gz *
