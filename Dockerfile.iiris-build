@@ -28,7 +28,7 @@ RUN yarn install --pure-lockfile && \
 
 COPY --from=go-builder /build/dist/ /build/dist
 
-RUN npx @grafana/sign-plugin@3.0.1 --rootUrls $GRAFANA_ROOT_URLS
+RUN npx @grafana/sign-plugin@1.1.0 --rootUrls $GRAFANA_ROOT_URLS
 
 RUN cd dist && \
     tar czvf ../iiris-zabbix-plugin.tar.gz *
