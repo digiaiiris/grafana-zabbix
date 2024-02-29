@@ -2,7 +2,7 @@
 set -e
 
 # Parse options
-OPTS=`getopt -o rt: --long release,tar:,grafana-api-key:,unsigned -n 'parse-options' -- "$@"`
+OPTS=`getopt -o rt: --long release,tar:,grafana-access-policy-token:,unsigned -n 'parse-options' -- "$@"`
 
 if [ $? != 0 ] ; then
   echo "Failed parsing options." >&2
@@ -12,7 +12,7 @@ fi
 eval set -- "$OPTS"
 
 TARFILE=
-GRAFANA_API_KEY=$(gcloud secrets versions access latest --secret=ci-grafana-api-key --project=digia-iiris-dev)
+GRAFANA_ACCESS_POLICY_TOKEN=$(gcloud secrets versions access latest --secret=ci-grafana-access-policy-token --project=digia-iiris-dev)
 GRAFANA_ROOT_URLS=$(gcloud secrets versions access latest --secret=ci-grafana-plugin-rooturls --project=digia-iiris-dev)
 
 while true; do
@@ -24,15 +24,20 @@ while true; do
   esac
 done
 
-if [ -z "$GRAFANA_API_KEY" ]; then
-  echo "ERROR: Grafana API key missing. API key must be exported in GRAFANA_API_KEY environment variable!"
+if [ -z "$GRAFANA_ACCESS_POLICY_TOKEN" ]; then
+  echo "ERROR: Grafana Access Policy token is missing. Token must be exported in GRAFANA_ACCESS_POLICY_TOKEN environment variable!"
+  exit 1
+fi
+
+if [ -z "$GRAFANA_ROOT_URLS" ]; then
+  echo "ERROR: Grafana root URLs missing. Token must be exported in GRAFANA_ROOT_URLS environment variable!"
   exit 1
 fi
 
 # Note that build is done inside Docker container so that the distro matches Grafana distro
 # If the build was done in Alma Linux host the distro would be different and the binaries compiled by Go would not work
 # Build
-docker build . -f Dockerfile.iiris-build -t iiris-zabbix-plugin-build --build-arg=GRAFANA_API_KEY=$GRAFANA_API_KEY --build-arg=GRAFANA_ROOT_URLS="$GRAFANA_ROOT_URLS"
+docker build . -f Dockerfile.iiris-build -t iiris-zabbix-plugin-build --build-arg=GRAFANA_ACCESS_POLICY_TOKEN=$GRAFANA_ACCESS_POLICY_TOKEN --build-arg=GRAFANA_ROOT_URLS="$GRAFANA_ROOT_URLS"
 
 if [ ! -z "$TARFILE" ]; then
     docker run --rm -i --entrypoint sh iiris-zabbix-plugin-build -c "cat iiris-zabbix-plugin.tar.gz" >$TARFILE

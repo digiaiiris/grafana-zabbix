@@ -10,9 +10,9 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-if [ -z "$GRAFANA_API_KEY" ]
+if [ -z "$GRAFANA_ACCESS_POLICY_TOKEN" ]
 then
-  echo -e "${RED}Error: \$GRAFANA_API_KEY variable should be set to sign plugin${NC}"
+  echo -e "${RED}Error: \$GRAFANA_ACCESS_POLICY_TOKEN variable should be set to sign plugin${NC}"
   exit 1
 fi
 
