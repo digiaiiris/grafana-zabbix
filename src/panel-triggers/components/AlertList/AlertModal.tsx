@@ -58,64 +58,68 @@ export class AlertModal extends React.Component<Props, State> {
         <div className="iiris-modal-content">
           <div className="iiris-event-table full-width-container">
             <table className="table">
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.priority}</td>
-                <td>{priority}</td>
-              </tr>
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.startTime}</td>
-                <td>{startTime}</td>
-              </tr>
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.duration}</td>
-                <td>{age}</td>
-              </tr>
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.title}</td>
-                <td>{problem.name}</td>
-              </tr>
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
-                <td>
-                  {
-                    this.getDescriptionArray(problem).map((pairArray: any[]) => {
-                      return (
-                        <span>
-                          <span>{pairArray[0]}</span>
-                          { pairArray[1] && <a href={pairArray[1]} target="_blank">{pairArray[1]}</a> }
-                        </span>
-                      );
-                    })
-                  }
-                </td>
-              </tr>
-              {problem.url && <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
-                <td>
-                  <a href={problem.url} target="_top">{problem.url}</a>
-                </td>
-              </tr>}
-              <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
-                <td>{problem.eventid}</td>
-              </tr>
-              {problem.acknowledges.length > 0 && <tr>
-                <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
-                <td>
-                  <table className="iiris-inner-table">
+              <tbody>
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.priority}</td>
+                  <td>{priority}</td>
+                </tr>
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.startTime}</td>
+                  <td>{startTime}</td>
+                </tr>
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.duration}</td>
+                  <td>{age}</td>
+                </tr>
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.title}</td>
+                  <td>{problem.name}</td>
+                </tr>
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
+                  <td>
                     {
-                      problem.acknowledges.map((acknowledge: any) => {
+                      this.getDescriptionArray(problem).map((pairArray: any[]) => {
                         return (
-                          <tr>
-                            <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
-                            <td>{acknowledge.message}</td>
-                          </tr>
-                        )
+                          <span>
+                            <span>{pairArray[0]}</span>
+                            { pairArray[1] && <a href={pairArray[1]} target="_blank">{pairArray[1]}</a> }
+                          </span>
+                        );
                       })
                     }
-                  </table>
-                </td>
-              </tr>}
+                  </td>
+                </tr>
+                {problem.url && <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
+                  <td>
+                    <a href={problem.url} target="_top">{problem.url}</a>
+                  </td>
+                </tr>}
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
+                  <td>{problem.eventid}</td>
+                </tr>
+                {problem.acknowledges.length > 0 && <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
+                  <td>
+                    <table className="iiris-inner-table">
+                      <tbody>
+                        {
+                          problem.acknowledges.map((acknowledge: any) => {
+                            return (
+                              <tr>
+                                <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
+                                <td>{acknowledge.message}</td>
+                              </tr>
+                            )
+                          })
+                        }
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>}
+              </tbody>
             </table>
           </div>
         </div>
