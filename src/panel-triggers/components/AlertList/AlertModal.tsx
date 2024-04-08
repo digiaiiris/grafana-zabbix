@@ -79,9 +79,9 @@ export class AlertModal extends React.Component<Props, State> {
                   <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
                   <td>
                     {
-                      this.getDescriptionArray(problem).map((pairArray: any[]) => {
+                      this.getDescriptionArray(problem).map((pairArray: any[], idx: number) => {
                         return (
-                          <span>
+                          <span key={idx}>
                             <span>{pairArray[0]}</span>
                             { pairArray[1] && <a href={pairArray[1]} target="_blank">{pairArray[1]}</a> }
                           </span>
