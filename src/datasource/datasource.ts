@@ -248,10 +248,11 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
       this.replaceTargetVariables(target, request);
       const timeRange = this.buildTimeRange(request, target);
 
-      if (target.queryType === c.MODE_TEXT) {
-        // Text query
-        // Don't request undefined targets
-        if (!target.group || !target.host || !target.item) {
+      // Metrics or Text query
+      if (!target.queryType || target.queryType === c.MODE_METRICS || target.queryType === c.MODE_TEXT) {
+        // Don't send request if group/host/item doesn't exist or all filters are empty
+        if (!target.group || !target.host || !target.item ||
+          (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
           return [];
         }
         return this.queryTextData(target, timeRange);
@@ -967,11 +968,25 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
 
   // Replace template variables
   replaceTargetVariables(target, options) {
-    const templateSrv = getTemplateSrv();
-    const parts = ['group', 'host', 'application', 'itemTag', 'item'];
-    _.forEach(parts, (p) => {
+    const parts = ['group', 'host', 'application', 'itemTag', 'item', 'trigger'];
+    _.forEach(parts, p => {
       if (target[p] && target[p].filter) {
-        target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
+        const hasVars = this.checkForTemplateVariables(target[p].filter, this.templateSrv.getVariables());
+        if (hasVars) {
+          const origValue = target[p].filter;
+          target[p].filter = this.replaceTemplateVars(target[p].filter, options.scopedVars);
+          if (origValue !== target[p].filter) {
+            // Set RegExp-filters to '/.*/' when filter uses magic keyword '<MATCH_ALL>'
+            // NOTE: replaceTemplateVars method call changes filters to '/^...$/' syntax
+            if (target[p].filter !== 'group' && target[p].filter === '/^<MATCH_ALL>$/') {
+              target[p].filter = '/.*/';
+            }
+          }
+        }
+        // Set normal text filters to '/.*/' when filter uses magic keyword '<MATCH_ALL>'
+        else if (target[p].filter !== 'group' && target[p].filter === '<MATCH_ALL>') {
+          target[p].filter = '/.*/';
+        }
       }
     });
 
@@ -992,6 +1007,12 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
         }
       });
     });
+  }
+
+  checkForTemplateVariables(fieldText: string, scopedVars: any[]) {
+    return scopedVars.some((variable: any) => (
+      fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1
+    ));
   }
 
   isUseTrends(timeRange, target: ZabbixMetricsQuery) {
