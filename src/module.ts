@@ -2,8 +2,8 @@ import { AppPlugin } from '@grafana/data';
 import { loadPluginCss } from '@grafana/runtime';
 
 loadPluginCss({
-  dark: 'plugins/alexanderzobnin-zabbix-app/styles/dark.css',
-  light: 'plugins/alexanderzobnin-zabbix-app/styles/light.css',
+  dark: 'plugins/iiris-zabbix-triggers-panel/styles/grafana-zabbix.dark.css',
+  light: 'plugins/iiris-zabbix-triggers-panel/styles/grafana-zabbix.light.css'
 });
 
 export const plugin = new AppPlugin<{}>();
