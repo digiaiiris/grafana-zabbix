@@ -128,123 +128,127 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     }
 
     return (
-      <li className={cardClass} key={idx} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
-        <AlertIcon
-          problem={problem}
-          color={problemColor}
-          highlightBackground={panelOptions.highlightBackground}
-          blink={blink}
-        />
-        <MaintenanceIcon problem={problem} />
+      <ModalController>
+        {({ showModal, hideModal }) => (
+          <li className={cardClass} key={idx} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
+            <AlertIcon
+              problem={problem}
+              color={problemColor}
+              highlightBackground={panelOptions.highlightBackground}
+              blink={blink}
+            />
+            <MaintenanceIcon problem={problem} />
 
-        <div className="alert-rule-item__body">
-          <div className="alert-rule-item__header">
-            <div className="alert-rule-item__name">
-              <span className="zabbix-trigger-name">{problem.description}</span>
-              {(panelOptions.hostField || panelOptions.hostTechNameField) && (
-                <AlertHost problem={problem} panelOptions={panelOptions} />
-              )}
-              {panelOptions.hostGroups && <AlertGroup problem={problem} panelOptions={panelOptions} />}
-
-              {panelOptions.showTags && (
-                <span className="zbx-trigger-tags">
-                  {problem.tags &&
-                    problem.tags.map((tag) => (
-                      <EventTag
-                        key={tag.tag + tag.value}
-                        tag={tag}
-                        datasource={dsName}
-                        highlight={tag.tag === problem.correlation_tag}
-                        onClick={this.handleTagClick}
-                      />
-                    ))}
-                </span>
-              )}
-            </div>
-
-            <div className={descriptionClass}>
-              {panelOptions.statusField && <AlertStatus problem={problem} blink={blink} />}
-              {panelOptions.severityField && (
-                <AlertSeverity
-                  severityDesc={severityDesc}
-                  blink={blink}
-                  testAlert={isTestAlert ? texts.testIncident : ''}
-                  highlightBackground={panelOptions.highlightBackground} />
-                )}
-              <span className="alert-rule-item__time">
-                {panelOptions.ageField && texts.duration + ': ' + age}
-              </span>
-              {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
-                <>
-                  {panelOptions.allowDangerousHTML ? (
-                    <span className="zbx-description" dangerouslySetInnerHTML={{ __html: problem.comments }} />
-                  ) : (
-                    <span className="zbx-description">{problem.comments}</span>
+            <div className="alert-rule-item__body">
+              <div className="alert-rule-item__header">
+                <div className="alert-rule-item__name">
+                  <span className="zabbix-trigger-name">{problem.description}</span>
+                  {(panelOptions.hostField || panelOptions.hostTechNameField) && (
+                    <AlertHost problem={problem} panelOptions={panelOptions} />
                   )}
-                </>
-              )}
-            </div>
+                  {panelOptions.hostGroups && <AlertGroup problem={problem} panelOptions={panelOptions} />}
 
-            {panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (
-              <div className="alert-rule-item__text zbx-description--newline">
-                {panelOptions.allowDangerousHTML ? (
-                  <span
-                    className="alert-rule-item__info zbx-description"
-                    dangerouslySetInnerHTML={{ __html: problem.comments }}
-                  />
-                ) : (
-                  <span className="alert-rule-item__info zbx-description">{problem.comments}</span>
+                  {panelOptions.showTags && (
+                    <span className="zbx-trigger-tags">
+                      {problem.tags &&
+                        problem.tags.map((tag) => (
+                          <EventTag
+                            key={tag.tag + tag.value}
+                            tag={tag}
+                            datasource={dsName}
+                            highlight={tag.tag === problem.correlation_tag}
+                            onClick={this.handleTagClick}
+                          />
+                        ))}
+                    </span>
+                  )}
+                </div>
+
+                <div className={descriptionClass}>
+                  {panelOptions.statusField && <AlertStatus problem={problem} blink={blink} />}
+                  {panelOptions.severityField && (
+                    <AlertSeverity
+                      severityDesc={severityDesc}
+                      blink={blink}
+                      testAlert={isTestAlert ? texts.testIncident : ''}
+                      highlightBackground={panelOptions.highlightBackground} />
+                    )}
+                  <span className="alert-rule-item__time">
+                    {panelOptions.ageField && texts.duration + ': ' + age}
+                  </span>
+                  {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
+                    <>
+                      {panelOptions.allowDangerousHTML ? (
+                        <span className="zbx-description" dangerouslySetInnerHTML={{ __html: problem.comments }} />
+                      ) : (
+                        <span className="zbx-description">{problem.comments}</span>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {panelOptions.descriptionField && panelOptions.descriptionAtNewLine && (
+                  <div className="alert-rule-item__text zbx-description--newline">
+                    {panelOptions.allowDangerousHTML ? (
+                      <span
+                        className="alert-rule-item__info zbx-description"
+                        dangerouslySetInnerHTML={{ __html: problem.comments }}
+                      />
+                    ) : (
+                      <span className="alert-rule-item__info zbx-description">{problem.comments}</span>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {showDatasourceName && (
-          <div className="alert-rule-item__time zabbix-trigger-source">
-            <span>
-              <i className="fa fa-database"></i>
-              {dsName}
-            </span>
-          </div>
-        )}
-
-        <div className="alert-rule-item__time zbx-trigger-lastchange">
-          <span>{startTime || 'last change unknown'}</span>
-          <div className="trigger-info-block zbx-status-icons">
-            {this.getLinkIconElement(problem)}
-            {problem.url && (
-              <a href={problem.url} target="_blank" rel="noreferrer">
-                <i className="fa fa-external-link"></i>
-              </a>
-            )}
-            {problem.state === '1' && (
-              <Tooltip placement="bottom" content={problem.error}>
+            {showDatasourceName && (
+              <div className="alert-rule-item__time zabbix-trigger-source">
                 <span>
-                  <i className="fa fa-question-circle"></i>
+                  <i className="fa fa-database"></i>
+                  {dsName}
                 </span>
-              </Tooltip>
+              </div>
             )}
-            {problem.eventid && (
-              <AlertAcknowledgesButton
-                problem={problem}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  showModal(AckModal, {
-                    canClose: problem.manual_close === '1',
-                    severity: problemSeverity,
-                    onSubmit: this.ackProblem,
-                    onDismiss: hideModal,
-                    texts: texts
-                  });
-                }}
-                texts={texts}
-              />
-            )}
-          </div>
-        </div>
-      </li>
-    )}
+
+            <div className="alert-rule-item__time zbx-trigger-lastchange">
+              <span>{startTime || 'last change unknown'}</span>
+              <div className="trigger-info-block zbx-status-icons">
+                {this.getLinkIconElement(problem)}
+                {problem.url && (
+                  <a href={problem.url} target="_blank" rel="noreferrer">
+                    <i className="fa fa-external-link"></i>
+                  </a>
+                )}
+                {problem.state === '1' && (
+                  <Tooltip placement="bottom" content={problem.error}>
+                    <span>
+                      <i className="fa fa-question-circle"></i>
+                    </span>
+                  </Tooltip>
+                )}
+                {problem.eventid && (
+                  <AlertAcknowledgesButton
+                    problem={problem}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      showModal(AckModal, {
+                        canClose: problem.manual_close === '1',
+                        severity: problemSeverity,
+                        onSubmit: this.ackProblem,
+                        onDismiss: hideModal,
+                        texts: texts
+                      });
+                    }}
+                    texts={texts}
+                  />
+                )}
+              </div>
+            </div>
+          </li>)}
+      </ModalController>
+    )
+  }
 }
 
 interface AlertHostProps {
