@@ -41,6 +41,7 @@ export interface ProblemsPanelOptions {
   okEventColor: TriggerColor;
   ackEventColor: TriggerColor;
   markAckEvents?: boolean;
+  hideAlertFilters?: boolean;
 }
 
 export const DEFAULT_SEVERITY: TriggerSeverity[] = [
