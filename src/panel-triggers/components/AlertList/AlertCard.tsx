@@ -11,15 +11,19 @@ import AlertAcknowledges from './AlertAcknowledges';
 import AlertIcon from './AlertIcon';
 import { ProblemDTO, ZBXTag } from '../../../datasource/types';
 import { ModalController } from '../../../components';
+import { AlertModal } from './AlertModal';
 import { DataSourceRef } from '@grafana/data';
 import { Tooltip } from '@grafana/ui';
 import { getDataSourceSrv } from '@grafana/runtime';
+import MaintenanceIcon from './MaintenanceIcon';
+const Url = require("url-parse");
 
 interface AlertCardProps {
   problem: ProblemDTO;
   panelOptions: ProblemsPanelOptions;
   onTagClick?: (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => Promise<any> | any;
+  texts: any;
 }
 
 export default class AlertCard extends PureComponent<AlertCardProps> {
@@ -34,12 +38,50 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     return this.props.onProblemAck(problem, data);
   };
 
+  onAlertItemClick = (showModal: any, hideModal: any, priority: string, startTime: string, age: string) => {
+    const { texts, problem } = this.props;
+    showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, texts, priority, startTime, age })
+  }
+
+  onLinkIconClick = (event: any, url: string) => {
+    event.stopPropagation();
+    // Add 'foldTabRow' query param so that Grafana tab row panel keeps folded
+    const urlObj = new Url(url, true);
+    urlObj.query['foldTabRow'] = 'all';
+    window.top.location.href = urlObj.toString();
+  }
+
+  getLinkIconElement = (problem) => {
+    if (window.location.href.indexOf('http://localhost') === -1) {
+      const { texts } = this.props;
+      // Compare link url and current page url; no need to show icon if urls are the same
+      const url1 = new Url(problem.url, true);
+      const url2 = new Url(window.top.location.href, true);
+      if (problem.url && (
+        url1.origin + url1.pathname !== url2.origin + url2.pathname ||
+        !url1.query.dashboard ||
+        !url1.query.orgId ||
+        url1.query.dashboard !== url2.query.dashboard ||
+        url1.query.orgId !== url2.query.orgId
+      )) {
+        return (
+          <Tooltip placement="bottom" content={texts.urlInfo}>
+            <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
+          </Tooltip>
+        );
+      }
+    }
+    return null;
+  }
+
   render() {
-    const { problem, panelOptions } = this.props;
-    const showDatasourceName = panelOptions.targets && panelOptions.targets.length > 1;
-    const cardClass = cx('alert-rule-item', 'zbx-trigger-card', {
-      'zbx-trigger-highlighted': panelOptions.highlightBackground,
-    });
+    const { idx, problem, panelOptions, texts } = this.props;
+    // Hide datasource name always 
+    const showDatasourceName = false; // panelOptions.targets && panelOptions.targets.length > 1;
+    const isTestAlert = problem && problem.tags ? _.find(problem.tags, tagItem => tagItem.tag === 'test') : false;
+    const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', 
+      { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert }
+    );
     const descriptionClass = cx('alert-rule-item__text', {
       'zbx-description--newline': panelOptions.descriptionAtNewLine,
     });
@@ -55,7 +97,9 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
       problem.timestamp,
       panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat
     );
-    const age = moment.unix(problem.timestamp).fromNow(true);
+    const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
+    const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
+    const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm:ss');
 
     let dsName: string = problem.datasource as string;
     if ((problem.datasource as DataSourceRef)?.uid) {
@@ -84,13 +128,14 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     }
 
     return (
-      <li className={cardClass} style={cardStyle}>
+      <li className={cardClass} key={idx} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
         <AlertIcon
           problem={problem}
           color={problemColor}
           highlightBackground={panelOptions.highlightBackground}
           blink={blink}
         />
+        <MaintenanceIcon problem={problem} />
 
         <div className="alert-rule-item__body">
           <div className="alert-rule-item__header">
@@ -123,10 +168,12 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 <AlertSeverity
                   severityDesc={severityDesc}
                   blink={blink}
-                  highlightBackground={panelOptions.highlightBackground}
-                />
-              )}
-              <span className="alert-rule-item__time">{panelOptions.ageField && 'for ' + age}</span>
+                  testAlert={isTestAlert ? texts.testIncident : ''}
+                  highlightBackground={panelOptions.highlightBackground} />
+                )}
+              <span className="alert-rule-item__time">
+                {panelOptions.ageField && texts.duration + ': ' + age}
+              </span>
               {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                 <>
                   {panelOptions.allowDangerousHTML ? (
@@ -163,8 +210,9 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
         )}
 
         <div className="alert-rule-item__time zbx-trigger-lastchange">
-          <span>{lastchange || 'last change unknown'}</span>
+          <span>{startTime || 'last change unknown'}</span>
           <div className="trigger-info-block zbx-status-icons">
+            {this.getLinkIconElement(problem)}
             {problem.url && (
               <a href={problem.url} target="_blank" rel="noreferrer">
                 <i className="fa fa-external-link"></i>
@@ -178,27 +226,25 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
               </Tooltip>
             )}
             {problem.eventid && (
-              <ModalController>
-                {({ showModal, hideModal }) => (
-                  <AlertAcknowledgesButton
-                    problem={problem}
-                    onClick={() => {
-                      showModal(AckModal, {
-                        canClose: problem.manual_close === '1',
-                        severity: problemSeverity,
-                        onSubmit: this.ackProblem,
-                        onDismiss: hideModal,
-                      });
-                    }}
-                  />
-                )}
-              </ModalController>
+              <AlertAcknowledgesButton
+                problem={problem}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  showModal(AckModal, {
+                    canClose: problem.manual_close === '1',
+                    severity: problemSeverity,
+                    onSubmit: this.ackProblem,
+                    onDismiss: hideModal,
+                    texts: texts
+                  });
+                }}
+                texts={texts}
+              />
             )}
           </div>
         </div>
       </li>
-    );
-  }
+    )}
 }
 
 interface AlertHostProps {
@@ -265,7 +311,7 @@ function AlertStatus(props) {
 }
 
 function AlertSeverity(props) {
-  const { severityDesc, highlightBackground, blink } = props;
+  const { severityDesc, highlightBackground, blink, testAlert } = props;
   const className = cx('zbx-trigger-severity', { 'zabbix-trigger--blinked': blink });
   const style: CSSProperties = {};
   if (!highlightBackground) {
@@ -273,7 +319,7 @@ function AlertSeverity(props) {
   }
   return (
     <span className={className} style={style}>
-      {severityDesc.severity}
+      {severityDesc.severity + (testAlert ? ' ' + testAlert : '')}
     </span>
   );
 }
@@ -281,6 +327,7 @@ function AlertSeverity(props) {
 interface AlertAcknowledgesButtonProps {
   problem: ProblemDTO;
   onClick: (event?) => void;
+  texts: any;
 }
 
 class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps> {
@@ -289,23 +336,23 @@ class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps
   };
 
   renderTooltipContent = () => {
-    return <AlertAcknowledges problem={this.props.problem} onClick={this.handleClick} />;
+    return <AlertAcknowledges problem={this.props.problem} onClick={this.handleClick} texts={this.props.texts} />;
   };
 
   render() {
-    const { problem } = this.props;
+    const { problem, texts } = this.props;
     let content = null;
     if (problem.acknowledges && problem.acknowledges.length) {
       content = (
-        <Tooltip placement="auto" content={this.renderTooltipContent} interactive>
-          <span>
+        <Tooltip placement="bottom" content={this.renderTooltipContent} interactive={true}>
+          <span role="button" onClick={this.handleClick}>
             <i className="fa fa-comments"></i>
           </span>
         </Tooltip>
       );
     } else if (problem.showAckButton) {
       content = (
-        <Tooltip placement="bottom" content="Acknowledge problem">
+        <Tooltip placement="bottom" content={texts.acknowledgeProblem} interactive={true}>
           <span role="button" onClick={this.handleClick}>
             <i className="fa fa-comments-o"></i>
           </span>
