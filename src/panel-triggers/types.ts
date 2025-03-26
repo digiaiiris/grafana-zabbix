@@ -41,6 +41,7 @@ export interface ProblemsPanelOptions {
   okEventColor: TriggerColor;
   ackEventColor: TriggerColor;
   markAckEvents?: boolean;
+  hideAlertsInMaintenanceByDefault?: boolean;
   hideAlertFilters?: boolean;
 }
 
@@ -91,6 +92,8 @@ export const defaultPanelOptions: Partial<ProblemsPanelOptions> = {
   okEventColor: 'rgb(56, 189, 113)',
   ackEventColor: 'rgb(56, 219, 156)',
   markAckEvents: false,
+  hideAlertsInMaintenanceByDefault: false,
+  hideAlertFilters: false,
 };
 
 export interface ProblemsPanelTarget {
