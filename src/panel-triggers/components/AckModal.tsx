@@ -20,7 +20,7 @@ import {
   ButtonGroup,
 } from '@grafana/ui';
 import { FAIcon } from '../../components';
-import { getSeverityOptions } from '../triggers_panel_ctrl';
+import { getSeverityOptions } from '../utils';
 import { GrafanaTheme } from '@grafana/data';
 
 const KEYBOARD_ENTER_KEY = 13;
@@ -55,15 +55,6 @@ export interface AckProblemData {
   severity?: number;
 }
 
-const severityOptions = [
-  { value: 0, label: 'Not classified' },
-  { value: 1, label: 'Information' },
-  { value: 2, label: 'Warning' },
-  { value: 3, label: 'Average' },
-  { value: 4, label: 'High' },
-  { value: 5, label: 'Disaster' },
-];
-
 export class AckModalUnthemed extends PureComponent<Props, State> {
   static defaultProps: Partial<Props> = {
     withBackdrop: true,
@@ -82,17 +73,6 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
       selectedSeverity: props.severity || 0,
       loading: false,
     };
-  }
-
-  getSeverityOptions(texts: any) {
-    return [
-      // value 0 has been omitted on purpose, changing severity to 'not classified' is not needed
-      {value: 1, label: texts.info},
-      {value: 2, label: texts.minor},
-      {value: 3, label: texts.average},
-      {value: 4, label: texts.major},
-      {value: 5, label: texts.critical}
-    ]
   }
 
   handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -192,7 +172,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         <RadioButtonGroup
           key="severity"
           size="sm"
-          options={this.getSeverityOptions(texts)}
+          options={getSeverityOptions(texts)}
           value={this.state.selectedSeverity}
           onChange={this.onChangeSelectedSeverity}
         />

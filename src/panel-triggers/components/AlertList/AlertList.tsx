@@ -5,7 +5,7 @@ import { AckProblemData } from '../AckModal';
 import AlertCard from './AlertCard';
 import { ProblemDTO, ZBXTag } from '../../../datasource/types';
 import { DataSourceRef } from '@grafana/data';
-import { getSeverityOptions } from '../../triggers_panel_ctrl';
+import { getSeverityOptions } from '../../utils';
 import _ from 'lodash';
 
 const SORT_BY_PRIORITY = 'priority';
