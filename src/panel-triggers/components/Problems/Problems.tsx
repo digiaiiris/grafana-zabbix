@@ -13,7 +13,8 @@ import { ProblemsPanelOptions, RTCell, RTResized, TriggerSeverity } from '../../
 import { ProblemDTO, ZBXAlert, ZBXEvent, ZBXTag } from '../../../datasource/types';
 import { APIExecuteScriptResponse, ZBXScript } from '../../../datasource/zabbix/connectors/zabbix_api/types';
 import { AckCell } from './AckCell';
-import { DataSourceRef, TimeRange } from '@grafana/data';
+import { TimeRange } from '@grafana/data';
+import { DataSourceRef } from '@grafana/schema';
 import { reportInteraction } from '@grafana/runtime';
 
 export interface ProblemListProps {

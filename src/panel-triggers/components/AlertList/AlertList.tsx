@@ -4,7 +4,7 @@ import { ProblemsPanelOptions } from '../../types';
 import { AckProblemData } from '../AckModal';
 import AlertCard from './AlertCard';
 import { ProblemDTO, ZBXTag } from '../../../datasource/types';
-import { DataSourceRef } from '@grafana/data';
+import { DataSourceRef } from '@grafana/schema';
 import { getSeverityOptions } from '../../utils';
 import _ from 'lodash';
 
