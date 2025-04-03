@@ -251,8 +251,14 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
       // Metrics or Text query
       if (!target.queryType || target.queryType === c.MODE_METRICS || target.queryType === c.MODE_TEXT) {
         // Don't send request if group/host/item doesn't exist or all filters are empty
-        if (!target.group || !target.host || !target.item ||
-          (target.queryType > -1 && !(target.group || {}).filter && !(target.host || {}).filter && !(target.item || {}).filter)) {
+        if (
+          !target.group ||
+          !target.host || !target.item ||
+          (target.queryType > -1 && 
+          !(target.group || {}).filter &&
+          !(target.host || {}).filter &&
+          !(target.item || {}).filter)
+        ) {
           return [];
         }
         return this.queryTextData(target, timeRange);
@@ -1010,7 +1016,8 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
   }
 
   checkForTemplateVariables(fieldText: string, scopedVars: any[]) {
-    return scopedVars.some((variable: any) => (
+    return scopedVars.some(
+      (variable: any) => (
       fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1
     ));
   }

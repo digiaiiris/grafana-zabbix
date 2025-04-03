@@ -16,7 +16,7 @@ import { DataSourceRef } from '@grafana/schema';
 import { Tooltip } from '@grafana/ui';
 import { getDataSourceSrv } from '@grafana/runtime';
 import MaintenanceIcon from './MaintenanceIcon';
-const Url = require("url-parse");
+const Url = require('url-parse');
 
 interface AlertCardProps {
   problem: ProblemDTO;
@@ -40,8 +40,8 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
 
   onAlertItemClick = (showModal: any, hideModal: any, priority: string, startTime: string, age: string) => {
     const { texts, problem } = this.props;
-    showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, texts, priority, startTime, age })
-  }
+    showModal(AlertModal, { onSubmit: hideModal, onDismiss: hideModal, problem, texts, priority, startTime, age });
+  };
 
   onLinkIconClick = (event: any, url: string) => {
     event.stopPropagation();
@@ -49,7 +49,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     const urlObj = new Url(url, true);
     urlObj.query['foldTabRow'] = 'all';
     window.top.location.href = urlObj.toString();
-  }
+  };
 
   getLinkIconElement = (problem) => {
     if (window.location.href.indexOf('http://localhost') === -1) {
@@ -57,31 +57,36 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
       // Compare link url and current page url; no need to show icon if urls are the same
       const url1 = new Url(problem.url, true);
       const url2 = new Url(window.top.location.href, true);
-      if (problem.url && (
-        url1.origin + url1.pathname !== url2.origin + url2.pathname ||
-        !url1.query.dashboard ||
-        !url1.query.orgId ||
-        url1.query.dashboard !== url2.query.dashboard ||
-        url1.query.orgId !== url2.query.orgId
-      )) {
+      if (
+        problem.url &&
+        (
+          url1.origin + url1.pathname !== url2.origin + url2.pathname ||
+          !url1.query.dashboard ||
+          !url1.query.orgId ||
+          url1.query.dashboard !== url2.query.dashboard ||
+          url1.query.orgId !== url2.query.orgId)
+      ) {
         return (
           <Tooltip placement="bottom" content={texts.urlInfo}>
-            <a onClick={(event) => this.onLinkIconClick(event, problem.url)}><i className="fa fa-external-link"></i></a>
+            <a onClick={(event) => this.onLinkIconClick(event, problem.url)}>
+              <i className="fa fa-external-link"></i>
+            </a>
           </Tooltip>
         );
       }
     }
     return null;
-  }
+  };
 
   render() {
     const { idx, problem, panelOptions, texts } = this.props;
-    // Hide datasource name always 
+    // Hide datasource name always
     const showDatasourceName = false; // panelOptions.targets && panelOptions.targets.length > 1;
-    const isTestAlert = problem && problem.tags ? _.find(problem.tags, tagItem => tagItem.tag === 'test') : false;
-    const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', 
-      { 'zbx-trigger-highlighted': panelOptions.highlightBackground, 'iiris-active-test-incident': isTestAlert }
-    );
+    const isTestAlert = problem && problem.tags ? _.find(problem.tags, (tagItem) => tagItem.tag === 'test') : false;
+    const cardClass = classNames('alert-rule-item', 'zbx-trigger-card', {
+      'zbx-trigger-highlighted': panelOptions.highlightBackground,
+      'iiris-active-test-incident': isTestAlert,
+    });
     const descriptionClass = cx('alert-rule-item__text', {
       'zbx-description--newline': panelOptions.descriptionAtNewLine,
     });
@@ -130,7 +135,12 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
     return (
       <ModalController>
         {({ showModal, hideModal }) => (
-          <li className={cardClass} key={idx} style={cardStyle} onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}>
+          <li
+            className={cardClass}
+            key={idx}
+            style={cardStyle}
+            onClick={() => this.onAlertItemClick(showModal, hideModal, severityDesc.severity, startTime, age)}
+          >
             <AlertIcon
               problem={problem}
               color={problemColor}
@@ -171,10 +181,10 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                       severityDesc={severityDesc}
                       blink={blink}
                       testAlert={isTestAlert ? texts.testIncident : ''}
-                      highlightBackground={panelOptions.highlightBackground} />
-                    )}
-                  <span className="alert-rule-item__time">
-                    {panelOptions.ageField && texts.duration + ': ' + age}
+                      highlightBackground={panelOptions.highlightBackground}
+                    />
+                  )}
+                  <span className="alert-rule-item__time">{panelOptions.ageField && texts.duration + ': ' + age}
                   </span>
                   {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                     <>
@@ -237,7 +247,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                         severity: problemSeverity,
                         onSubmit: this.ackProblem,
                         onDismiss: hideModal,
-                        texts: texts
+                        texts: texts,
                       });
                     }}
                     texts={texts}
@@ -245,9 +255,10 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                 )}
               </div>
             </div>
-          </li>)}
+          </li>
+        )}
       </ModalController>
-    )
+    );
   }
 }
 

@@ -453,42 +453,40 @@ export class Zabbix implements ZabbixConnector {
     // Don't try to fetch host macros if no hostids are given
     if (hostids && hostids.length > 0) {
       // Fetch also parent template host ids
-      return this.zabbixAPI.getHostsByIDs(hostids)
-        .then((parentHosts: any) => {
+      return this.zabbixAPI.getHostsByIDs(hostids).then((parentHosts: any) => {
           parentHosts.map((host: any) => {
-            if (host.parentTemplates) {
-              host.parentTemplates.map((template: any) => {
-                if (hostids.indexOf(template.templateid) === -1) {
-                  hostids.push(template.templateid);
-                }
-              });
-            }
-          });
-          return this.getMacros(hostids)
-          .then(macros => {
-            _.forEach(items, item => {
-              if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
-                if (isTriggerItem) {
-                  item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
-                } else {
-                  item.name = utils.replaceMacro(item, macros);
-                }
+          if (host.parentTemplates) {
+            host.parentTemplates.map((template: any) => {
+              if (hostids.indexOf(template.templateid) === -1) {
+                hostids.push(template.templateid);
               }
             });
-            return this.getGlobalMacros().then(globalMacros => {
-              return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
-            });
+          }
+        });
+        return this.getMacros(hostids).then(macros => {
+          _.forEach(items, item => {
+            if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+              if (isTriggerItem) {
+                item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
+              } else {
+                item.name = utils.replaceMacro(item, macros);
+              }
+            }
+          });
+          return this.getGlobalMacros().then((globalMacros) => {
+            return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
           });
         });
+      });
     } else {
-      return this.getGlobalMacros().then(globalMacros => {
+      return this.getGlobalMacros().then((globalMacros) => {
         return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
       });
     }
   }
 
   getExpandedGlobalMacros(globalMacros, items, isTriggerItem) {
-    _.forEach(items, item => {
+    _.forEach(items, (item) => {
       if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
         if (isTriggerItem) {
           item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
@@ -496,7 +494,7 @@ export class Zabbix implements ZabbixConnector {
           item.name = utils.replaceMacro(item, globalMacros);
         }
       }
-    })
+    });
     return items;
   }
 

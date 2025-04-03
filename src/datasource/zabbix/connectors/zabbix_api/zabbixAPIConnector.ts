@@ -241,7 +241,7 @@ export class ZabbixAPIConnector {
     const params: any = {
       hostids: hostids,
       selectParentTemplates: ['name', 'templateid'],
-      output: ['name', 'hostid']
+      output: ['name', 'hostid'],
     };
 
     return this.request('host.get', params);
@@ -939,7 +939,16 @@ export class ZabbixAPIConnector {
       output: ['active_since', 'active_till', 'name', 'maintenanceid'],
       selectGroups: ['groupid', 'name'],
       selectHosts: ['hostid', 'name'],
-      selectTimeperiods: ['start_time', 'period', 'timeperiod_type', 'start_date', 'every', 'dayofweek', 'month', 'day']
+      selectTimeperiods: [
+        'start_time',
+        'period',
+        'timeperiod_type',
+        'start_date',
+        'every',
+        'dayofweek',
+        'month',
+        'day'
+      ]
     };
     if (groupids) {
       params['groupids'] = groupids;

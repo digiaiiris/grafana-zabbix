@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ProblemDTO } from '../../../datasource-zabbix/types';
+import { ProblemDTO } from '../../../datasource/types';
 
 interface Props {
   problem: ProblemDTO;
