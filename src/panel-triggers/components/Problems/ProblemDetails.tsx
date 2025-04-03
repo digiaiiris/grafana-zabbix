@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { css } from '@emotion/css';
 // eslint-disable-next-line
 import moment from 'moment';
-import { TimeRange, GrafanaTheme2 } from '@grafana/data';
-import { DataSourceRef } from '@grafana/schema';
+import { TimeRange, DataSourceRef, GrafanaTheme2 } from '@grafana/data';
 import { Tooltip, useStyles2 } from '@grafana/ui';
 import { getDataSourceSrv } from '@grafana/runtime';
 import { ProblemDTO, ZBXAlert, ZBXEvent, ZBXTag } from '../../../datasource/types';

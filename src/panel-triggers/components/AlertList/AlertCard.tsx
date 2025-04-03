@@ -13,7 +13,7 @@ import AlertIcon from './AlertIcon';
 import { ProblemDTO, ZBXTag } from '../../../datasource/types';
 import { ModalController } from '../../../components';
 import { AlertModal } from './AlertModal';
-import { DataSourceRef } from '@grafana/schema';
+import { DataSourceRef } from '@grafana/data';
 import { Tooltip } from '@grafana/ui';
 import { getDataSourceSrv } from '@grafana/runtime';
 import MaintenanceIcon from './MaintenanceIcon';

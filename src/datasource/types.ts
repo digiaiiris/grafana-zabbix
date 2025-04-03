@@ -1,5 +1,4 @@
-import { BusEventWithPayload, SelectableValue } from '@grafana/data';
-import { DataSourceRef } from '@grafana/schema';
+import { BusEventWithPayload, DataSourceRef, SelectableValue } from '@grafana/data';
 
 // The paths of these files have moved around in Grafana and they don't resolve properly
 // either. Safer not to bother trying to import them just for type hinting.
