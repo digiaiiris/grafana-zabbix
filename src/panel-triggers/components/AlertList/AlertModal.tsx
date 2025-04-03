@@ -78,9 +78,7 @@ export class AlertModal extends React.Component<Props, State> {
                   <td>{age}</td>
                 </tr>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
-                    {texts.title}
-                  </td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.title}</td>
                   <td>{problem.name}</td>
                 </tr>
                 <tr>
@@ -103,36 +101,38 @@ export class AlertModal extends React.Component<Props, State> {
                     }
                   </td>
                 </tr>
-                {problem.url && <tr>
+                {problem.url && (
+                  <tr>
                     <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
                     <td>
                       <a href={problem.url} target="_top">{problem.url}</a>
                     </td>
-                  </tr>}
+                  </tr>)}
                   <tr>
                     <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
                     <td>{problem.eventid}</td>
                   </tr>
-                  {problem.acknowledges.length > 0 && <tr>
-                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
-                    <td>
-                      <table className="iiris-inner-table">
-                        <tbody>
-                          {
-                            problem.acknowledges.map((acknowledge: any) => {
-                              return (
-                                <tr>
-                                  <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
-                                  <td>{acknowledge.message}</td>
-                                </tr>
-                              )
-                            })
-                          }
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                }
+                  {problem.acknowledges.length > 0 && (
+                    <tr>
+                      <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
+                      <td>
+                        <table className="iiris-inner-table">
+                          <tbody>
+                            {
+                              problem.acknowledges.map((acknowledge: any, idx: number) => {
+                                return (
+                                  <tr key={idx}>
+                                    <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
+                                    <td>{acknowledge.message}</td>
+                                  </tr>
+                                )
+                              })
+                            }
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                )}
               </tbody>
             </table>
           </div>

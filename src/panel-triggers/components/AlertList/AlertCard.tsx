@@ -61,8 +61,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
       const url2 = new Url(window.top.location.href, true);
       if (
         problem.url &&
-        (
-          url1.origin + url1.pathname !== url2.origin + url2.pathname ||
+        (url1.origin + url1.pathname !== url2.origin + url2.pathname ||
           !url1.query.dashboard ||
           !url1.query.orgId ||
           url1.query.dashboard !== url2.query.dashboard ||
@@ -182,8 +181,7 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
                       highlightBackground={panelOptions.highlightBackground}
                     />
                   )}
-                  <span className="alert-rule-item__time">{panelOptions.ageField && texts.duration + ': ' + age}
-                  </span>
+                  <span className="alert-rule-item__time">{panelOptions.ageField && texts.duration + ': ' + age}</span>
                   {panelOptions.descriptionField && !panelOptions.descriptionAtNewLine && (
                     <>
                       {panelOptions.allowDangerousHTML ? (

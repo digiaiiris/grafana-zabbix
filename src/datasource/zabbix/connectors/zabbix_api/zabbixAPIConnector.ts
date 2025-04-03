@@ -947,8 +947,8 @@ export class ZabbixAPIConnector {
         'every',
         'dayofweek',
         'month',
-        'day'
-      ]
+        'day',
+      ],
     };
     if (groupids) {
       params['groupids'] = groupids;

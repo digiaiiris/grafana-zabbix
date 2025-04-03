@@ -41,6 +41,6 @@ export function getSeverityOptions(texts: any) {
     { value: 2, label: texts.minor },
     { value: 3, label: texts.average },
     { value: 4, label: texts.major },
-    { value: 5, label: texts.critical }
+    { value: 5, label: texts.critical },
   ];
 }

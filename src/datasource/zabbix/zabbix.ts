@@ -454,7 +454,7 @@ export class Zabbix implements ZabbixConnector {
     if (hostids && hostids.length > 0) {
       // Fetch also parent template host ids
       return this.zabbixAPI.getHostsByIDs(hostids).then((parentHosts: any) => {
-          parentHosts.map((host: any) => {
+        parentHosts.map((host: any) => {
           if (host.parentTemplates) {
             host.parentTemplates.map((template: any) => {
               if (hostids.indexOf(template.templateid) === -1) {
@@ -463,8 +463,8 @@ export class Zabbix implements ZabbixConnector {
             });
           }
         });
-        return this.getMacros(hostids).then(macros => {
-          _.forEach(items, item => {
+        return this.getMacros(hostids).then((macros) => {
+          _.forEach(items, (item) => {
             if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
               if (isTriggerItem) {
                 item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);

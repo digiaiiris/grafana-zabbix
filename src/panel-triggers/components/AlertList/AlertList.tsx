@@ -286,7 +286,11 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
               ))}
             </select>
             <select onChange={(event) => this.filterByPriority(event)}>
-              {severityOptions.map((option: any, index: number) => <option key={index} value={option.value}>{option.label}</option>)}
+              {severityOptions.map((option: any, index: number) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             <select onChange={(event) => this.filterByCategory(event)}>
               {categoryOptions.map((option: any, index: number) => (
@@ -320,7 +324,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
               </label>
             </div>
           </div>
-        ) : null }
+        ) : null}
         <section className="card-section card-list-layout-list">
           <ol className={alertListClass}>
             {currentProblems.map((problem, index) => (
@@ -338,9 +342,9 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
             ))}
           </ol>
         </section>
-        {(
+        {
           currentProblems.length === 0 ? <div className="no-data-container">{texts.noActiveAlerts}</div> : null
-        )}
+        }
         <div className="triggers-panel-footer" key="alertListFooter">
           <PaginationControl
             itemsLength={filteredProblems.length}

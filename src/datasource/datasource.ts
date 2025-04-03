@@ -254,10 +254,10 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
         if (
           !target.group ||
           !target.host || !target.item ||
-          (target.queryType > -1 && 
-          !(target.group || {}).filter &&
-          !(target.host || {}).filter &&
-          !(target.item || {}).filter)
+            (target.queryType > -1 &&
+            !(target.group || {}).filter &&
+            !(target.host || {}).filter &&
+            !(target.item || {}).filter)
         ) {
           return [];
         }
@@ -976,7 +976,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
   replaceTargetVariables(target, options) {
     const templateSrv = getTemplateSrv() as any;
     const parts = ['group', 'host', 'application', 'itemTag', 'item', 'trigger'];
-    _.forEach(parts, p => {
+    _.forEach(parts, (p) => {
       if (target[p] && target[p].filter) {
         const hasVars = this.checkForTemplateVariables(target[p].filter, templateSrv.getVariables());
         if (hasVars) {
@@ -1018,9 +1018,9 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
 
   checkForTemplateVariables(fieldText: string, scopedVars: any[]) {
     return scopedVars.some(
-      (variable: any) => (
-      fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1
-    ));
+      (variable: any) =>
+        fieldText.indexOf('$' + variable.name) > -1 || fieldText.indexOf('${' + variable.name + '}') > -1
+    );
   }
 
   isUseTrends(timeRange, target: ZabbixMetricsQuery) {
