@@ -36,11 +36,11 @@ export const getNextRefIdChar = (queries: DataQuery[]): string => {
 
 export function getSeverityOptions(texts: any) {
   return [
-    {value: 0, label: texts.unknown},
-    {value: 1, label: texts.info},
-    {value: 2, label: texts.minor},
-    {value: 3, label: texts.average},
-    {value: 4, label: texts.major},
-    {value: 5, label: texts.critical}
-  ]
-};
+    { value: 0, label: texts.unknown },
+    { value: 1, label: texts.info },
+    { value: 2, label: texts.minor },
+    { value: 3, label: texts.average },
+    { value: 4, label: texts.major },
+    { value: 5, label: texts.critical }
+  ];
+}

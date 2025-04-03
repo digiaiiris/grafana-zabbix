@@ -33,7 +33,7 @@ export class AlertModal extends React.Component<Props, State> {
       const urlId = new RegExp('https?://');
       let startIndex = description.search(urlId);
       let endIndex = -1;
-      
+
       while (startIndex > -1) {
         endIndex = description.slice(startIndex).search('\\s');
         endIndex = endIndex >= 0 ? startIndex + endIndex : description.length;
@@ -60,30 +60,43 @@ export class AlertModal extends React.Component<Props, State> {
             <table className="table">
               <tbody>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.priority}</td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.priority}
+                  </td>
                   <td>{priority}</td>
                 </tr>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.startTime}</td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.startTime}
+                  </td>
                   <td>{startTime}</td>
                 </tr>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.duration}</td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.duration}
+                  </td>
                   <td>{age}</td>
                 </tr>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.title}</td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.title}
+                  </td>
                   <td>{problem.name}</td>
                 </tr>
                 <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.description}
+                  </td>
                   <td>
                     {
                       this.getDescriptionArray(problem).map((pairArray: any[], idx: number) => {
                         return (
                           <span key={idx}>
                             <span>{pairArray[0]}</span>
-                            { pairArray[1] && <a href={pairArray[1]} target="_blank">{pairArray[1]}</a> }
+                            { pairArray[1] && (
+                            <a href={pairArray[1]} rel="noreferrer" target="_blank">
+                              {pairArray[1]}
+                            </a>) }
                           </span>
                         );
                       })
@@ -91,34 +104,35 @@ export class AlertModal extends React.Component<Props, State> {
                   </td>
                 </tr>
                 {problem.url && <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
-                  <td>
-                    <a href={problem.url} target="_top">{problem.url}</a>
-                  </td>
-                </tr>}
-                <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
-                  <td>{problem.eventid}</td>
-                </tr>
-                {problem.acknowledges.length > 0 && <tr>
-                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
-                  <td>
-                    <table className="iiris-inner-table">
-                      <tbody>
-                        {
-                          problem.acknowledges.map((acknowledge: any) => {
-                            return (
-                              <tr>
-                                <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
-                                <td>{acknowledge.message}</td>
-                              </tr>
-                            )
-                          })
-                        }
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>}
+                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
+                    <td>
+                      <a href={problem.url} target="_top">{problem.url}</a>
+                    </td>
+                  </tr>}
+                  <tr>
+                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
+                    <td>{problem.eventid}</td>
+                  </tr>
+                  {problem.acknowledges.length > 0 && <tr>
+                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
+                    <td>
+                      <table className="iiris-inner-table">
+                        <tbody>
+                          {
+                            problem.acknowledges.map((acknowledge: any) => {
+                              return (
+                                <tr>
+                                  <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
+                                  <td>{acknowledge.message}</td>
+                                </tr>
+                              )
+                            })
+                          }
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>

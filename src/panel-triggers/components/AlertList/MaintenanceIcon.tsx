@@ -10,7 +10,7 @@ export const MaintenanceIcon: FC<Props> = ({ problem }) => {
 
   return (
     <>
-      { ongoingMaintenance ?
+      { ongoingMaintenance ? (
         <div className="alert-maintenance-icon">
           <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" viewBox="0 0 120 120">
             <g>
@@ -25,7 +25,7 @@ export const MaintenanceIcon: FC<Props> = ({ problem }) => {
             </g>
           </svg>
         </div>
-      : null }
+      ) : null }
     </>
   );
 };

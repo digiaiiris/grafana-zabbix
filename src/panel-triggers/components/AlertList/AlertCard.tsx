@@ -1,9 +1,10 @@
 import React, { PureComponent, CSSProperties } from 'react';
+import classNames from 'classnames';
 import { cx } from '@emotion/css';
 import _ from 'lodash';
 // eslint-disable-next-line
 import moment from 'moment';
-import { isNewProblem, formatLastChange } from '../../utils';
+import { isNewProblem } from '../../utils';
 import { ProblemsPanelOptions, TriggerSeverity } from '../../types';
 import { AckProblemData, AckModal } from '../AckModal';
 import { EventTag } from '../EventTag';
@@ -24,6 +25,7 @@ interface AlertCardProps {
   onTagClick?: (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => Promise<any> | any;
   texts: any;
+  idx: number;
 }
 
 export default class AlertCard extends PureComponent<AlertCardProps> {
@@ -98,10 +100,6 @@ export default class AlertCard extends PureComponent<AlertCardProps> {
       severityDesc = _.find(panelOptions.triggerSeverity, (s) => s.priority === problemSeverity);
     }
 
-    const lastchange = formatLastChange(
-      problem.timestamp,
-      panelOptions.customLastChangeFormat && panelOptions.lastChangeFormat
-    );
     const storedLanguage = localStorage.getItem('iiris_language') || 'fi';
     const age = moment.unix(problem.timestamp).locale(storedLanguage).fromNow(true);
     const startTime = moment.unix(problem.timestamp).format('DD.MM.YYYY HH:mm:ss');
