@@ -132,7 +132,8 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
         (priorityFilter === -1 || problem.severity === priorityFilter.toString()) &&
         (categoryFilter === 'all' || problem.opdata === categoryFilter) &&
         (!maintenanceFilter ||
-          problem.hosts.length === 0 || !problem.hosts.some((h) => h.maintenance_status === '1')) &&
+          problem.hosts.length === 0 ||
+          !problem.hosts.some((h) => h.maintenance_status === '1')) &&
         (!testTagFilter || !problem.tags || !problem.tags.some((e) => e.tag === 'test'))
       );
     });
@@ -342,9 +343,7 @@ export default class AlertList extends PureComponent<AlertListProps, AlertListSt
             ))}
           </ol>
         </section>
-        {
-          currentProblems.length === 0 ? <div className="no-data-container">{texts.noActiveAlerts}</div> : null
-        }
+        {currentProblems.length === 0 ? <div className="no-data-container">{texts.noActiveAlerts}</div> : null}
         <div className="triggers-panel-footer" key="alertListFooter">
           <PaginationControl
             itemsLength={filteredProblems.length}

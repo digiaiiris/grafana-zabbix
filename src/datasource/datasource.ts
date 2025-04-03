@@ -253,8 +253,9 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
         // Don't send request if group/host/item doesn't exist or all filters are empty
         if (
           !target.group ||
-          !target.host || !target.item ||
-            (target.queryType > -1 &&
+          !target.host ||
+          !target.item ||
+          (target.queryType > -1 &&
             !(target.group || {}).filter &&
             !(target.host || {}).filter &&
             !(target.item || {}).filter)

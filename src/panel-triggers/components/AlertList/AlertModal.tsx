@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal } from '@grafana/ui';
+// eslint-disable-next-line
 import moment from 'moment';
 
 interface Props {
@@ -86,52 +87,58 @@ export class AlertModal extends React.Component<Props, State> {
                     {texts.description}
                   </td>
                   <td>
-                    {
-                      this.getDescriptionArray(problem).map((pairArray: any[], idx: number) => {
-                        return (
-                          <span key={idx}>
-                            <span>{pairArray[0]}</span>
-                            { pairArray[1] && (
+                    {this.getDescriptionArray(problem).map((pairArray: any[], idx: number) => {
+                      return (
+                        <span key={idx}>
+                          <span>{pairArray[0]}</span>
+                          {pairArray[1] && (
                             <a href={pairArray[1]} rel="noreferrer" target="_blank">
                               {pairArray[1]}
-                            </a>) }
-                          </span>
-                        );
-                      })
-                    }
+                            </a>
+                          )}
+                        </span>
+                      );
+                    })}
                   </td>
                 </tr>
                 {problem.url && (
                   <tr>
-                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.dashboard}</td>
-                    <td>
-                      <a href={problem.url} target="_top">{problem.url}</a>
+                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                      {texts.dashboard}
                     </td>
-                  </tr>)}
-                  <tr>
-                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.eventId}</td>
-                    <td>{problem.eventid}</td>
+                    <td>
+                      <a href={problem.url} target="_top">
+                        {problem.url}
+                      </a>
+                    </td>
                   </tr>
-                  {problem.acknowledges.length > 0 && (
-                    <tr>
-                      <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.acknowledgements}</td>
-                      <td>
-                        <table className="iiris-inner-table">
-                          <tbody>
-                            {
-                              problem.acknowledges.map((acknowledge: any, idx: number) => {
-                                return (
-                                  <tr key={idx}>
-                                    <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
-                                    <td>{acknowledge.message}</td>
-                                  </tr>
-                                )
-                              })
-                            }
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
+                )}
+                <tr>
+                  <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                    {texts.eventId}
+                  </td>
+                  <td>{problem.eventid}</td>
+                </tr>
+                {problem.acknowledges.length > 0 && (
+                  <tr>
+                    <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">
+                      {texts.acknowledgements}
+                    </td>
+                    <td>
+                      <table className="iiris-inner-table">
+                        <tbody>
+                          {problem.acknowledges.map((acknowledge: any, idx: number) => {
+                            return (
+                              <tr key={idx}>
+                                <td>{moment.unix(acknowledge.clock).format('DD.MM.YYYY HH:mm:ss')}</td>
+                                <td>{acknowledge.message}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
