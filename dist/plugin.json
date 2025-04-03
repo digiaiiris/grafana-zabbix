@@ -49,8 +49,8 @@
         "path": "img/screenshot-triggers.png"
       }
     ],
-    "version": "%VERSION%",
-    "updated": "%TODAY%"
+    "version": "4.6.1",
+    "updated": "2025-04-03"
   },
   "includes": [
     {
