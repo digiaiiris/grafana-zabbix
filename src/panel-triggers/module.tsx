@@ -7,8 +7,8 @@ import { ProblemColorEditor } from './components/ProblemColorEditor';
 import { loadPluginCss } from '@grafana/runtime';
 
 loadPluginCss({
-  dark: 'plugins/alexanderzobnin-zabbix-app/styles/dark.css',
-  light: 'plugins/alexanderzobnin-zabbix-app/styles/light.css',
+  dark: 'plugins/iiris-zabbix-triggers-panel/styles/dark.css',
+  light: 'plugins/iiris-zabbix-triggers-panel/styles/light.css',
 });
 
 export const plugin = new PanelPlugin<ProblemsPanelOptions, {}>(ProblemsPanel)
