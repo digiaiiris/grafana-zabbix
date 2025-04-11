@@ -10,8 +10,10 @@ import { APIExecuteScriptResponse } from '../datasource/zabbix/connectors/zabbix
 import ProblemList from './components/Problems/Problems';
 import { AckProblemData } from './components/AckModal';
 import AlertList from './components/AlertList/AlertList';
+import { texts } from './localization';
 
 const PROBLEM_EVENTS_LIMIT = 100;
+const STORED_LANGUAGE = localStorage.getItem('iiris_language') || 'fi';
 
 interface ProblemsPanelProps extends PanelProps<ProblemsPanelOptions> {}
 
@@ -241,6 +243,7 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
         fontSize={fontSizeProp}
         onProblemAck={onProblemAck}
         onTagClick={onTagClick}
+        texts={texts[STORED_LANGUAGE]}
       />
     );
   };

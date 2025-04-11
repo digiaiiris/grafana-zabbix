@@ -218,6 +218,8 @@ export const problemsPanelMigrationHandler = (panel: PanelModel<Partial<Problems
     customLastChangeFormat: panel.customLastChangeFormat,
     lastChangeFormat: panel.lastChangeFormat,
     resizedColumns: panel.resizedColumns,
+    hideAlertsInMaintenanceByDefault: panel.hideAlertsInMaintenanceByDefault,
+    hideAlertFilters: panel.hideAlertFilters,
     triggerSeverity: panel.triggerSeverity,
     okEventColor: panel.okEventColor,
     ackEventColor: panel.ackEventColor,

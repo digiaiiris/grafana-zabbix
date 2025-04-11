@@ -1,6 +1,6 @@
 // Plugin IDs
-export const ZABBIX_PROBLEMS_PANEL_ID = 'alexanderzobnin-zabbix-triggers-panel';
-export const ZABBIX_DS_ID = 'alexanderzobnin-zabbix-datasource';
+export const ZABBIX_PROBLEMS_PANEL_ID = 'iiris-zabbix-problems-panel';
+export const ZABBIX_DS_ID = 'iiris-zabbix-datasource';
 
 // Data point
 export const DATAPOINT_VALUE = 0;

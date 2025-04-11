@@ -46,7 +46,10 @@ const REQUESTS_TO_PROXYFY = [
   'getEventsHistory',
   'getTriggersByIds',
   'getScripts',
+  'getGlobalMacros',
   'getValueMappings',
+  'getHostsByIDs',
+  'getMaintenances',
   'getSLAList',
   'getUsers',
 ];
@@ -61,7 +64,10 @@ const REQUESTS_TO_CACHE = [
   'getItemsByIDs',
   'getITService',
   'getProxies',
+  'getGlobalMacros',
   'getValueMappings',
+  'getHostsByIDs',
+  'getMaintenances',
   'getSLAList',
   'getUsers',
 ];
@@ -85,7 +91,9 @@ const REQUESTS_TO_BIND = [
   'getExtendedEventData',
   'getScripts',
   'executeScript',
+  'getGlobalMacros',
   'getValueMappings',
+  'getHostsByIDs',
   'getSLAList',
   'getUsers',
 ];
@@ -114,10 +122,12 @@ export class Zabbix implements ZabbixConnector {
   getEventAlerts: (eventids) => Promise<any>;
   getExtendedEventData: (eventids) => Promise<any>;
   getMacros: (hostids: any[]) => Promise<any>;
+  getGlobalMacros: () => Promise<any>;
   getUserMacros: (hostmacroids) => Promise<any>;
   getValueMappings: () => Promise<any>;
   getSLAList: () => Promise<any>;
   getUsers: () => Promise<any>;
+  getHostsByIDs: (hostids) => Promise<any>;
 
   constructor(options) {
     const {
@@ -328,6 +338,10 @@ export class Zabbix implements ZabbixConnector {
     return this.getAllHosts(groupFilter).then((hosts) => findByFilter(hosts, hostFilter));
   }
 
+  getMaintenances(hostids: string[], groupids?: number[]) {
+    return this.zabbixAPI.getMaintenances(hostids, groupids);
+  }
+
   /**
    * Get list of applications belonging to given groups and hosts.
    */
@@ -436,18 +450,52 @@ export class Zabbix implements ZabbixConnector {
 
   expandUserMacro(items, isTriggerItem) {
     const hostids = getHostIds(items);
-    return this.getMacros(hostids).then((macros) => {
-      _.forEach(items, (item) => {
-        if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
-          if (isTriggerItem) {
-            item.url = utils.replaceMacro(item, macros, isTriggerItem);
-          } else {
-            item.name = utils.replaceMacro(item, macros);
+    // Don't try to fetch host macros if no hostids are given
+    if (hostids && hostids.length > 0) {
+      // Fetch also parent template host ids
+      return this.zabbixAPI.getHostsByIDs(hostids).then((parentHosts: any) => {
+        parentHosts.map((host: any) => {
+          if (host.parentTemplates) {
+            host.parentTemplates.map((template: any) => {
+              if (hostids.indexOf(template.templateid) === -1) {
+                hostids.push(template.templateid);
+              }
+            });
           }
-        }
+        });
+        return this.getMacros(hostids).then((macros) => {
+          _.forEach(items, (item) => {
+            if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+              if (isTriggerItem) {
+                item.url = utils.replaceMacro(item, macros, isTriggerItem, parentHosts);
+              } else {
+                item.name = utils.replaceMacro(item, macros);
+              }
+            }
+          });
+          return this.getGlobalMacros().then((globalMacros) => {
+            return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+          });
+        });
       });
-      return items;
+    } else {
+      return this.getGlobalMacros().then((globalMacros) => {
+        return this.getExpandedGlobalMacros(globalMacros, items, isTriggerItem);
+      });
+    }
+  }
+
+  getExpandedGlobalMacros(globalMacros, items, isTriggerItem) {
+    _.forEach(items, (item) => {
+      if (utils.containsMacro(isTriggerItem ? item.url : item.name)) {
+        if (isTriggerItem) {
+          item.url = utils.replaceMacro(item, globalMacros, isTriggerItem);
+        } else {
+          item.name = utils.replaceMacro(item, globalMacros);
+        }
+      }
     });
+    return items;
   }
 
   getItems(groupFilter?, hostFilter?, appFilter?, itemTagFilter?, itemFilter?, options = {}) {
@@ -515,8 +563,8 @@ export class Zabbix implements ZabbixConnector {
         return Promise.all([Promise.resolve(problems), this.zabbixAPI.getTriggersByIds(triggerids)]);
       })
       .then(([problems, triggers]) => joinTriggersWithProblems(problems, triggers))
-      .then((triggers) => this.filterTriggersByProxy(triggers, proxyFilter));
-    // .then(triggers => this.expandUserMacro.bind(this)(triggers, true));
+      .then((triggers) => this.filterTriggersByProxy(triggers, proxyFilter))
+      .then((triggers) => this.expandUserMacro.bind(this)(triggers, true));
   }
 
   getProblemsHistory(groupFilter, hostFilter, appFilter, proxyFilter?, options?): Promise<ProblemDTO[]> {
@@ -551,8 +599,8 @@ export class Zabbix implements ZabbixConnector {
         return Promise.all([Promise.resolve(problems), this.zabbixAPI.getTriggersByIds(triggerids)]);
       })
       .then(([problems, triggers]) => joinTriggersWithEvents(problems, triggers, { valueFromEvent }))
-      .then((triggers) => this.filterTriggersByProxy(triggers, proxyFilter));
-    // .then(triggers => this.expandUserMacro.bind(this)(triggers, true));
+      .then((triggers) => this.filterTriggersByProxy(triggers, proxyFilter))
+      .then((triggers) => this.expandUserMacro.bind(this)(triggers, true));
   }
 
   getCProblems(groupFilter?, hostFilter?, appFilter?, proxyFilter?, triggerFilter?, options?): Promise<ProblemDTO[]> {
