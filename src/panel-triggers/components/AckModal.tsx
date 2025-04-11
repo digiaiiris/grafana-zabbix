@@ -33,7 +33,7 @@ interface Props extends Themeable {
   withBackdrop?: boolean;
   onSubmit: (data?: AckProblemData) => Promise<any> | any;
   onDismiss?: () => void;
-  texts: any;
+  texts: { [index: string]: string };
 }
 
 interface State {

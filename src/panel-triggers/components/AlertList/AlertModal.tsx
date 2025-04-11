@@ -6,7 +6,7 @@ import moment from 'moment';
 interface Props {
   onDismiss(): void;
   problem: any;
-  texts: any;
+  texts: { [index: string]: string };
   priority: string;
   startTime: string;
   age: string;
@@ -23,7 +23,7 @@ export class AlertModal extends React.Component<Props, State> {
     this.props.onDismiss();
   };
 
-  renderTitle(texts: any) {
+  renderTitle(texts: { [index: string]: string }) {
     return <div className="iiris-modal-title-text">{texts.information}</div>;
   }
 

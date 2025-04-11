@@ -34,7 +34,7 @@ export const getNextRefIdChar = (queries: DataQuery[]): string => {
   return nextLetter || 'A';
 };
 
-export function getSeverityOptions(texts: any) {
+export function getSeverityOptions(texts: { [index: string]: string }) {
   return [
     { value: 0, label: texts.unknown },
     { value: 1, label: texts.info },

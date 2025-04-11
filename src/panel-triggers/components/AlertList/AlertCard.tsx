@@ -24,7 +24,7 @@ interface AlertCardProps {
   panelOptions: ProblemsPanelOptions;
   onTagClick?: (tag: ZBXTag, datasource: DataSourceRef | string, ctrlKey?: boolean, shiftKey?: boolean) => void;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => Promise<any> | any;
-  texts: any;
+  texts: { [index: string]: string };
   idx: number;
 }
 
@@ -338,7 +338,7 @@ function AlertSeverity(props) {
 interface AlertAcknowledgesButtonProps {
   problem: ProblemDTO;
   onClick: (event?) => void;
-  texts: any;
+  texts: { [index: string]: string };
 }
 
 class AlertAcknowledgesButton extends PureComponent<AlertAcknowledgesButtonProps> {

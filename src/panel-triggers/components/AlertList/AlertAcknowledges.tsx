@@ -4,7 +4,7 @@ import { ProblemDTO } from '../../../datasource/types';
 interface AlertAcknowledgesProps {
   problem: ProblemDTO;
   onClick: (event?) => void;
-  texts: any;
+  texts: { [index: string]: string };
 }
 
 export default class AlertAcknowledges extends PureComponent<AlertAcknowledgesProps> {

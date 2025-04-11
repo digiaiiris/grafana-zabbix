@@ -19,7 +19,7 @@ export interface AlertListProps {
   fontSize?: number;
   onProblemAck?: (problem: ProblemDTO, data: AckProblemData) => void;
   onTagClick?: (tag: ZBXTag, datasource: DataSourceRef, ctrlKey?: boolean, shiftKey?: boolean) => void;
-  texts: any;
+  texts: { [index: string]: string };
 }
 
 interface AlertListState {
