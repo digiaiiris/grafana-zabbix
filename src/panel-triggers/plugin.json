@@ -1,11 +1,11 @@
 {
   "type": "panel",
-  "name": "Zabbix Problems",
-  "id": "alexanderzobnin-zabbix-triggers-panel",
+  "name": "Iiris Zabbix Problems",
+  "id": "iiris-zabbix-problems-panel",
   "info": {
     "author": {
-      "name": "Grafana Labs",
-      "url": "https://grafana.com"
+      "name": "Digia Finland Oy",
+      "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
     "logos": {
       "small": "img/icn-zabbix-problems-panel.svg",

@@ -7,8 +7,8 @@ import { ProblemColorEditor } from './components/ProblemColorEditor';
 import { loadPluginCss } from '@grafana/runtime';
 
 loadPluginCss({
-  dark: 'plugins/alexanderzobnin-zabbix-app/styles/dark.css',
-  light: 'plugins/alexanderzobnin-zabbix-app/styles/light.css',
+  dark: 'plugins/iiris-zabbix-triggers-panel/styles/dark.css',
+  light: 'plugins/iiris-zabbix-triggers-panel/styles/light.css',
 });
 
 export const plugin = new PanelPlugin<ProblemsPanelOptions, {}>(ProblemsPanel)
@@ -102,6 +102,16 @@ export const plugin = new PanelPlugin<ProblemsPanelOptions, {}>(ProblemsPanel)
         name: 'Reset resized columns',
         editor: ResetColumnsEditor,
         showIf: (options) => options.layout === 'table',
+      })
+      .addBooleanSwitch({
+        path: 'hideAlertsInMaintenanceByDefault',
+        name: 'Hide alerts from hosts under maintenance',
+        defaultValue: defaultPanelOptions.hideAlertsInMaintenanceByDefault,
+      })
+      .addBooleanSwitch({
+        path: 'hideAlertFilters',
+        name: 'Hide alert filters',
+        defaultValue: defaultPanelOptions.hideAlertFilters,
       })
       .addCustomEditor({
         id: 'triggerColors',

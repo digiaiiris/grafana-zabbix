@@ -5,7 +5,7 @@
       "label": "Zabbix",
       "description": "",
       "type": "datasource",
-      "pluginId": "alexanderzobnin-zabbix-datasource",
+      "pluginId": "iiris-zabbix-datasource",
       "pluginName": "Zabbix"
     }
   ],
@@ -13,7 +13,7 @@
   "__requires": [
     {
       "type": "datasource",
-      "id": "alexanderzobnin-zabbix-datasource",
+      "id": "iiris-zabbix-datasource",
       "name": "Zabbix",
       "version": "4.5.5"
     },
@@ -54,7 +54,7 @@
   "panels": [
     {
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "${DS_ZABBIX}"
       },
       "fieldConfig": {
@@ -380,7 +380,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -447,7 +447,7 @@
     },
     {
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "${DS_ZABBIX}"
       },
       "fieldConfig": {
@@ -518,7 +518,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -589,7 +589,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "alexanderzobnin-zabbix-datasource",
+          "type": "iiris-zabbix-datasource",
           "uid": "${DS_ZABBIX}"
         },
         "includeAll": true,
