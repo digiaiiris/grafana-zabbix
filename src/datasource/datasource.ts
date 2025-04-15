@@ -18,6 +18,7 @@ import {
   BackendSrvRequest,
   getBackendSrv,
   getTemplateSrv,
+  TemplateSrv,
   toDataQueryResponse,
   getDataSourceSrv,
 } from '@grafana/runtime';
@@ -68,7 +69,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
     };
 
     // Use custom format for template variables
-    const templateSrv = getTemplateSrv() as any;
+    const templateSrv: TemplateSrv = getTemplateSrv();
     this.replaceTemplateVars = _.partial(replaceTemplateVars, templateSrv);
 
     // General data source settings
@@ -491,7 +492,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
    */
   queryItemIdData(target, timeRange, useTrends, options) {
     let itemids = target.itemids;
-    const templateSrv = getTemplateSrv() as any;
+    const templateSrv: TemplateSrv = getTemplateSrv();
     itemids = templateSrv.replace(itemids, options.scopedVars, zabbixItemIdsTemplateFormat);
     itemids = _.map(itemids.split(','), (itemid) => itemid.trim());
 
@@ -879,7 +880,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
   }
 
   targetContainsTemplate(target: ZabbixMetricsQuery): boolean {
-    const templateSrv = getTemplateSrv() as any;
+    const templateSrv: TemplateSrv = getTemplateSrv();
     return (
       templateSrv.variableExists(target.group?.filter) ||
       templateSrv.variableExists(target.host?.filter) ||
@@ -975,7 +976,7 @@ export class ZabbixDatasource extends DataSourceApi<ZabbixMetricsQuery, ZabbixDS
 
   // Replace template variables
   replaceTargetVariables(target, options) {
-    const templateSrv = getTemplateSrv() as any;
+    const templateSrv: TemplateSrv = getTemplateSrv();
     const parts = ['group', 'host', 'application', 'itemTag', 'item', 'trigger'];
     _.forEach(parts, (p) => {
       if (target[p] && target[p].filter) {
