@@ -7,9 +7,10 @@ COPY / /build
 
 WORKDIR /build
 
-RUN go install -v ./pkg/ && \
-	GO111MODULE=off go get -u golang.org/x/lint/golint && \
-    make dist-backend
+RUN go install -v ./pkg/
+RUN go install golang.org/x/lint/golint@latest
+RUN go install github.com/magefile/mage@latest
+RUN make dist-backend
 
 # Frontend (node) build and packaging
 FROM node:hydrogen-alpine3.21 AS js-builder
