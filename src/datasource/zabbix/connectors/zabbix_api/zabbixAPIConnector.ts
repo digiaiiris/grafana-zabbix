@@ -237,6 +237,16 @@ export class ZabbixAPIConnector {
     return this.request('item.get', params).then((items) => utils.expandItems(items));
   }
 
+  getHostsByIDs(hostids) {
+    const params: any = {
+      hostids: hostids,
+      selectParentTemplates: ['name', 'templateid'],
+      output: ['name', 'hostid'],
+    };
+
+    return this.request('host.get', params);
+  }
+
   getMacros(hostids) {
     const params = {
       output: 'extend',
@@ -921,6 +931,29 @@ export class ZabbixAPIConnector {
     };
 
     return this.request('user.get', params);
+  }
+
+  getMaintenances(hostids: string[], groupids?: number[]) {
+    const params = {
+      hostids: hostids,
+      output: ['active_since', 'active_till', 'name', 'maintenanceid'],
+      selectGroups: ['groupid', 'name'],
+      selectHosts: ['hostid', 'name'],
+      selectTimeperiods: [
+        'start_time',
+        'period',
+        'timeperiod_type',
+        'start_date',
+        'every',
+        'dayofweek',
+        'month',
+        'day',
+      ],
+    };
+    if (groupids) {
+      params['groupids'] = groupids;
+    }
+    return this.request('maintenance.get', params);
   }
 }
 

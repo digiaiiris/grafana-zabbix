@@ -46,6 +46,14 @@
   flex-direction: column;
   height: 100%;
 
+  .triggers-panel-filters {
+    margin-top: 2px;
+    margin-bottom: 5px;
+    input, select {
+      margin-right: 5px;
+    }
+  }
+
   .card-section {
     padding: 2px;
     margin-bottom: 0.4rem;
@@ -53,6 +61,7 @@
 
     .alert-rule-list {
       .alert-rule-item {
+        cursor: pointer;
         .alert-rule-item__text {
           display: flex;
           max-height: 1.6em;
@@ -131,6 +140,19 @@
         }
       }
     }
+  }
+
+  .no-data-container {
+    width: 100%;
+    height: 40px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
   }
 
   .zabbix-trigger-name {
@@ -306,6 +328,47 @@
   }
 }
 
+.alert-maintenance-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 10px;
+  & svg {
+    fill: $zbx-text-highlighted;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.triggers-panel-container {
+  .triggers-panel-filters {
+    display: flex;
+    .checkbox-filter {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      input {
+        min-width: 20px;
+        margin-right: 3px;
+        margin-bottom: 5px;
+      }
+      label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 5px;
+      }
+      &.disabled label {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
 // fix for phantomjs (it has troubles with flex blocks rendering)
 .body--phantomjs {
   .triggers-panel-container {
@@ -319,3 +382,11 @@
     }
   }
 }
+
+.full-width-container {
+  width: 100%;
+}
+
+/* Iiris */
+@import 'panel-triggers-iiris';
+/* /Iiris */

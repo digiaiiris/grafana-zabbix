@@ -30,7 +30,7 @@
     {
       "collapsed": false,
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "PCAF1C06DCF802728"
       },
       "gridPos": {
@@ -44,7 +44,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "PCAF1C06DCF802728"
           },
           "refId": "A"
@@ -55,7 +55,7 @@
     },
     {
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "PCAF1C06DCF802728"
       },
       "fieldConfig": {
@@ -189,7 +189,7 @@
           "countTriggers": true,
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "PCAF1C06DCF802728"
           },
           "evaltype": "0",
@@ -243,7 +243,7 @@
     },
     {
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "PCAF1C06DCF802728"
       },
       "fieldConfig": {
@@ -346,7 +346,7 @@
           "countTriggers": true,
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "PCAF1C06DCF802728"
           },
           "evaltype": "0",
@@ -401,7 +401,7 @@
     {
       "collapsed": false,
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "PCAF1C06DCF802728"
       },
       "gridPos": {
@@ -415,7 +415,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "PCAF1C06DCF802728"
           },
           "refId": "A"
@@ -426,7 +426,7 @@
     },
     {
       "datasource": {
-        "type": "alexanderzobnin-zabbix-datasource",
+        "type": "iiris-zabbix-datasource",
         "uid": "PCAF1C06DCF802728"
       },
       "fieldConfig": {
@@ -526,7 +526,7 @@
           "countTriggers": true,
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "PCAF1C06DCF802728"
           },
           "evaltype": "0",
@@ -594,7 +594,7 @@
           "value": "Frontend"
         },
         "datasource": {
-          "type": "alexanderzobnin-zabbix-datasource",
+          "type": "iiris-zabbix-datasource",
           "uid": "PCAF1C06DCF802728"
         },
         "definition": "Zabbix - group",
@@ -630,7 +630,7 @@
           "value": "frontend01"
         },
         "datasource": {
-          "type": "alexanderzobnin-zabbix-datasource",
+          "type": "iiris-zabbix-datasource",
           "uid": "PCAF1C06DCF802728"
         },
         "definition": "Zabbix - host",
@@ -666,7 +666,7 @@
           "value": ["$__all"]
         },
         "datasource": {
-          "type": "alexanderzobnin-zabbix-datasource",
+          "type": "iiris-zabbix-datasource",
           "uid": "PCAF1C06DCF802728"
         },
         "definition": "Zabbix - item",

@@ -1,12 +1,12 @@
 {
   "type": "app",
-  "name": "Zabbix",
-  "id": "alexanderzobnin-zabbix-app",
+  "name": "Iiris Zabbix",
+  "id": "iiris-zabbix-triggers-panel",
   "info": {
-    "description": "Zabbix plugin for Grafana",
+    "description": "Iiris Zabbix plugin for Grafana",
     "author": {
-      "name": "Grafana Labs",
-      "url": "https://grafana.com"
+      "name": "Digia Finland Oy",
+      "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
     "keywords": ["zabbix", "servers and vms"],
     "logos": {
@@ -50,17 +50,17 @@
       }
     ],
     "version": "4.6.1",
-    "updated": "2025-01-07"
+    "updated": "2025-04-03"
   },
   "includes": [
     {
       "type": "datasource",
-      "name": "Zabbix data source",
+      "name": "Iiris Zabbix Datasource",
       "path": "datasource/plugin.json"
     },
     {
       "type": "panel",
-      "name": "Problems panel",
+      "name": "Iiris Zabbix Problems",
       "path": "panel-triggers/plugin.json"
     }
   ],
