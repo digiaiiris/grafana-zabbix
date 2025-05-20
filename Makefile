@@ -7,6 +7,7 @@ install:
 	# Backend
 	go install -v ./pkg/
 	go install golang.org/x/lint/golint@latest
+	go install github.com/magefile/mage@latest
 
 deps-go:
 	go install -v ./pkg/
