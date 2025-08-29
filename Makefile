@@ -74,7 +74,7 @@ lint:
 	golint -min_confidence=1.1 -set_exit_status pkg/...
 
 sign-package:
-	yarn sign
+	yarn sign --rootUrls "${GRAFANA_ROOT_URLS}"
 
 package: install dist sign-package
 
