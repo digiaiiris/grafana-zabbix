@@ -1,49 +1,35 @@
 # Zabbix plugin for Grafana
+This is Digia Iiris version of grafana-zabbix plugin. The plugin contains Zabbix-datasource and Zabbix Problems Panel. There are Iiris specific changes to both of these.
 
-[![Version](https://badge.fury.io/gh/grafana%2Fgrafana-zabbix.svg)](https://github.com/grafana/grafana-zabbix/releases)
-[![Change Log](https://img.shields.io/badge/change-log-blue.svg?style=flat)](https://github.com/grafana/grafana-zabbix/blob/main/CHANGELOG.md)
-[![Docs](https://img.shields.io/badge/docs-latest-red.svg?style=flat)](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/)
-
-![Dashboard](https://user-images.githubusercontent.com/4932851/53799185-e1cdc700-3f4a-11e9-9cb4-8330f501b32e.png)
-
-## Features
-
-- Select multiple metrics [by using Regex](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/guides/#multiple-items-on-one-graph)
-- Create interactive and reusable dashboards with [template variables](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/guides/templating/)
-- Show events on graphs with [Annotations](http://docs.grafana.org/reference/annotations/)
-- Display active problems with Triggers panel
-- Transform and shape your data with [metric processing functions](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/reference/functions/) (Avg, Median, Min, Max, Multiply, Summarize, Time shift, Alias)
-- Find problems faster with [Alerting](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/reference/alerting/) feature
-- Mix metrics from multiple data sources in the same dashboard or even graph
-- Discover and share [dashboards](https://grafana.com/dashboards) in the official library
-
-See all features overview and dashboards examples at Grafana-Zabbix [Live demo](http://play.grafana-zabbix.org) site.
-Visit [plugins page](https://grafana.com/plugins) at [grafana.com](http://grafana.com) and check out available Grafana data sources, panels and [dashboards](https://grafana.com/dashboards?dataSource=alexanderzobnin-zabbix-datasource).
-
-## Installation
-
-Install by using `grafana-cli`
-
-```sh
-grafana-cli plugins install alexanderzobnin-zabbix-app
+## Creating a New Release of grafana-zabbix Plugin
+Start by creating a new branch for a new release:
 ```
+git checkout -b iiris-release-4.6.1-2-branch iiris-release-4.6.1-1-branch
+git push -u origin iiris-release-4.6.1-2-branch
+```
+Create a new feature branch for your task, e.g.
+```
+git checkout -b feature/IISCRUM-2796 iiris-release-4.6.1-2-branch
+git push -u origin feature/IISCRUM-2796
+```
+Make your changes and create a pull request in GitHub and when that is merged you can create a new release.
 
-Or see more installation options in [docs](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/installation/).
+To build grafana-zabbix panel, go to it's folder and run:
+`make dist`
 
-## Getting started
+Compiled version is in dist-folder and that is included in grafana-zabbix repo because Grafana's Docker build will fetch the compiled version from there.
+Before releasing you need to sign the plugin with instructions below and copy to MANIFEST.txt to Iiris-repos Grafana-folder where Dockerfile is located.
+Create a new tag by leaving the 'branch' postfix away.
+`iiris-release-4.6.1-2`
 
-First, [configure](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/configuration/) Zabbix data source. Then you can create your first dashboard with step-by-step [Getting started guide](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/guides/).
+## What is MANIFEST.txt
+MANIFEST.txt is the signature file iiris-grafana-zabbix panel or any Grafana plugin. Manifest is created to dist-folder during sign process.
+If iiris-grafana-zabbix panel is updated, you need to re-create the MANIFEST.txt and copy the new file to Grafana-folder where Docker file is located.
 
-## Documentation
-
-- [About](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/)
-- [Installation](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/installation)
-- [Getting Started](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/guides)
-- [Templating](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/guides/templating)
-- [Alerting](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/reference/alerting/)
-- [Metric processing functions](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/reference/functions/)
-
-## Community Resources, Feedback, and Support
-
-- Found a bug? Want a new feature? Feel free to open an [issue](https://github.com/grafana/grafana-zabbix/issues/new).
-- Have a question? You also can open issue, but for questions, it would be better to use [Grafana Community](https://community.grafana.com/) portal.
+## Signing grafana-zabbix plugin
+Go to the iiris-grafana-zabbix folder and run:
+```
+export GRAFANA_ACCESS_POLICY_TOKEN=<GRAFANA_ACCESS_POLICY_TOKEN>
+npx @grafana/sign-plugin --rootUrls <URL1>,<URL2>,<URL3>
+```
+The newly created MANIFEST.txt can be found from dist-folder. Copy it to this same folder with Dockerfile at the same as you change the new GRAFANA_ZABBIX_BRANCH address in Dockerfile. Create a new commit to Iiris-repo Develop-branch with description, e.g.: 'grafana-zabbix updated to iiris-release-4.6.1-2'.

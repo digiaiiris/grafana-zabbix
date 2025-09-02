@@ -5,7 +5,7 @@
       "label": "Zabbix",
       "description": "",
       "type": "datasource",
-      "pluginId": "alexanderzobnin-zabbix-datasource",
+      "pluginId": "iiris-zabbix-datasource",
       "pluginName": "Zabbix"
     }
   ],
@@ -13,7 +13,7 @@
   "__requires": [
     {
       "type": "datasource",
-      "id": "alexanderzobnin-zabbix-datasource",
+      "id": "iiris-zabbix-datasource",
       "name": "Zabbix",
       "version": "4.5.5"
     },
@@ -123,7 +123,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -244,7 +244,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -360,7 +360,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -544,7 +544,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -675,7 +675,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -854,7 +854,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -992,7 +992,7 @@
           },
           "countTriggersBy": "",
           "datasource": {
-            "type": "alexanderzobnin-zabbix-datasource",
+            "type": "iiris-zabbix-datasource",
             "uid": "${DS_ZABBIX}"
           },
           "evaltype": "0",
@@ -1104,7 +1104,7 @@
         "label": "Zabbix Data Source",
         "name": "datasource",
         "options": [],
-        "query": "alexanderzobnin-zabbix-datasource",
+        "query": "iiris-zabbix-datasource",
         "refresh": 1,
         "regex": "",
         "type": "datasource"

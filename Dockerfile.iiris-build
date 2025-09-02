@@ -1,0 +1,35 @@
+# Dockerfile for building grafana-zabbix artifacts
+
+# Backend (golang) build
+FROM golang:1.22.7 AS go-builder
+
+COPY / /build
+
+WORKDIR /build
+
+RUN go install -v ./pkg/
+RUN go install golang.org/x/lint/golint@latest
+RUN go install github.com/magefile/mage@latest
+RUN make dist-backend
+
+# Frontend (node) build and packaging
+FROM node:hydrogen-alpine3.21 AS js-builder
+
+ARG GRAFANA_ACCESS_POLICY_TOKEN
+ARG GRAFANA_ROOT_URLS
+
+COPY / /build
+
+WORKDIR /build
+
+RUN yarn install --pure-lockfile && \
+    yarn build && \
+    rm -rf node_modules && \
+    rm -rf ~/.npm
+
+COPY --from=go-builder /build/dist/ /build/dist
+
+RUN npx @grafana/sign-plugin@1.1.0 --rootUrls "${GRAFANA_ROOT_URLS}"
+
+RUN cd dist && \
+    tar czvf ../iiris-zabbix-plugin.tar.gz *
