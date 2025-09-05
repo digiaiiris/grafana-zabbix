@@ -1,7 +1,7 @@
 {
   "type": "datasource",
-  "name": "Zabbix",
-  "id": "alexanderzobnin-zabbix-datasource",
+  "name": "Iiris Zabbix Datasource",
+  "id": "iiris-zabbix-datasource",
   "metrics": true,
   "annotations": true,
   "backend": true,
@@ -29,8 +29,8 @@
   },
   "info": {
     "author": {
-      "name": "Grafana Labs",
-      "url": "https://grafana.com"
+      "name": "Digia Finland Oy",
+      "url": "https://github.com/digiaiiris/grafana-zabbix"
     },
     "logos": {
       "small": "img/icn-zabbix-datasource.svg",
