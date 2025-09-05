@@ -86,7 +86,7 @@ export function containsMacro(itemName) {
   return MACRO_PATTERN.test(itemName);
 }
 
-export function replaceMacro(item, macros, isTriggerItem?) {
+export function replaceMacro(item, macros, isTriggerItem?, parentHosts?) {
   let itemName = isTriggerItem ? item.url : item.name;
   const item_macros = itemName.match(MACRO_PATTERN);
   _.forEach(item_macros, (macro) => {
@@ -97,7 +97,15 @@ export function replaceMacro(item, macros, isTriggerItem?) {
           // Check all trigger host ids against macro host id
           let hostIdFound = false;
           _.forEach(item.hosts, (h) => {
-            if (h.hostid === m.hostid) {
+            // Check for parent templates hostid and macros
+            const parentHost = parentHosts.find((pHost) => pHost.hostid === h.hostid) || {};
+            const isTemplateMacro =
+              parentHost.parentTemplates.findIndex((tmpl) => tmpl.templateid === m.hostid && m.value) > -1;
+            // Check if host already has that same macro, host is overruling
+            const hostHasMacro =
+              macros.findIndex((aMacro) => aMacro.hostid === h.hostid && aMacro.value && aMacro.macro === m.macro) > -1;
+            // Check if macro's hostid is same as hosts or parent templates hostid
+            if ((h.hostid === m.hostid && m.value) || (isTemplateMacro && !hostHasMacro)) {
               hostIdFound = true;
             }
           });
