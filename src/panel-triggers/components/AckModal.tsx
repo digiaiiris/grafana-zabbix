@@ -20,6 +20,7 @@ import {
   ButtonGroup,
 } from '@grafana/ui';
 import { FAIcon } from '../../components';
+import { getSeverityOptions } from '../utils';
 import { GrafanaTheme } from '@grafana/data';
 
 const KEYBOARD_ENTER_KEY = 13;
@@ -32,6 +33,7 @@ interface Props extends Themeable {
   withBackdrop?: boolean;
   onSubmit: (data?: AckProblemData) => Promise<any> | any;
   onDismiss?: () => void;
+  texts: { [index: string]: string };
 }
 
 interface State {
@@ -164,13 +166,13 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   };
 
   renderActions() {
-    const { canClose } = this.props;
+    const { canClose, texts } = this.props;
 
     const actions = [
       <Checkbox key="ack" label="Acknowledge" value={this.state.acknowledge} onChange={this.onAcknowledgeToggle} />,
       <Checkbox
         key="change-severity"
-        label="Change severity"
+        label={texts.changeSeverity}
         description=""
         value={this.state.changeSeverity}
         onChange={this.onChangeSeverityToggle}
@@ -179,7 +181,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         <RadioButtonGroup
           key="severity"
           size="sm"
-          options={severityOptions}
+          options={getSeverityOptions(texts)}
           value={this.state.selectedSeverity}
           onChange={this.onChangeSelectedSeverity}
         />
@@ -187,7 +189,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
       canClose && (
         <Checkbox
           key="close"
-          label="Close problem"
+          label={texts.closeProblem}
           disabled={!canClose}
           value={this.state.closeProblem}
           onChange={this.onCloseProblemToggle}
@@ -200,7 +202,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
   }
 
   render() {
-    const { theme } = this.props;
+    const { theme, texts } = this.props;
     const styles = getStyles(theme);
 
     return (
@@ -211,7 +213,7 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
         title={
           <div className={styles.modalHeaderTitle}>
             {this.state.loading ? <Spinner size={18} /> : <FAIcon icon="reply-all" />}
-            Acknowledge Problem
+            <span className="p-l-1">{texts.acknowledgeProblem}</span>
           </div>
         }
       >
@@ -220,14 +222,14 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
             className={this.state.error && styles.input}
             type="text"
             name="message"
-            placeholder="Message"
+            placeholder={texts.message}
             autoComplete="off"
             autoFocus={true}
             value={this.state.value}
             onChange={this.handleChange}
             onKeyDown={this.handleKeyPress}
           />
-          <small className={styles.inputHint}>Press Enter to submit</small>
+          <small className={styles.inputHint}>{texts.pressEnterToSubmit}</small>
           {this.state.error && <small className={styles.inputError}>{this.state.errorMessage}</small>}
         </div>
 
@@ -237,11 +239,11 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
 
         <ButtonGroup className={styles.buttonGroup}>
           <Button variant="primary" onClick={this.submit}>
-            Update
+            {texts.update}
           </Button>
 
           <Button variant="secondary" onClick={this.dismiss}>
-            Cancel
+            {texts.cancel}
           </Button>
         </ButtonGroup>
       </Modal>
