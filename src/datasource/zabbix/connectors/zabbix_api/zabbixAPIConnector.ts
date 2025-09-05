@@ -237,6 +237,16 @@ export class ZabbixAPIConnector {
     return this.request('item.get', params).then((items) => utils.expandItems(items));
   }
 
+  getHostsByIDs(hostids) {
+    const params: any = {
+      hostids: hostids,
+      selectParentTemplates: ['name', 'templateid'],
+      output: ['name', 'hostid'],
+    };
+
+    return this.request('host.get', params);
+  }
+
   getMacros(hostids) {
     const params = {
       output: 'extend',
@@ -530,7 +540,7 @@ export class ZabbixAPIConnector {
     return this.request('problem.get', params).then(utils.mustArray);
   }
 
-  async getTriggersByIds(triggerids: string[]) {
+  getTriggersByIds(triggerids: string[]) {
     const params = {
       output: 'extend',
       triggerids: triggerids,
@@ -555,17 +565,10 @@ export class ZabbixAPIConnector {
       params.selectHosts.push('proxyid');
     }
 
-    const triggers = await this.request('trigger.get', params);
-    // When version is 7.0.0 or higher, groups are returned as hostgroups
-    if (semver.gte(this.version, '7.0.0')) {
-      Object.keys(triggers).forEach((trigger) => {
-        triggers[trigger].groups = triggers[trigger].hostgroups;
-      });
-    }
-    return triggers;
+    return this.request('trigger.get', params).then(utils.mustArray);
   }
 
-  async getTriggers(groupids, hostids, applicationids, options) {
+  getTriggers(groupids, hostids, applicationids, options) {
     const { showTriggers, maintenance, timeFrom, timeTo } = options;
 
     const params: any = {
@@ -611,14 +614,7 @@ export class ZabbixAPIConnector {
       params.lastChangeTill = timeTo;
     }
 
-    const triggers = await this.request('trigger.get', params);
-    // When version is 7.0.0 or higher, groups are returned as hostgroups
-    if (semver.gte(this.version, '7.0.0')) {
-      triggers.forEach((trigger) => {
-        trigger.groups = trigger.hostgroups;
-      });
-    }
-    return triggers;
+    return this.request('trigger.get', params);
   }
 
   getEvents(objectids, timeFrom, timeTo, showEvents, limit) {
@@ -930,14 +926,11 @@ export class ZabbixAPIConnector {
     return this.request('script.get', params).then(utils.mustArray);
   }
 
-  executeScript(scriptid: string, hostid?: string, eventid?: string): Promise<APIExecuteScriptResponse> {
-    const params: { scriptid: string; hostid?: string; eventid?: string } = { scriptid };
-    if (hostid) {
-      params.hostid = hostid;
-    }
-    if (eventid) {
-      params.eventid = eventid;
-    }
+  executeScript(hostid: string, scriptid: string): Promise<APIExecuteScriptResponse> {
+    const params: any = {
+      hostid,
+      scriptid,
+    };
 
     return this.request('script.execute', params);
   }
@@ -957,6 +950,29 @@ export class ZabbixAPIConnector {
     };
 
     return this.request('user.get', params);
+  }
+
+  getMaintenances(hostids: string[], groupids?: number[]) {
+    const params = {
+      hostids: hostids,
+      output: ['active_since', 'active_till', 'name', 'maintenanceid'],
+      selectGroups: ['groupid', 'name'],
+      selectHosts: ['hostid', 'name'],
+      selectTimeperiods: [
+        'start_time',
+        'period',
+        'timeperiod_type',
+        'start_date',
+        'every',
+        'dayofweek',
+        'month',
+        'day',
+      ],
+    };
+    if (groupids) {
+      params['groupids'] = groupids;
+    }
+    return this.request('maintenance.get', params);
   }
 }
 
@@ -1029,7 +1045,7 @@ function getParamsKeyByVersion(
     case 'selectAcknowledges':
       return semver.gte(version, '7.0.0') ? 'selectAcknowledges' : 'select_acknowledges';
     case 'with_hosts':
-      return semver.gte(version, '6.2.0') ? 'with_hosts' : 'real_hosts';
+      return semver.gte(version, '7.0.0') ? 'with_hosts' : 'real_hosts';
     default:
       return '';
   }
