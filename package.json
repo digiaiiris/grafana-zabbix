@@ -1,14 +1,14 @@
 {
-  "name": "grafana-zabbix",
+  "name": "iiris-zabbix-triggers-panel",
   "version": "5.2.1",
   "description": "Zabbix plugin for Grafana",
-  "homepage": "http://grafana-zabbix.org",
+  "homepage": "https://github.com/digiaiiris/grafana-zabbix/",
   "bugs": {
-    "url": "https://github.com/grafana/grafana-zabbix/issues"
+    "url": "https://github.com/digiaiiris/grafana-zabbix/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/grafana/grafana-zabbix.git"
+    "url": "git+https://github.com/digiaiiris/grafana-zabbix.git"
   },
   "license": "Apache-2.0",
   "author": "Grafana Labs",

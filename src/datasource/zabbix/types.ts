@@ -8,6 +8,7 @@ export type zabbixMethodName =
   | 'host.get'
   | 'hostgroup.get'
   | 'item.get'
+  | 'maintenance.get'
   | 'problem.get'
   | 'proxy.get'
   | 'script.execute'

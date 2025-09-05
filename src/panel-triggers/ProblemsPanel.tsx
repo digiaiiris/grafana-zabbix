@@ -10,8 +10,10 @@ import { APIExecuteScriptResponse } from '../datasource/zabbix/connectors/zabbix
 import ProblemList from './components/Problems/Problems';
 import { AckProblemData } from './components/AckModal';
 import AlertList from './components/AlertList/AlertList';
+import { texts } from './localization';
 
 const PROBLEM_EVENTS_LIMIT = 100;
+const STORED_LANGUAGE = localStorage.getItem('iiris_language') || 'fi';
 
 interface ProblemsPanelProps extends PanelProps<ProblemsPanelOptions> {}
 
@@ -100,9 +102,8 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
     if (trigger.comments && options.allowDangerousHTML) {
       trigger.comments = trigger.comments.replace('\n', '<br>');
     }
-    if (trigger && typeof trigger === 'object') {
-      trigger.lastchangeUnix = Number(trigger.lastchange);
-    }
+
+    trigger.lastchangeUnix = Number(trigger.lastchange);
     return trigger;
   };
 
@@ -190,22 +191,10 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
     return ds.zabbix.getScripts([hostid]);
   };
 
-  const onExecuteScript = async (
-    problem: ProblemDTO,
-    scriptid: string,
-    scope: string
-  ): Promise<APIExecuteScriptResponse> => {
+  const onExecuteScript = async (problem: ProblemDTO, scriptid: string): Promise<APIExecuteScriptResponse> => {
     const hostid = problem.hosts?.length ? problem.hosts[0].hostid : null;
     const ds: any = await getDataSourceSrv().get(problem.datasource);
-
-    switch (scope) {
-      case '4': // Event action
-        return ds.zabbix.executeScript(scriptid, undefined, problem.eventid);
-      case '2': // Host action
-        return ds.zabbix.executeScript(scriptid, hostid, undefined);
-      default:
-        return ds.zabbix.executeScript(scriptid);
-    }
+    return ds.zabbix.executeScript(hostid, scriptid);
   };
 
   const onProblemAck = async (problem: ProblemDTO, data: AckProblemData) => {
@@ -254,6 +243,7 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
         fontSize={fontSizeProp}
         onProblemAck={onProblemAck}
         onTagClick={onTagClick}
+        texts={texts[STORED_LANGUAGE]}
       />
     );
   };
