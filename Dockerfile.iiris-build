@@ -1,7 +1,7 @@
 # Dockerfile for building grafana-zabbix artifacts
 
 # Backend (golang) build
-FROM golang:1.22.7 AS go-builder
+FROM golang:1.24.2 AS go-builder
 
 COPY / /build
 
@@ -13,7 +13,7 @@ RUN go install github.com/magefile/mage@latest
 RUN make dist-backend
 
 # Frontend (node) build and packaging
-FROM node:hydrogen-alpine3.21 AS js-builder
+FROM node:jod-alpine3.21 AS js-builder
 
 ARG GRAFANA_ACCESS_POLICY_TOKEN
 ARG GRAFANA_ROOT_URLS
