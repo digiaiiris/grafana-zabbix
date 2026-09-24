@@ -8,7 +8,6 @@ COPY / /build
 WORKDIR /build
 
 RUN go install -v ./pkg/ && \
-	GO111MODULE=off go get -u golang.org/x/lint/golint && \
     make dist-backend
 
 # Frontend (node) build and packaging

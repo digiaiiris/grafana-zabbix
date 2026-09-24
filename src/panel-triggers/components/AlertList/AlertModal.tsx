@@ -27,9 +27,10 @@ export class AlertModal extends React.Component<Props, State> {
   }
 
   getDescriptionArray(eventObj: any) {
-    const descriptionArray = [];
+    const descriptionArray: string[][] = [];
     if (eventObj.comments) {
-      let description = eventObj.comments;
+      // Normalize CRLF/CR to LF so pre-wrap renders line breaks without stray glyphs
+      let description = eventObj.comments.replace(/\r\n?/g, '\n');
       const urlId = new RegExp('https?://');
       let startIndex = description.search(urlId);
       let endIndex = -1;
@@ -37,7 +38,7 @@ export class AlertModal extends React.Component<Props, State> {
       while (startIndex > -1) {
         endIndex = description.slice(startIndex).search('\\s');
         endIndex = endIndex >= 0 ? startIndex + endIndex : description.length;
-        const pairArray = [];
+        const pairArray: string[] = [];
         pairArray.push(description.substring(0, startIndex));
         pairArray.push(description.substring(startIndex, endIndex));
         descriptionArray.push(pairArray);
@@ -77,7 +78,7 @@ export class AlertModal extends React.Component<Props, State> {
                 </tr>
                 <tr>
                   <td className="iiris-table-title-cell iiris-cell-width-10 iiris-table-cell-no-wrap">{texts.description}</td>
-                  <td>
+                  <td className="iiris-table-description-cell">
                     {
                       this.getDescriptionArray(problem).map((pairArray: any[], idx: number) => {
                         return (
