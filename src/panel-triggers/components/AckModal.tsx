@@ -229,7 +229,6 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
             onChange={this.handleChange}
             onKeyDown={this.handleKeyPress}
           />
-          <small className={styles.inputHint}>{texts.pressEnterToSubmit}</small>
           {this.state.error && <small className={styles.inputError}>{this.state.errorMessage}</small>}
         </div>
 
@@ -273,11 +272,6 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
       box-shadow:
         0 0 0 2px ${theme.colors.bg1},
         0 0 0px 4px ${red};
-    `,
-    inputHint: css`
-      display: inherit;
-      float: right;
-      color: ${theme.colors.textWeak};
     `,
     inputError: css`
       float: left;
