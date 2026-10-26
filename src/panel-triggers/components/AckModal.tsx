@@ -199,7 +199,6 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
     const modalTitleClass = cx(styles.modalHeaderTitle);
     const inputGroupClass = cx('gf-form', styles.inputGroup);
     const inputClass = cx(this.state.error && styles.input);
-    const inputHintClass = cx('gf-form-hint-text', styles.inputHint);
     const inputErrorClass = cx('gf-form-hint-text', styles.inputError);
 
     return (
@@ -227,7 +226,6 @@ export class AckModalUnthemed extends PureComponent<Props, State> {
               onChange={this.handleChange}
               onKeyDown={this.handleKeyPress}>
             </TextArea>
-            <small className={inputHintClass}>{texts.pressEnterToSubmit}</small>
             {this.state.error &&
               <small className={inputErrorClass}>{this.state.errorMessage}</small>
             }
@@ -275,11 +273,6 @@ const getStyles = stylesFactory((theme: GrafanaTheme) => {
       border-radius: 2px;
       outline-offset: 2px;
       box-shadow: 0 0 0 2px ${theme.colors.bg1}, 0 0 0px 4px ${red};
-    `,
-    inputHint: css`
-      display: inherit;
-      float: right;
-      color: ${theme.colors.textWeak};
     `,
     inputError: css`
       float: left;
