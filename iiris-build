@@ -1,5 +1,19 @@
 #!/bin/bash
+# Exit on errors, unset variables and failures inside pipelines
 set -euo pipefail
+
+# Exit if a required command is missing
+check_cmd() {
+  local CMD_NAME="${1}"
+  if ! command -v "${CMD_NAME}" >/dev/null 2>&1; then
+    echo "ERROR: Required command '${CMD_NAME}' not found. Please install it and try again." >&2
+    exit 1
+  fi
+}
+
+# Check for required build commands
+check_cmd docker
+check_cmd gcloud
 
 # Parse options
 if ! OPTS=$(getopt -o rt: --long release,tar: -n 'parse-options' -- "${@}"); then
@@ -7,21 +21,25 @@ if ! OPTS=$(getopt -o rt: --long release,tar: -n 'parse-options' -- "${@}"); the
   exit 1
 fi
 
-eval set -- "$OPTS"
+# Replace the script arguments with the normalized options from getopt
+eval set -- "${OPTS}"
 
-# Declare variables
-TARFILE=
-GRAFANA_ACCESS_POLICY_TOKEN=$(gcloud secrets versions access latest --secret=ci-grafana-access-policy-token --project=digia-iiris-dev)
-GRAFANA_ROOT_URLS=$(gcloud secrets versions access latest --secret=ci-grafana-plugin-rooturls --project=digia-iiris-dev)
+# Name of the release tarball (empty = do not package)
+TARFILE=""
 
+# Handle parsed options
 while true; do
-  case "$1" in
+  case "${1}" in
     -r | --release ) TARFILE="iiris-zabbix-plugin.tar.gz"; shift;;
-    -t | --tar ) TARFILE="$2"; shift 2;;
+    -t | --tar ) TARFILE="${2}"; shift 2;;
     -- ) shift; break ;;
     * ) break ;;
   esac
 done
+
+# Fetch plugin signing secrets from GCP Secret Manager
+GRAFANA_ACCESS_POLICY_TOKEN=$(gcloud secrets versions access latest --secret=ci-grafana-access-policy-token --project=digia-iiris-dev)
+GRAFANA_ROOT_URLS=$(gcloud secrets versions access latest --secret=ci-grafana-plugin-rooturls --project=digia-iiris-dev)
 
 if [ -z "${GRAFANA_ACCESS_POLICY_TOKEN}" ]; then
   echo "ERROR: Grafana Access Policy token is missing. Fetching GCP secret 'ci-grafana-access-policy-token' (project digia-iiris-dev) returned an empty value!" >&2
@@ -40,6 +58,6 @@ export GRAFANA_ACCESS_POLICY_TOKEN
 docker build --network=host . -f Dockerfile.iiris-build -t iiris-zabbix-plugin-build --secret id=grafana_token,env=GRAFANA_ACCESS_POLICY_TOKEN --build-arg=GRAFANA_ROOT_URLS="${GRAFANA_ROOT_URLS}"
 
 # Extract the built tarball from the Docker container if a TARFILE is specified.
-if [ ! -z "$TARFILE" ]; then
+if [ ! -z "${TARFILE}" ]; then
   docker run --rm -i --entrypoint sh iiris-zabbix-plugin-build -c "cat iiris-zabbix-plugin.tar.gz" >"${TARFILE}"
 fi
