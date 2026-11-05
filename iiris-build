@@ -2,6 +2,12 @@
 # Exit on errors, unset variables and failures inside pipelines
 set -euo pipefail
 
+# Check gcloud authentication
+if ! gcloud auth print-access-token >/dev/null 2>&1; then
+  echo "Not authenticated with gcloud. Please run 'gcloud auth login --update-adc' to authenticate."
+  exit 1
+fi
+
 # Exit if a required command is missing
 check_cmd() {
   local CMD_NAME="${1}"
