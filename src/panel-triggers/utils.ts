@@ -3,6 +3,7 @@ import { dateMath } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 import * as utils from '../datasource/utils';
 import { ProblemDTO } from 'datasource/types';
+import { TriggerSeverity } from './types';
 
 export function isNewProblem(problem: ProblemDTO, highlightNewerThan: string): boolean {
   try {
@@ -33,6 +34,20 @@ export const getNextRefIdChar = (queries: DataQuery[]): string => {
   });
   return nextLetter || 'A';
 };
+
+export function localizeSeverityNames(
+  triggerSeverity: TriggerSeverity[],
+  texts?: { [index: string]: string }
+): TriggerSeverity[] {
+  if (!texts) {
+    return triggerSeverity;
+  }
+  const labels = getSeverityOptions(texts);
+  return triggerSeverity.map((s) => {
+    const label = labels.find((l) => l.value === s.priority)?.label;
+    return label ? { ...s, severity: label } : s;
+  });
+}
 
 const HOST_MACRO_FIELDS = ['url', 'name', 'description', 'comments'] as const;
 

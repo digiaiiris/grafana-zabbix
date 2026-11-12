@@ -11,7 +11,7 @@ import ProblemList from './components/Problems/Problems';
 import { AckProblemData } from './components/AckModal';
 import AlertList from './components/AlertList/AlertList';
 import { texts } from './localization';
-import { expandHostMacros } from './utils';
+import { expandHostMacros, localizeSeverityNames } from './utils';
 
 const PROBLEM_EVENTS_LIMIT = 100;
 const STORED_LANGUAGE = localStorage.getItem('iiris_language') || 'fi';
@@ -21,6 +21,10 @@ interface ProblemsPanelProps extends PanelProps<ProblemsPanelOptions> {}
 export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
   const { data, options, timeRange, onOptionsChange } = props;
   const { layout, showTriggers, triggerSeverity, sortProblems } = options;
+  const displayOptions = {
+    ...options,
+    triggerSeverity: localizeSeverityNames(triggerSeverity, texts[STORED_LANGUAGE]),
+  };
 
   const prepareProblems = () => {
     const problems: ProblemDTO[] = [];
@@ -239,7 +243,7 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
     return (
       <AlertList
         problems={problems}
-        panelOptions={options}
+        panelOptions={displayOptions}
         pageSize={options.pageSize}
         fontSize={fontSizeProp}
         onProblemAck={onProblemAck}
@@ -257,7 +261,7 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
     return (
       <ProblemList
         problems={problems}
-        panelOptions={options}
+        panelOptions={displayOptions}
         pageSize={options.pageSize}
         fontSize={fontSizeProp}
         timeRange={timeRange}

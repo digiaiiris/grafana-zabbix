@@ -1,5 +1,28 @@
 import { ProblemDTO } from '../datasource/types';
-import { expandHostMacros } from './utils';
+import { texts } from './localization';
+import { DEFAULT_SEVERITY } from './types';
+import { expandHostMacros, localizeSeverityNames } from './utils';
+
+describe('localizeSeverityNames', () => {
+  const saved = DEFAULT_SEVERITY.map((s) => ({ ...s, color: `custom-${s.priority}`, show: s.priority !== 0 }));
+
+  it('replaces severity names with the selected language and keeps saved colors and visibility', () => {
+    const result = localizeSeverityNames(saved, texts.fi);
+    expect(result.map((s) => s.severity)).toEqual([
+      'Tuntematon',
+      'Informatiivinen',
+      'Matala',
+      'Keskitaso',
+      'Vakava',
+      'Kriittinen',
+    ]);
+    expect(result.map((s) => [s.color, s.show])).toEqual(saved.map((s) => [s.color, s.show]));
+  });
+
+  it('keeps saved names when the language is not available', () => {
+    expect(localizeSeverityNames(saved, undefined)).toBe(saved);
+  });
+});
 
 describe('expandHostMacros', () => {
   const hosts = [
