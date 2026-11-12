@@ -1,5 +1,37 @@
 # Zabbix plugin for Grafana
 
+## Digia Iiris version
+
+This is the Digia Iiris version of the grafana-zabbix plugin. It contains the Zabbix data source
+(`iiris-zabbix-datasource`) and the Zabbix Problems panel (`iiris-zabbix-triggers-panel`), both with
+Iiris specific changes, such as the active incidents list layout, Finnish and English texts based on
+the `iiris_language` setting, and Iiris defaults for new Problems panels.
+
+### Building a release
+
+Run the release build from the repository root:
+
+```bash
+./iiris-build --release
+```
+
+The script needs `docker` and an authenticated `gcloud` (`gcloud auth login --update-adc`). It
+reads the plugin signing token and allowed root URLs from the GCP secrets
+`ci-grafana-access-policy-token` and `ci-grafana-plugin-rooturls` in project `digia-iiris-dev`,
+then builds, signs and packages the plugin inside Docker (`Dockerfile.iiris-build`) so the backend
+binary matches Grafana's runtime.
+
+The result is `iiris-zabbix-plugin.tar.gz`. Upload it to the GitHub release; the consuming
+repository downloads the archive by this exact name. Use `--tar <file>` instead of `--release` to write the
+archive under another name for testing, or run the script without options to only build the image.
+
+### Local development
+
+Select Node.js with nvm (`nvm use`, version from `.nvmrc`), then use the Makefile targets, for
+example `make install`, `make dist` and `make test`.
+
+---
+
 [![Version](https://badge.fury.io/gh/grafana%2Fgrafana-zabbix.svg)](https://github.com/grafana/grafana-zabbix/releases)
 [![Change Log](https://img.shields.io/badge/change-log-blue.svg?style=flat)](https://github.com/grafana/grafana-zabbix/blob/main/CHANGELOG.md)
 [![Docs](https://img.shields.io/badge/docs-latest-red.svg?style=flat)](https://grafana.com/docs/plugins/alexanderzobnin-zabbix-app/latest/)
