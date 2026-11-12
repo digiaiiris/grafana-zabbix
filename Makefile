@@ -35,7 +35,8 @@ dist: dist-frontend dist-backend
 dist-frontend:
 	yarn build
 
-dist-backend: dist-backend-mage dist-backend-freebsd dist-arm-freebsd-arm64
+dist-backend:
+	mage -v build:linux
 dist-backend-mage:
 	mage -v buildAll
 dist-backend-windows: extension = .exe
