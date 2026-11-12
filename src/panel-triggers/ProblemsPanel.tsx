@@ -11,6 +11,7 @@ import ProblemList from './components/Problems/Problems';
 import { AckProblemData } from './components/AckModal';
 import AlertList from './components/AlertList/AlertList';
 import { texts } from './localization';
+import { expandHostMacros } from './utils';
 
 const PROBLEM_EVENTS_LIMIT = 100;
 const STORED_LANGUAGE = localStorage.getItem('iiris_language') || 'fi';
@@ -41,7 +42,7 @@ export const ProblemsPanel = (props: ProblemsPanelProps): JSX.Element => {
 
     let triggers = _.cloneDeep(problems);
 
-    triggers = triggers.map((t) => formatTrigger(t));
+    triggers = triggers.map((t) => formatTrigger(expandHostMacros(t)));
     triggers = filterProblems(triggers);
     triggers = sortTriggers(triggers);
 

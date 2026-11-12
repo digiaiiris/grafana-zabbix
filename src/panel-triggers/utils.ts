@@ -34,6 +34,24 @@ export const getNextRefIdChar = (queries: DataQuery[]): string => {
   return nextLetter || 'A';
 };
 
+const HOST_MACRO_FIELDS = ['url', 'name', 'description', 'comments'] as const;
+
+// Zabbix leaves {HOST.HOST} and {HOST.NAME} unexpanded in some trigger fields, so expand them from the first host.
+export function expandHostMacros(problem: ProblemDTO): ProblemDTO {
+  const host = problem.hosts?.[0];
+  if (!host) {
+    return problem;
+  }
+  const expanded = { ...problem };
+  for (const field of HOST_MACRO_FIELDS) {
+    const value = expanded[field];
+    if (value) {
+      expanded[field] = value.replace(/\{HOST\.HOST\}/g, () => host.host).replace(/\{HOST\.NAME\}/g, () => host.name);
+    }
+  }
+  return expanded;
+}
+
 export function getSeverityOptions(texts: { [index: string]: string }) {
   return [
     { value: 0, label: texts.unknown },
