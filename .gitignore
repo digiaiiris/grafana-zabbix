@@ -44,6 +44,7 @@ yarn-error.log
 dist/
 ci/
 alexanderzobnin-zabbix-app.zip
+iiris-zabbix-plugin.tar.gz
 
 .eslintcache
 
