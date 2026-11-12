@@ -1,44 +1,69 @@
 #!/bin/bash
-set -e
+# Exit on errors, unset variables and failures inside pipelines
+set -euo pipefail
+
+# Check gcloud authentication
+if ! gcloud auth print-access-token >/dev/null 2>&1; then
+  echo "Not authenticated with gcloud. Please run 'gcloud auth login --update-adc' to authenticate."
+  exit 1
+fi
+
+# Exit if a required command is missing
+check_cmd() {
+  local CMD_NAME="${1}"
+  if ! command -v "${CMD_NAME}" >/dev/null 2>&1; then
+    echo "ERROR: Required command '${CMD_NAME}' not found. Please install it and try again." >&2
+    exit 1
+  fi
+}
+
+# Check for required build commands
+check_cmd docker
+check_cmd gcloud
 
 # Parse options
-OPTS=`getopt -o rt: --long release,tar:,grafana-access-policy-token:,unsigned -n 'parse-options' -- "$@"`
-
-if [ $? != 0 ] ; then
+if ! OPTS=$(getopt -o rt: --long release,tar: -n 'parse-options' -- "${@}"); then
   echo "Failed parsing options." >&2
   exit 1
 fi
 
-eval set -- "$OPTS"
+# Replace the script arguments with the normalized options from getopt
+eval set -- "${OPTS}"
 
-TARFILE=
-GRAFANA_ACCESS_POLICY_TOKEN=$(gcloud secrets versions access latest --secret=ci-grafana-access-policy-token --project=digia-iiris-dev)
-GRAFANA_ROOT_URLS=$(gcloud secrets versions access latest --secret=ci-grafana-plugin-rooturls --project=digia-iiris-dev)
+# Name of the release tarball (empty = do not package)
+TARFILE=""
 
+# Handle parsed options
 while true; do
-  case "$1" in
+  case "${1}" in
     -r | --release ) TARFILE="iiris-zabbix-plugin.tar.gz"; shift;;
-    -t | --tar ) TARFILE="$2"; shift 2;;
+    -t | --tar ) TARFILE="${2}"; shift 2;;
     -- ) shift; break ;;
     * ) break ;;
   esac
 done
 
-if [ -z "$GRAFANA_ACCESS_POLICY_TOKEN" ]; then
-  echo "ERROR: Grafana Access Policy token is missing. Token must be exported in GRAFANA_ACCESS_POLICY_TOKEN environment variable!"
+# Fetch plugin signing secrets from GCP Secret Manager
+GRAFANA_ACCESS_POLICY_TOKEN=$(gcloud secrets versions access latest --secret=ci-grafana-access-policy-token --project=digia-iiris-dev)
+GRAFANA_ROOT_URLS=$(gcloud secrets versions access latest --secret=ci-grafana-plugin-rooturls --project=digia-iiris-dev)
+
+if [ -z "${GRAFANA_ACCESS_POLICY_TOKEN}" ]; then
+  echo "ERROR: Grafana Access Policy token is missing. Fetching GCP secret 'ci-grafana-access-policy-token' (project digia-iiris-dev) returned an empty value!" >&2
   exit 1
 fi
 
-if [ -z "$GRAFANA_ROOT_URLS" ]; then
-  echo "ERROR: Grafana root URLs missing. Token must be exported in GRAFANA_ROOT_URLS environment variable!"
+if [ -z "${GRAFANA_ROOT_URLS}" ]; then
+  echo "ERROR: Grafana root URLs missing. Fetching GCP secret 'ci-grafana-plugin-rooturls' (project digia-iiris-dev) returned an empty value!" >&2
   exit 1
 fi
 
-# Note that build is done inside Docker container so that the distro matches Grafana distro
-# If the build was done in Alma Linux host the distro would be different and the binaries compiled by Go would not work
-# Build
-docker build . -f Dockerfile.iiris-build -t iiris-zabbix-plugin-build --build-arg=GRAFANA_ACCESS_POLICY_TOKEN=$GRAFANA_ACCESS_POLICY_TOKEN --build-arg=GRAFANA_ROOT_URLS="$GRAFANA_ROOT_URLS"
+# The build is done inside a Docker container so that the distribution matches Grafana's
+# distribution. If the build was done in the host instead, the distro would be different and the
+# binaries would not work.
+export GRAFANA_ACCESS_POLICY_TOKEN
+docker build --network=host . -f Dockerfile.iiris-build -t iiris-zabbix-plugin-build --secret id=grafana_token,env=GRAFANA_ACCESS_POLICY_TOKEN --build-arg=GRAFANA_ROOT_URLS="${GRAFANA_ROOT_URLS}"
 
-if [ ! -z "$TARFILE" ]; then
-    docker run --rm -i --entrypoint sh iiris-zabbix-plugin-build -c "cat iiris-zabbix-plugin.tar.gz" >$TARFILE
+# Extract the built tarball from the Docker container if a TARFILE is specified.
+if [ ! -z "${TARFILE}" ]; then
+  docker run --rm -i --entrypoint sh iiris-zabbix-plugin-build -c "cat iiris-zabbix-plugin.tar.gz" >"${TARFILE}"
 fi
