@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Dockerfile for building grafana-zabbix artifacts
 
 # Backend (golang) build
@@ -15,7 +16,6 @@ RUN make dist-backend
 # Frontend (node) build and packaging
 FROM node:jod-alpine3.21 AS js-builder
 
-ARG GRAFANA_ACCESS_POLICY_TOKEN
 ARG GRAFANA_ROOT_URLS
 
 COPY / /build
@@ -29,7 +29,9 @@ RUN yarn install --pure-lockfile && \
 
 COPY --from=go-builder /build/dist/ /build/dist
 
-RUN npx @grafana/sign-plugin@1.1.0 --rootUrls "${GRAFANA_ROOT_URLS}"
+# Token is mounted as a BuildKit secret so it is not persisted in image layers/history
+RUN --mount=type=secret,id=grafana_token,env=GRAFANA_ACCESS_POLICY_TOKEN,required=true \
+    npx @grafana/sign-plugin@1.1.0 --rootUrls $GRAFANA_ROOT_URLS
 
 RUN cd dist && \
     tar czvf ../iiris-zabbix-plugin.tar.gz *
