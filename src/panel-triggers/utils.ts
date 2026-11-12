@@ -3,6 +3,7 @@ import { dateMath } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 import * as utils from '../datasource/utils';
 import { ProblemDTO } from 'datasource/types';
+import { TriggerSeverity } from './types';
 
 export function isNewProblem(problem: ProblemDTO, highlightNewerThan: string): boolean {
   try {
@@ -33,6 +34,38 @@ export const getNextRefIdChar = (queries: DataQuery[]): string => {
   });
   return nextLetter || 'A';
 };
+
+export function localizeSeverityNames(
+  triggerSeverity: TriggerSeverity[],
+  texts?: { [index: string]: string }
+): TriggerSeverity[] {
+  if (!texts) {
+    return triggerSeverity;
+  }
+  const labels = getSeverityOptions(texts);
+  return triggerSeverity.map((s) => {
+    const label = labels.find((l) => l.value === s.priority)?.label;
+    return label ? { ...s, severity: label } : s;
+  });
+}
+
+const HOST_MACRO_FIELDS = ['url', 'name', 'description', 'comments'] as const;
+
+// Zabbix leaves {HOST.HOST} and {HOST.NAME} unexpanded in some trigger fields, so expand them from the first host.
+export function expandHostMacros(problem: ProblemDTO): ProblemDTO {
+  const host = problem.hosts?.[0];
+  if (!host) {
+    return problem;
+  }
+  const expanded = { ...problem };
+  for (const field of HOST_MACRO_FIELDS) {
+    const value = expanded[field];
+    if (value) {
+      expanded[field] = value.replace(/\{HOST\.HOST\}/g, () => host.host).replace(/\{HOST\.NAME\}/g, () => host.name);
+    }
+  }
+  return expanded;
+}
 
 export function getSeverityOptions(texts: { [index: string]: string }) {
   return [
