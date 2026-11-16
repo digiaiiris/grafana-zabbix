@@ -15,21 +15,21 @@ describe('Zabbix API connector', () => {
       expect(zabbixAPIConnector.request).toHaveBeenCalledWith('proxy.get', { output: ['proxyid', 'name'] });
     });
 
-    it('should send the host parameter when version is less than 7.0.0', () => {
+    it('should send the host parameter when version is less than 7.0.0', async () => {
       const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
       zabbixAPIConnector.version = '6.0.0';
       zabbixAPIConnector.request = jest.fn();
 
-      zabbixAPIConnector.getProxies();
+      await zabbixAPIConnector.getProxies();
       expect(zabbixAPIConnector.request).toHaveBeenCalledWith('proxy.get', { output: ['proxyid', 'host'] });
     });
 
-    it('should send the with_hosts parameter when version is 7.0+', () => {
+    it('should send the with_hosts parameter when version is 7.0+', async () => {
       const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
       zabbixAPIConnector.version = '7.0.0';
       zabbixAPIConnector.request = jest.fn();
 
-      zabbixAPIConnector.getGroups();
+      await zabbixAPIConnector.getGroups();
       expect(zabbixAPIConnector.request).toHaveBeenCalledWith('hostgroup.get', {
         output: ['name', 'groupid'],
         sortfield: 'name',
@@ -37,12 +37,12 @@ describe('Zabbix API connector', () => {
       });
     });
 
-    it('should send the real_hosts parameter when version is <=6.0', () => {
+    it('should send the real_hosts parameter when version is <=6.0', async () => {
       const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
       zabbixAPIConnector.version = '6.0.0';
       zabbixAPIConnector.request = jest.fn();
 
-      zabbixAPIConnector.getGroups();
+      await zabbixAPIConnector.getGroups();
       expect(zabbixAPIConnector.request).toHaveBeenCalledWith('hostgroup.get', {
         output: ['name', 'groupid'],
         sortfield: 'name',
@@ -50,13 +50,50 @@ describe('Zabbix API connector', () => {
       });
     });
 
-    it('should send the with_hosts parameter when version is >=6.2', () => {
+    it('should send the with_hosts parameter when version is >=6.2', async () => {
       const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
       zabbixAPIConnector.version = '6.2.0';
       zabbixAPIConnector.request = jest.fn();
 
-      zabbixAPIConnector.getGroups();
+      await zabbixAPIConnector.getGroups();
       expect(zabbixAPIConnector.request).toHaveBeenCalledWith('hostgroup.get', {
+        output: ['name', 'groupid'],
+        sortfield: 'name',
+        with_hosts: true,
+      });
+    });
+  });
+
+  describe('version detection', () => {
+    beforeEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it('should build request params after the version is detected', async () => {
+      jest.spyOn(ZabbixAPIConnector.prototype, 'getVersion').mockResolvedValue('7.0.0');
+      const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
+      zabbixAPIConnector.backendAPIRequest = jest.fn();
+
+      await zabbixAPIConnector.getGroups();
+      expect(zabbixAPIConnector.backendAPIRequest).toHaveBeenCalledWith('hostgroup.get', {
+        output: ['name', 'groupid'],
+        sortfield: 'name',
+        with_hosts: true,
+      });
+    });
+
+    it('should retry version detection after a failed attempt', async () => {
+      const getVersion = jest
+        .spyOn(ZabbixAPIConnector.prototype, 'getVersion')
+        .mockRejectedValueOnce(new Error('unavailable'))
+        .mockResolvedValue('7.0.0');
+      const zabbixAPIConnector = new ZabbixAPIConnector(true, true, 123);
+      zabbixAPIConnector.backendAPIRequest = jest.fn();
+
+      await expect(zabbixAPIConnector.getGroups()).rejects.toThrow('unavailable');
+      await zabbixAPIConnector.getGroups();
+      expect(getVersion).toHaveBeenCalledTimes(2);
+      expect(zabbixAPIConnector.backendAPIRequest).toHaveBeenCalledWith('hostgroup.get', {
         output: ['name', 'groupid'],
         sortfield: 'name',
         with_hosts: true,
