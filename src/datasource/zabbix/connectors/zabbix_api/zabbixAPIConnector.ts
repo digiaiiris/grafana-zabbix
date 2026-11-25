@@ -41,7 +41,8 @@ export class ZabbixAPIConnector {
     this.getTrend = this.getTrend_ZBXNEXT1193;
     //getTrend = getTrend_30;
 
-    this.initVersion();
+    // Prefetch only; failures are retried and surfaced by the first real request
+    this.initVersion().catch(() => {});
   }
 
   //////////////////////////
@@ -97,17 +98,24 @@ export class ZabbixAPIConnector {
 
     if (!this.getVersionPromise) {
       this.getVersionPromise = Promise.resolve(
-        this.getVersion().then((version) => {
-          if (version) {
-            console.log(`Zabbix version detected: ${version}`);
-          } else {
-            console.log(`Failed to detect Zabbix version, use default ${DEFAULT_ZABBIX_VERSION}`);
-          }
+        this.getVersion().then(
+          (version) => {
+            if (version) {
+              console.log(`Zabbix version detected: ${version}`);
+            } else {
+              console.log(`Failed to detect Zabbix version, use default ${DEFAULT_ZABBIX_VERSION}`);
+            }
 
-          this.version = version || DEFAULT_ZABBIX_VERSION;
-          this.getVersionPromise = null;
-          return version;
-        })
+            this.version = version || DEFAULT_ZABBIX_VERSION;
+            this.getVersionPromise = null;
+            return version;
+          },
+          (error) => {
+            // Reset so the next request retries instead of reusing the rejected promise
+            this.getVersionPromise = null;
+            throw error;
+          }
+        )
       );
     }
     return this.getVersionPromise;
@@ -121,7 +129,8 @@ export class ZabbixAPIConnector {
   // Zabbix API method wrappers //
   ////////////////////////////////
 
-  acknowledgeEvent(eventid: string, message: string, action?: number, severity?: number) {
+  async acknowledgeEvent(eventid: string, message: string, action?: number, severity?: number) {
+    await this.initVersion();
     if (!action) {
       action = semver.gte(this.version, '4.0.0') ? ZBX_ACK_ACTION_ADD_MESSAGE : ZBX_ACK_ACTION_NONE;
     }
@@ -139,7 +148,8 @@ export class ZabbixAPIConnector {
     return this.request('event.acknowledge', params);
   }
 
-  getGroups() {
+  async getGroups() {
+    await this.initVersion();
     const params = {
       output: ['name', 'groupid'],
       sortfield: 'name',
@@ -540,7 +550,8 @@ export class ZabbixAPIConnector {
     return this.request('problem.get', params).then(utils.mustArray);
   }
 
-  getTriggersByIds(triggerids: string[]) {
+  async getTriggersByIds(triggerids: string[]) {
+    await this.initVersion();
     const params = {
       output: 'extend',
       triggerids: triggerids,
@@ -568,7 +579,8 @@ export class ZabbixAPIConnector {
     return this.request('trigger.get', params).then(utils.mustArray);
   }
 
-  getTriggers(groupids, hostids, applicationids, options) {
+  async getTriggers(groupids, hostids, applicationids, options) {
+    await this.initVersion();
     const { showTriggers, maintenance, timeFrom, timeTo } = options;
 
     const params: any = {
@@ -617,7 +629,8 @@ export class ZabbixAPIConnector {
     return this.request('trigger.get', params);
   }
 
-  getEvents(objectids, timeFrom, timeTo, showEvents, limit) {
+  async getEvents(objectids, timeFrom, timeTo, showEvents, limit) {
+    await this.initVersion();
     const params: any = {
       output: 'extend',
       time_from: timeFrom,
@@ -637,7 +650,8 @@ export class ZabbixAPIConnector {
     return this.request('event.get', params).then(utils.mustArray);
   }
 
-  getEventsHistory(groupids, hostids, applicationids, options) {
+  async getEventsHistory(groupids, hostids, applicationids, options) {
+    await this.initVersion();
     const { timeFrom, timeTo, severities, limit, value, tags, evaltype } = options;
 
     const params: any = {
@@ -681,7 +695,8 @@ export class ZabbixAPIConnector {
     return this.request('event.get', params).then(utils.mustArray);
   }
 
-  getExtendedEventData(eventids) {
+  async getExtendedEventData(eventids) {
+    await this.initVersion();
     const params = {
       output: 'extend',
       eventids: eventids,
@@ -705,7 +720,8 @@ export class ZabbixAPIConnector {
     return this.request('alert.get', params);
   }
 
-  getAcknowledges(eventids) {
+  async getAcknowledges(eventids) {
+    await this.initVersion();
     const params = {
       output: 'extend',
       eventids: eventids,
@@ -745,6 +761,7 @@ export class ZabbixAPIConnector {
   }
 
   async getHostAlerts(hostids, applicationids, options): Promise<ZBXTrigger[]> {
+    await this.initVersion();
     const { minSeverity, acknowledged, tags, count, timeFrom, timeTo } = options;
     const params: any = {
       output: 'extend',
@@ -799,7 +816,8 @@ export class ZabbixAPIConnector {
     return triggers;
   }
 
-  getHostICAlerts(hostids, applicationids, itemids, options) {
+  async getHostICAlerts(hostids, applicationids, itemids, options) {
+    await this.initVersion();
     const { minSeverity, acknowledged, count, timeFrom, timeTo } = options;
     const params: any = {
       output: 'extend',
@@ -854,7 +872,8 @@ export class ZabbixAPIConnector {
     });
   }
 
-  getHostPCAlerts(hostids, applicationids, triggerids, options) {
+  async getHostPCAlerts(hostids, applicationids, triggerids, options) {
+    await this.initVersion();
     const { minSeverity, acknowledged, count, timeFrom, timeTo } = options;
     const params: any = {
       output: 'extend',
@@ -903,7 +922,8 @@ export class ZabbixAPIConnector {
     });
   }
 
-  getProxies() {
+  async getProxies() {
+    await this.initVersion();
     const params = {
       output: ['proxyid'],
     };
